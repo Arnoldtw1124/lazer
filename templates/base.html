@@ -29,53 +29,43 @@
     <footer class="site-footer">
         <div class="footer-content">
             <div class="footer-column">
-                <h4>關於我們</h4>
+                <h4>關於諾雕</h4>
                 <ul>
-                    <li><a href="#">客製禮贈品</a></li>
-                    <li><a href="#">成功案例</a></li>
-                    <li><a href="#">常見問題</a></li>
-                    <li><a href="#">合作流程</a></li>
-                    <li><a href="#">聯繫提案</a></li>
+                    <li><a href="{{ url_for('index') }}">品牌故事</a></li>
+                    <li><a href="{{ url_for('index') }}#services">服務項目</a></li>
+                    <li><a href="{{ url_for('booking') }}">合作流程</a></li>
+                    <li><a href="https://x.com/arnoldtw1124" target="_blank">追蹤 X (Twitter)</a></li>
                 </ul>
             </div>
 
             <div class="footer-column">
-                <h4>禮品工藝</h4>
+                <h4>熱門產品</h4>
                 <ul>
-                    <li><a href="#">雷射雕刻</a></li>
-                    <li><a href="#">彩色印刷</a></li>
-                    <li><a href="#">網版印刷</a></li>
-                    <li><a href="#">燙金 / 燙銀</a></li>
+                    <li><a href="{{ url_for('product_detail', product_id='keychain') }}">客製化鑰匙圈</a></li>
+                    <li><a href="{{ url_for('product_detail', product_id='coaster') }}">原木杯墊</a></li>
+                    <li><a href="{{ url_for('product_detail', product_id='tag') }}">寵物名牌</a></li>
+                    <li><a href="{{ url_for('product_detail', product_id='stand') }}">壓克力立牌</a></li>
+                    <li><a href="{{ url_for('product_detail', product_id='cardcheck') }}">金屬名片</a></li>
                 </ul>
             </div>
 
             <div class="footer-column">
-                <h4>產品分類</h4>
+                <h4>材質與工藝</h4>
                 <ul>
-                    <li><a href="#">水杯 / 保溫杯</a></li>
-                    <li><a href="#">辦公文具用品</a></li>
-                    <li><a href="#">3C 手機小物</a></li>
-                    <li><a href="#">居家用品</a></li>
-                    <li><a href="#">包包購物袋</a></li>
+                    <li><a href="{{ url_for('booking') }}">原木雷雕</a></li>
+                    <li><a href="{{ url_for('booking') }}">皮革刻印</a></li>
+                    <li><a href="{{ url_for('booking') }}">壓克力切割</a></li>
+                    <li><a href="{{ url_for('booking') }}">金屬蝕刻</a></li>
                 </ul>
             </div>
 
             <div class="footer-column">
-                <h4>材質分類</h4>
+                <h4>客戶服務</h4>
                 <ul>
-                    <li><a href="#">環保材質</a></li>
-                    <li><a href="#">皮革小物</a></li>
-                    <li><a href="#">金屬材質</a></li>
-                    <li><a href="#">壓克力</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h4>特殊訂製</h4>
-                <ul>
-                    <li><a href="#">提袋 / 包裝盒</a></li>
-                    <li><a href="#">束口袋</a></li>
-                    <li><a href="#">企業大量採購</a></li>
+                    <li><a href="{{ url_for('booking') }}">立即預約</a></li>
+                    <li><a href="{{ url_for('products') }}">產品價目表</a></li>
+                    <li><a href="{{ url_for('booking') }}">企業大量採購</a></li>
+                    <li><a href="{{ url_for('booking') }}">特殊客製諮詢</a></li>
                 </ul>
             </div>
         </div>
