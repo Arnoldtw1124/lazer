@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}製作流程 - 諾雕 Laser engraving{% endblock %}
+
+{% block content %}
+<section style="padding: 120px 10%; min-height: 80vh;">
+    <h2 style="font-size: 2.5rem; margin-bottom: 4rem; text-align: center; color: var(--text-color);">客製化製作流程</h2>
+
+    <div class="process-timeline" style="max-width: 1000px; margin: 0 auto;">
+
+        <!-- Phase 1 -->
+        <div class="process-step"
+            style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6rem; gap: 3rem;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="{{ url_for('static', filename='images/consultation.png') }}" alt="接單諮詢"
+                    style="width: 100%; border-radius: 15px; border: var(--glass-border);">
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem;">Phase 1: 接單與溝通</h3>
+                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">Inquiry & Consultation</h4>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">
+                    <strong>目標：</strong>確認需求可行性，並篩選掉有版權風險的訂單。
+                </p>
+                <ul style="list-style: none; padding-left: 0; color: rgba(255,255,255,0.7);">
+                    <li style="margin-bottom: 0.5rem;">• <strong>需求諮詢：</strong>確認品項 (軟木杯墊 / 皮革集線器 / 其他)、數量與交期。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>版權確認 (重要⚠️)：</strong>
+                        <br>- 文字/名字：確認字型風格（手寫風、黑體等）。
+                        <br>- 圖片：確認是否為原創或授權圖。我們尊重創作者，恕不接受未經授權的官方圖或同人圖。
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>Cubiio 小撇步：</strong>建議提供黑白線稿 (JPG/PNG)，雷射單色線條效果最佳。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>報價與付款：</strong>確認後收取 50% 訂金或全額才開始製作。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Phase 2 -->
+        <div class="process-step"
+            style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6rem; gap: 3rem; flex-direction: row-reverse;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="{{ url_for('static', filename='images/design.png') }}" alt="設計與模擬"
+                    style="width: 100%; border-radius: 15px; border: var(--glass-border);">
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem;">Phase 2: 設計與模擬</h3>
+                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">Design & Mockup</h4>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">
+                    <strong>目標：</strong>讓您「看見」成品，減少彼此對成品的落差。
+                </p>
+                <ul style="list-style: none; padding-left: 0; color: rgba(255,255,255,0.7);">
+                    <li style="margin-bottom: 0.5rem;">• <strong>合成模擬圖 (Digital Proof)：</strong>我們會將您的圖案合成在實際材質 (軟木/皮革)
+                        照片上，傳給您確認大小位置。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>參數設定 (CAM)：</strong>依照材質厚度與特性，調整雷射功率與速度，確保最佳刻印深度。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Phase 3 -->
+        <div class="process-step"
+            style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6rem; gap: 3rem;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="{{ url_for('static', filename='images/production.png') }}" alt="製作與雷雕"
+                    style="width: 100%; border-radius: 15px; border: var(--glass-border);">
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem;">Phase 3: 精準雷雕</h3>
+                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">Production</h4>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">
+                    <strong>目標：</strong>職人精神，精準執行，確保品質。
+                </p>
+                <ul style="list-style: none; padding-left: 0; color: rgba(255,255,255,0.7);">
+                    <li style="margin-bottom: 0.5rem;">• <strong>機器架設與對焦：</strong>使用紙膠帶固定確保平整，並進行精確對焦，這是刻印清晰的關鍵。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>路徑預覽：</strong>在弱光模式下再次確認路徑，確保圖案完美落在材料中央，不歪斜。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>正式雕刻/監控：</strong>全程人工監控雷射運作，確保安全與細節完美呈現。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>皮革小撇步：</strong>會在表面貼紙膠帶保護，防止煙燻黃漬，線條更乾淨。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Phase 4 -->
+        <div class="process-step"
+            style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 6rem; gap: 3rem; flex-direction: row-reverse;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="{{ url_for('static', filename='images/post_processing.png') }}" alt="後處理"
+                    style="width: 100%; border-radius: 15px; border: var(--glass-border);">
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem;">Phase 4: 細緻後處理</h3>
+                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">Post-Processing</h4>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">
+                    <strong>目標：</strong>去除焦痕與異味，提升手感與質感。
+                </p>
+                <ul style="list-style: none; padding-left: 0; color: rgba(255,255,255,0.7);">
+                    <li style="margin-bottom: 0.5rem;">• <strong>清潔 (Cleaning)：</strong>軟木使用軟毛刷清除凹槽黑灰；皮革使用專用清潔布擦拭表面粉塵。
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>除味 (Deodorizing)：</strong>成品會靜置通風 1-2 小時，散去雷雕天然的燒焦味。
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>組裝 (Assembly)：</strong>如皮革托盤打上金屬扣，集線器裝上鈕扣等最後修飾。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Phase 5 -->
+        <div class="process-step"
+            style="display: flex; flex-wrap: wrap; align-items: center; margin-bottom: 3rem; gap: 3rem;">
+            <div style="flex: 1; min-width: 300px;">
+                <img src="{{ url_for('static', filename='images/packaging.png') }}" alt="包裝與交付"
+                    style="width: 100%; border-radius: 15px; border: var(--glass-border);">
+            </div>
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="font-size: 1.8rem; color: var(--primary-color); margin-bottom: 1rem;">Phase 5: 包裝與交付</h3>
+                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">Packaging & Delivery</h4>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">
+                    <strong>目標：</strong>創造「開箱儀式感」，是我們對粉絲與客戶的承諾。
+                </p>
+                <ul style="list-style: none; padding-left: 0; color: rgba(255,255,255,0.7);">
+                    <li style="margin-bottom: 0.5rem;">• <strong>質感包裝：</strong>使用牛皮紙信封或透明霧面袋，呈現簡約高級感。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>專屬心意：</strong>我們會附上寫有您 ID 的感謝小卡（如：「感謝 @User123
+                        的委託！」），讓這份禮物獨一無二。</li>
+                    <li style="margin-bottom: 0.5rem;">• <strong>出貨通知：</strong>完成後會拍照傳給您確認，隨即寄出或安排面交。</li>
+                </ul>
+
+                <a href="{{ url_for('booking') }}" class="btn btn-primary"
+                    style="margin-top: 2rem; display: inline-block; width: 100%; text-align: center;">了解流程了，我想預約！</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

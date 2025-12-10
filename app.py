@@ -69,6 +69,11 @@ def product_detail(product_id):
         return redirect(url_for('products'))
     return render_template('product_detail.html', product=product)
 
+# Route: Production Process
+@app.route('/process')
+def process():
+    return render_template('process.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
