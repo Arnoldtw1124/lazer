@@ -16,6 +16,13 @@
         <div class="logo">
             <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">諾雕 Laser engraving</a>
         </div>
+
+        <div class="hamburger">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+
         <div class="nav-links">
             <a href="{{ url_for('index') }}">首頁</a>
 
@@ -89,6 +96,21 @@
             <p>&copy; 2025 諾雕 Laser engraving. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        const hamburger = document.querySelector(".hamburger");
+        const navLinks = document.querySelector(".nav-links");
+
+        hamburger.addEventListener("click", () => {
+            hamburger.classList.toggle("active");
+            navLinks.classList.toggle("active");
+        });
+
+        document.querySelectorAll(".nav-links a").forEach(n => n.addEventListener("click", () => {
+            hamburger.classList.remove("active");
+            navLinks.classList.remove("active");
+        }));
+    </script>
 </body>
 
 </html>
