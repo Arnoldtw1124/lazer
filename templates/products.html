@@ -10,8 +10,12 @@
         {% for id, product in products.items() %}
         <!-- Dynamic Product Card -->
         <a href="{{ url_for('product_detail', product_id=product.id) }}" class="card"
-            style="display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: inherit;">
-            <div>
+            style="display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: inherit; padding: 0; overflow: hidden;">
+            <div style="width: 100%; height: 200px; background-color: rgba(255,255,255,0.05); overflow: hidden;">
+                <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 2rem;">
                 <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">{{ product.name }}</h3>
                 <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
                     {{ product.desc[:40] }}...

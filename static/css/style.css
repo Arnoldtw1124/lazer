@@ -207,11 +207,21 @@ body {
     border-radius: 15px;
     border: var(--glass-border);
     transition: transform 0.3s;
+    overflow: hidden;
+    /* Ensure image doesn't overflow rounded corners */
 }
 
 .card:hover {
     transform: translateY(-10px);
     background: rgba(255, 255, 255, 0.08);
+}
+
+.card:hover img {
+    transform: scale(1.1);
+}
+
+.card img {
+    transition: transform 0.5s ease;
 }
 
 .card h3 {
