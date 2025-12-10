@@ -81,7 +81,7 @@ def booking():
         # Extract data from form
         data = {
             'name': request.form.get('name'),
-            'material': request.form.get('material'),
+            'material': request.form.get('product'), # Map 'product' to 'material' column in Sheets
             'contact': request.form.get('contact'),
             'notes': request.form.get('notes')
         }

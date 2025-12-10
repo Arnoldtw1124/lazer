@@ -31,13 +31,23 @@
             </div>
 
             <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label for="material" style="display: block; margin-bottom: 0.5rem;">材質選擇</label>
-                <select id="material" name="material"
+                <label for="product" style="display: block; margin-bottom: 0.5rem;">商品選擇 (Product Selection)</label>
+                <select id="product" name="product" required
                     style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
-                    <option value="wood" style="color: black;">原木</option>
-                    <option value="leather" style="color: black;">皮革</option>
-                    <option value="acrylic" style="color: black;">壓克力</option>
-                    <option value="metal" style="color: black;">金屬</option>
+                    <option value="" disabled {% if not request.args.get('product') %}selected{% endif %}
+                        style="color: black;">請選擇商品</option>
+                    <option value="客製化鑰匙圈" {% if request.args.get('product')=='客製化鑰匙圈' %}selected{% endif %}
+                        style="color: black;">客製化鑰匙圈</option>
+                    <option value="原木杯墊" {% if request.args.get('product')=='原木杯墊' %}selected{% endif %}
+                        style="color: black;">原木杯墊</option>
+                    <option value="寵物名牌" {% if request.args.get('product')=='寵物名牌' %}selected{% endif %}
+                        style="color: black;">寵物名牌</option>
+                    <option value="壓克力立牌" {% if request.args.get('product')=='壓克力立牌' %}selected{% endif %}
+                        style="color: black;">壓克力立牌</option>
+                    <option value="金屬名片/銘版" {% if request.args.get('product')=='金屬名片/銘版' %}selected{% endif %}
+                        style="color: black;">金屬名片/銘版</option>
+                    <option value="特殊客製需求" {% if request.args.get('product')=='特殊客製需求' %}selected{% endif %}
+                        style="color: black;">特殊客製需求</option>
                 </select>
             </div>
 
