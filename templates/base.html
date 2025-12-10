@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <nav class="navbar">
         <div class="logo">LaserCraft</div>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">首頁</a>
             <a href="{{ url_for('booking') }}">立即預約</a>
-            <a href="{{ url_for('preview') }}">線上模擬</a>
+
         </div>
     </nav>
 
@@ -25,4 +27,5 @@
         <p>&copy; 2025 LaserCraft Studio. All rights reserved.</p>
     </footer>
 </body>
+
 </html>

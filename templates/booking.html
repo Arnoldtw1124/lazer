@@ -7,6 +7,21 @@
     style="padding: 100px 10%; min-height: 80vh; display: flex; justify-content: center; align-items: center;">
     <div class="booking-card"
         style="background: var(--card-bg); padding: 3rem; border-radius: 20px; border: var(--glass-border); width: 100%; max-width: 600px; backdrop-filter: blur(10px);">
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div
+            style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; text-align: center; 
+                          background: {{ 'rgba(46, 204, 113, 0.2)' if category == 'success' else 'rgba(231, 76, 60, 0.2)' }}; 
+                          color: {{ '#2ecc71' if category == 'success' else '#e74c3c' }}; border: 1px solid currentColor;">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
         <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">預約雷雕服務</h2>
         <form method="POST" action="{{ url_for('booking') }}">
             <div class="form-group" style="margin-bottom: 1.5rem;">
