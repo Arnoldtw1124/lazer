@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_here' # Required for flash messages
 
 # Google Sheets Web App URL
-GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHCpaqrvjipuFS2pVNq867X7h8XjGdN7be7mvzJT4fywH_tZnRQTKbnm2k9Xj-4l7j/exec'
+GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ_HU_bBSTJhpAnNzUQ-IYK227w9KP9UcVWIqZLMUZooNUMSpe7pA0lcwOFedsmr-a/exec'
 
 # Route: Home Page
 @app.route('/')
