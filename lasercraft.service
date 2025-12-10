@@ -1,0 +1,16 @@
+[Unit]
+Description=LaserCraft Gunicorn Service
+After=network.target
+
+[Service]
+# Service runs as root or a specific user (adjust User/Group if needed)
+User=root
+Group=www-data
+# Project working directory
+WorkingDirectory=/opt/lasercraft
+# Path to gunicorn execution (adjust path if venv is different)
+Environment="PATH=/opt/lasercraft/venv/bin"
+ExecStart=/opt/lasercraft/venv/bin/gunicorn --workers 3 --bind 0.0.0.0:80 app:app
+
+[Install]
+WantedBy=multi-user.target

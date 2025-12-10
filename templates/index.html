@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}首頁 - LaserCraft 雷雕工作室{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>打造專屬於您的<br>雷雕藝術</h1>
+        <p>精密的工藝，無限的創意。讓每一個想法都刻畫永恆。</p>
+        <a href="{{ url_for('booking') }}" class="btn btn-primary">開始預約</a>
+    </div>
+</section>
+
+<section class="services">
+    <h2>我們的服務</h2>
+    <div class="service-grid">
+        <div class="card">
+            <h3>客製化禮品</h3>
+            <p>為特別的人準備獨一無二的禮物。</p>
+        </div>
+        <div class="card">
+            <h3>商業標示</h3>
+            <p>提升品牌質感的專業雷雕招牌。</p>
+        </div>
+        <div class="card">
+            <h3>藝術創作</h3>
+            <p>將您的設計轉化為實體藝術品。</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

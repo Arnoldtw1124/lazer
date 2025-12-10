@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}立即預約 - LaserCraft{% endblock %}
+
+{% block content %}
+<section class="booking-section"
+    style="padding: 100px 10%; min-height: 80vh; display: flex; justify-content: center; align-items: center;">
+    <div class="booking-card"
+        style="background: var(--card-bg); padding: 3rem; border-radius: 20px; border: var(--glass-border); width: 100%; max-width: 600px; backdrop-filter: blur(10px);">
+        <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">預約雷雕服務</h2>
+        <form method="POST" action="{{ url_for('booking') }}">
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="name" style="display: block; margin-bottom: 0.5rem;">姓名</label>
+                <input type="text" id="name" name="name" required
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="material" style="display: block; margin-bottom: 0.5rem;">材質選擇</label>
+                <select id="material" name="material"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+                    <option value="wood" style="color: black;">原木</option>
+                    <option value="leather" style="color: black;">皮革</option>
+                    <option value="acrylic" style="color: black;">壓克力</option>
+                    <option value="metal" style="color: black;">金屬</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="date" style="display: block; margin-bottom: 0.5rem;">預約日期</label>
+                <input type="date" id="date" name="date" required
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 2rem;">
+                <label for="notes" style="display: block; margin-bottom: 0.5rem;">備註需求</label>
+                <textarea id="notes" name="notes" rows="4"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="width: 100%; border: none; cursor: pointer;">送出預約</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
