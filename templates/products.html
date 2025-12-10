@@ -9,7 +9,8 @@
     <div class="service-grid">
         {% for id, product in products.items() %}
         <!-- Dynamic Product Card -->
-        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="card"
+            style="display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: inherit;">
             <div>
                 <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">{{ product.name }}</h3>
                 <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
@@ -18,9 +19,9 @@
                 <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color); margin-bottom: 1.5rem;">
                     {{ product.price }}</div>
             </div>
-            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn"
-                style="border: 1px solid var(--primary-color); background: transparent; color: white; text-align: center;">查看詳情</a>
-        </div>
+            <span class="btn"
+                style="border: 1px solid var(--primary-color); background: transparent; color: white; text-align: center;">查看詳情</span>
+        </a>
         {% endfor %}
 
         <!-- Custom Request Card -->
