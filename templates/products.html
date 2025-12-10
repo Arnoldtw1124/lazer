@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}產品與價目 - 諾雕 Laser engraving{% endblock %}
+
+{% block content %}
+<section class="services" style="padding-top: 120px; min-height: 80vh;">
+    <h2 style="font-size: 2.5rem; margin-bottom: 3rem; text-align: center; color: var(--text-color);">產品與價目表</h2>
+
+    <div class="service-grid">
+        <!-- Product 1 -->
+        <div class="card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">客製化鑰匙圈</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                個人專屬雷雕鑰匙圈，可刻印名字或簡單圖案。適合送禮或自用。
+            </p>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color);">NT$ 150 起</div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">原木杯墊</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                天然原木材質，質感溫潤。可刻印公司 Logo 或紀念文字。
+            </p>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color);">NT$ 250 起</div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">寵物名牌</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                金屬或皮革材質，耐用且輕便。刻上毛孩名字與聯絡電話，防止走失。
+            </p>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color);">NT$ 200 起</div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">壓克力立牌</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                透明壓克力切割與雕刻，適合動漫角色、偶像應援或展示架。
+            </p>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color);">NT$ 450 起</div>
+        </div>
+
+        <!-- Product 5 -->
+        <div class="card">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--primary-color);">金屬名片/銘版</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                陽極處理鋁合金或不鏽鋼，呈現極致工業風質感。
+            </p>
+            <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color);">NT$ 300 起</div>
+        </div>
+
+        <!-- Product 6 -->
+        <div class="card" style="border: 1px dashed var(--primary-color);">
+            <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-color);">特殊客製需求</h3>
+            <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                有其他創意想法？歡迎直接預約諮詢，我們將為您報價。
+            </p>
+            <a href="{{ url_for('booking') }}" class="btn btn-primary"
+                style="margin-top: 1rem; display: inline-block; width: 100%; text-align: center;">前往預約</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

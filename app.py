@@ -12,6 +12,11 @@ GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ_HU_bBSTJhpAnNzU
 def index():
     return render_template('index.html')
 
+# Route: Products Page
+@app.route('/products')
+def products():
+    return render_template('products.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
