@@ -18,8 +18,20 @@
         </div>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">首頁</a>
-            <a href="{{ url_for('products') }}">產品介紹</a>
-            <a href="{{ url_for('booking') }}">立即預約</a>
+
+            <div class="dropdown">
+                <a href="{{ url_for('products') }}" class="dropbtn">產品介紹 ▾</a>
+                <div class="dropdown-content">
+                    <a href="{{ url_for('product_detail', product_id='keychain') }}">客製化鑰匙圈</a>
+                    <a href="{{ url_for('product_detail', product_id='coaster') }}">原木杯墊</a>
+                    <a href="{{ url_for('product_detail', product_id='tag') }}">寵物名牌</a>
+                    <a href="{{ url_for('product_detail', product_id='stand') }}">壓克力立牌</a>
+                    <a href="{{ url_for('product_detail', product_id='cardcheck') }}">金屬名片/銘版</a>
+                    <a href="{{ url_for('products') }}">查看所有產品</a>
+                </div>
+            </div>
+
+            <a href="{{ url_for('process') }}">製作流程</a>
             <a href="https://x.com/arnoldtw1124" target="_blank">X (Twitter)</a>
         </div>
     </nav>
