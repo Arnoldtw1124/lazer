@@ -20,7 +20,7 @@ def booking():
         data = {
             'name': request.form.get('name'),
             'material': request.form.get('material'),
-            'date': request.form.get('date'),
+            'contact': request.form.get('contact'),
             'notes': request.form.get('notes')
         }
         
