@@ -1,8 +1,13 @@
-import requests
-from flask import Flask, render_template, request, flash, redirect, url_for
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here' # Required for flash messages
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
+
+# Ensure upload directory exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Google Sheets Web App URL
 GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ_HU_bBSTJhpAnNzUQ-IYK227w9KP9UcVWIqZLMUZooNUMSpe7pA0lcwOFedsmr-a/exec'
@@ -78,12 +83,25 @@ def process():
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
     if request.method == 'POST':
+        # Handle file upload
+        file = request.files.get('file')
+        filename = "無附檔"
+        file_url = ""
+
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            # Generate a local URL (or you could upload to a cloud service)
+            # For this context, we'll store the filename to reference
+            file_url = f" (附檔: {filename})"
+        
         # Extract data from form
         data = {
             'name': request.form.get('name'),
             'material': request.form.get('product'), # Map 'product' to 'material' column in Sheets
             'contact': request.form.get('contact'),
-            'notes': request.form.get('notes')
+            'notes': request.form.get('notes') + file_url # Append file info to notes
         }
         
         try:

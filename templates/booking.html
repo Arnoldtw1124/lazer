@@ -23,17 +23,22 @@
         {% endwith %}
 
         <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">預約雷雕服務</h2>
-        <form method="POST" action="{{ url_for('booking') }}">
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label for="name" style="display: block; margin-bottom: 0.5rem;">暱稱</label>
-                <input type="text" id="name" name="name" required
-                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+        <form method="POST" action="{{ url_for('booking') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">暱稱 (Nickname)</label>
+                <input type="text" id="name" name="name" required placeholder="請輸入您的稱呼">
+            </div>
+
+            <div class="form-group">
+                <label for="contact">聯絡方式 (Contact)</label>
+                <input type="text" id="contact" name="contact" required placeholder="Email 或 Discord ID">
             </div>
 
             <div class="form-group" style="margin-bottom: 1.5rem;">
                 <label for="product" style="display: block; margin-bottom: 0.5rem;">商品選擇 (Product Selection)</label>
                 <select id="product" name="product" required
-                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;"
+                    onchange="toggleUploadSection()">
                     <option value="" disabled {% if not request.args.get('product') %}selected{% endif %}
                         style="color: black;">請選擇商品</option>
                     <option value="客製化鑰匙圈" {% if request.args.get('product')=='客製化鑰匙圈' %}selected{% endif %}
@@ -51,21 +56,10 @@
                 </select>
             </div>
 
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label for="contact" style="display: block; margin-bottom: 0.5rem;">聯絡方式 (Email / Discord)</label>
-                <input type="text" id="contact" name="contact" required
-                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
-            </div>
+    </div>
 
-            <div class="form-group" style="margin-bottom: 2rem;">
-                <label for="notes" style="display: block; margin-bottom: 0.5rem;">備註需求</label>
-                <textarea id="notes" name="notes" rows="4"
-                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white; resize: none;"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary"
-                style="width: 100%; border: none; cursor: pointer;">送出預約</button>
-        </form>
+    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; cursor: pointer;">送出預約</button>
+    </form>
     </div>
 </section>
 {% endblock %}
