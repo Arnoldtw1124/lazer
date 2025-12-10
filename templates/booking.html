@@ -31,8 +31,14 @@
             </div>
 
             <div class="form-group">
-                <label for="contact">聯絡方式 (Contact)</label>
-                <input type="text" id="contact" name="contact" required placeholder="Email 或 Discord ID"
+                <label for="email">電子郵件 (Email) <span style="color: #ff4d4d;">*</span></label>
+                <input type="email" id="email" name="email" required placeholder="example@gmail.com"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+            </div>
+
+            <div class="form-group">
+                <label for="discord">Discord ID (選填)</label>
+                <input type="text" id="discord" name="discord" placeholder="username#1234"
                     style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
             </div>
 
