@@ -99,13 +99,7 @@ def booking():
             file_url = f" (附檔: {filename})"
         
         # Extract data from form
-        email = request.form.get('email')
-        discord = request.form.get('discord')
-        
-        # Combine contact info for Sheets
-        contact_info = email
-        if discord:
-            contact_info += f" / Discord: {discord}"
+        contact_info = request.form.get('email')
 
         data = {
             'name': request.form.get('name'),
