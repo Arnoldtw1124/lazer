@@ -5,7 +5,7 @@
     --secondary-color: #b5179e;
     --card-bg: rgba(255, 255, 255, 0.05);
     --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-    --font-main: 'Outfit', sans-serif;
+    --font-main: 'Outfit', 'Noto Sans TC', sans-serif;
 }
 
 * {
@@ -64,7 +64,7 @@ body {
     justify-content: center;
     text-align: center;
     background: radial-gradient(circle at top right, rgba(123, 44, 191, 0.2), transparent 40%),
-                radial-gradient(circle at bottom left, rgba(181, 23, 158, 0.2), transparent 40%);
+        radial-gradient(circle at bottom left, rgba(181, 23, 158, 0.2), transparent 40%);
 }
 
 .hero h1 {
