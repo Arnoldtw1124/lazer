@@ -26,12 +26,14 @@
         <form method="POST" action="{{ url_for('booking') }}" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">暱稱 (Nickname)</label>
-                <input type="text" id="name" name="name" required placeholder="請輸入您的稱呼">
+                <input type="text" id="name" name="name" required placeholder="請輸入您的稱呼"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
             </div>
 
             <div class="form-group">
                 <label for="contact">聯絡方式 (Contact)</label>
-                <input type="text" id="contact" name="contact" required placeholder="Email 或 Discord ID">
+                <input type="text" id="contact" name="contact" required placeholder="Email 或 Discord ID"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
             </div>
 
             <div class="form-group" style="margin-bottom: 1.5rem;">
@@ -56,10 +58,35 @@
                 </select>
             </div>
 
-    </div>
+            <!-- Upload Section (Hidden by default until product is selected) -->
+            <div id="upload-section"
+                style="display: none; background: rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border: 1px dashed rgba(255,255,255,0.3);">
+                <label for="file"
+                    style="display: block; margin-bottom: 1rem; color: var(--secondary-color); font-weight: bold;">
+                    📂 上傳雷雕圖檔 (Upload File)
+                </label>
+                <input type="file" id="file" name="file" accept=".jpg,.jpeg,.png,.ai,.svg"
+                    style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
 
-    <button type="submit" class="btn btn-primary" style="width: 100%; border: none; cursor: pointer;">送出預約</button>
-    </form>
+                <div style="font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.6;">
+                    <strong>💡 建議規格：</strong>
+                    <ul style="padding-left: 1.2rem; margin-top: 0.5rem;">
+                        <li><strong>格式：</strong> JPG / PNG (黑白線稿最佳)</li>
+                        <li><strong>解析度：</strong> 300dpi 以上，避免鉅齒狀。</li>
+                        <li><strong>備註：</strong> 若只有草圖，請在下方備註欄說明。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="notes">備註需求 (Notes)</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="請描述您的設計想法、刻印文字內容等..."
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white; resize: none;"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary"
+                style="width: 100%; border: none; cursor: pointer;">送出預約</button>
+        </form>
     </div>
 </section>
 {% endblock %}
