@@ -13,7 +13,9 @@
 
 <body>
     <nav class="navbar">
-        <div class="logo">諾雕 Laser engraving</div>
+        <div class="logo">
+            <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">諾雕 Laser engraving</a>
+        </div>
         <div class="nav-links">
             <a href="{{ url_for('index') }}">首頁</a>
             <a href="{{ url_for('products') }}">產品介紹</a>
