@@ -87,6 +87,26 @@
             <button type="submit" class="btn btn-primary"
                 style="width: 100%; border: none; cursor: pointer;">送出預約</button>
         </form>
+
+        <script>
+            function toggleUploadSection() {
+                var productSelect = document.getElementById("product");
+                var uploadSection = document.getElementById("upload-section");
+
+                if (productSelect.value !== "") {
+                    uploadSection.style.display = "block";
+                    // Add a small fade-in effect
+                    uploadSection.style.animation = "fadeIn 0.5s";
+                } else {
+                    uploadSection.style.display = "none";
+                }
+            }
+
+            // Run on load in case a product is pre-selected via URL
+            window.onload = function () {
+                toggleUploadSection();
+            };
+        </script>
     </div>
 </section>
 {% endblock %}
