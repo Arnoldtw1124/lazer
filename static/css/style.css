@@ -280,3 +280,132 @@ body {
     color: rgba(255, 255, 255, 0.4);
     font-size: 0.8rem;
 }
+
+/* Hamburger Menu */
+.hamburger {
+    display: none;
+    cursor: pointer;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+    background-color: white;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 5%;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .nav-links {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        gap: 0;
+        flex-direction: column;
+        background-color: rgba(15, 15, 19, 0.98);
+        width: 100%;
+        height: calc(100vh - 70px);
+        /* Fill remaining height */
+        text-align: center;
+        transition: 0.3s;
+        backdrop-filter: blur(10px);
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        align-items: center;
+        /* Center items horizontally */
+        justify-content: flex-start;
+        /* Start from top */
+    }
+
+    .nav-links.active {
+        left: 0;
+    }
+
+    .nav-links a {
+        margin: 1.5rem 0;
+        font-size: 1.2rem;
+    }
+
+    /* Mobile Dropdown Fix */
+    .dropdown {
+        display: block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .dropdown-content {
+        position: static;
+        background: transparent;
+        box-shadow: none;
+        border: none;
+        transform: none !important;
+        display: none;
+        /* Keep hidden by default */
+        padding: 0;
+        min-width: unset;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+        /* Show on hover (or tap on mobile) */
+        animation: none;
+    }
+
+    .dropdown-content a {
+        padding: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 1rem;
+        background: transparent;
+    }
+
+    /* Adjust Hero */
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+    }
+
+    /* Adjust Sections */
+    .services,
+    .booking-section {
+        padding: 4rem 5%;
+    }
+
+    /* Footer Stack */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .footer-column ul li a:hover {
+        padding-left: 0;
+        /* Removing shift effect on mobile */
+        color: var(--secondary-color);
+    }
+}
