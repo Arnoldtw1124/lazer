@@ -12,7 +12,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Google Sheets Web App URL
-GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJ_HU_bBSTJhpAnNzUQ-IYK227w9KP9UcVWIqZLMUZooNUMSpe7pA0lcwOFedsmr-a/exec'
+GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHk9WGTbGxPKxnwmX1mY11WCtCNoXFEuuWa9qpXh8su2pAxdS9Yw1XtmSBwWbMH-8akw/exec'
 
 # Product Data
 products_data = {
