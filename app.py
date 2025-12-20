@@ -18,11 +18,11 @@ GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJ
 products_data = {
     'keychain': {
         'id': 'keychain',
-        'name': '客製化鑰匙圈',
+        'name': '皮革鑰匙圈',
         'price': 'NT$ 150 起',
-        'desc': '個人專屬雷雕鑰匙圈，可刻印名字或簡單圖案。適合送禮或自用。選用進口高級板材，邊緣光滑不刮手。',
-        'specs': ['尺寸：5cm x 3cm', '厚度：3mm', '材質：壓克力 / 木質', '包含：金屬鑰匙扣環'],
-        'image': 'keychain.jpg' 
+        'desc': '質感皮革鑰匙圈，搭配精緻縫線與金屬扣環。可客製化刻印名字或紀念日期，展現個人獨特品味。',
+        'specs': ['尺寸：10cm x 2cm', '材質：麂皮 / PU皮革 / 合金', '工藝：雷射雕刻'],
+        'image': 'leather_keychain.jpg' 
     },
     'coaster': {
         'id': 'coaster',
