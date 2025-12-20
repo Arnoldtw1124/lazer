@@ -21,7 +21,7 @@ products_data = {
         'name': '皮革鑰匙圈',
         'price': 'NT$ 150 起',
         'desc': '質感皮革鑰匙圈，搭配精緻縫線與金屬扣環。可客製化刻印名字或紀念日期，展現個人獨特品味。',
-        'specs': ['尺寸：10cm x 2cm', '材質：麂皮 / PU皮革 / 合金', '工藝：雷射雕刻'],
+        'specs': ['尺寸：10cm x 2cm', '材質：PU皮革 / 合金', '工藝：雷射雕刻'],
         'image': 'leather_keychain.jpg' 
     },
     'coaster': {
