@@ -8,14 +8,31 @@
     <div class="booking-card"
         style="background: var(--card-bg); padding: 3rem; border-radius: 20px; border: var(--glass-border); width: 100%; max-width: 600px; backdrop-filter: blur(10px);">
 
-        <!-- Flash Messages -->
+        <!-- Flash Messages Styles -->
+        <style>
+            .flash-message {
+                padding: 1rem;
+                margin-bottom: 1rem;
+                border-radius: 8px;
+                text-align: center;
+                border: 1px solid currentColor;
+            }
+
+            .flash-success {
+                background: rgba(46, 204, 113, 0.2);
+                color: #2ecc71;
+            }
+
+            .flash-error {
+                background: rgba(231, 76, 60, 0.2);
+                color: #e74c3c;
+            }
+        </style>
+
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div
-            style="padding: 1rem; margin-bottom: 1rem; border-radius: 8px; text-align: center; 
-                          background: {{ 'rgba(46, 204, 113, 0.2)' if category == 'success' else 'rgba(231, 76, 60, 0.2)' }}; 
-                          color: {{ '#2ecc71' if category == 'success' else '#e74c3c' }}; border: 1px solid currentColor;">
+        <div class="flash-message {{ 'flash-success' if category == 'success' else 'flash-error' }}">
             {{ message }}
         </div>
         {% endfor %}
