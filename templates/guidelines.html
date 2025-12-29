@@ -1,0 +1,218 @@
+{% extends 'base.html' %}
+
+{% block title %}送印規範 (File Guidelines) - 諾雕 Laser engraving{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section style="
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: url('{{ url_for('static', filename='images/guidelines_hero.png') }}') no-repeat center center/cover;
+    text-align: center;
+    color: white;
+">
+    <!-- Overlay -->
+    <div style="
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 1;
+    "></div>
+
+    <div style="position: relative; z-index: 2;">
+        <h1 style="
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        ">檔案製作指南</h1>
+        <p style="
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.9);
+            letter-spacing: 1px;
+        ">精準度源自規範</p>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div style="
+    background: #0f0f13;
+    color: white;
+    padding: 80px 10%;
+">
+
+    <!-- File Formats Section -->
+    <section style="margin-bottom: 100px; text-align: center;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 3rem; color: var(--primary-color);">接受格式</h2>
+
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        ">
+            <!-- Displaying the generated icons image -->
+            <img src="{{ url_for('static', filename='images/guidelines_icons.png') }}"
+                alt="File Formats: AI, PDF, JPG, PNG" style="
+                max-width: 100%;
+                height: auto;
+                max-height: 300px;
+                border: 1px solid rgba(255, 0, 0, 0.2);
+                border-radius: 15px;
+                box-shadow: 0 0 15px rgba(255, 0, 0, 0.1);
+            ">
+        </div>
+
+        <div style="
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        ">
+            <div style="padding: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <h3 style="color: #ff4d4d; margin-bottom: 0.5rem;">AI / EPS</h3>
+                <p style="font-size: 0.9rem; color: #ccc;">向量格式最佳 (CS6以下)</p>
+            </div>
+            <div style="padding: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <h3 style="color: #ff4d4d; margin-bottom: 0.5rem;">PDF</h3>
+                <p style="font-size: 0.9rem; color: #ccc;">保留向量路徑</p>
+            </div>
+            <div style="padding: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <h3 style="color: #ff4d4d; margin-bottom: 0.5rem;">JPG / PNG</h3>
+                <p style="font-size: 0.9rem; color: #ccc;">高解析度圖片</p>
+            </div>
+            <div style="padding: 1.5rem; background: rgba(255,255,255,0.05); border-radius: 10px;">
+                <h3 style="color: #ff4d4d; margin-bottom: 0.5rem;">DXF</h3>
+                <p style="font-size: 0.9rem; color: #ccc;">CAD 線稿專用</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Do's and Don'ts Section -->
+    <section style="margin-bottom: 100px;">
+        <h2 style="font-size: 2.5rem; margin-bottom: 3rem; text-align: center; color: var(--primary-color);">正確 vs 錯誤範例
+        </h2>
+
+        <div style="
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        ">
+            <!-- Do's -->
+            <div style="
+                background: rgba(0, 255, 0, 0.05);
+                border: 2px solid #00cc00;
+                border-radius: 15px;
+                padding: 2rem;
+                text-align: center;
+            ">
+                <h3 style="color: #00cc00; font-size: 2rem; margin-bottom: 1.5rem;">✔ 正確範例</h3>
+                <div style="
+                    width: 100%;
+                    aspect-ratio: 1/1;
+                    overflow: hidden;
+                    border-radius: 10px;
+                    margin-bottom: 1.5rem;
+                    background: white;
+                ">
+                    <img src="{{ url_for('static', filename='images/guidelines_good.png') }}" alt="Good Example"
+                        style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <p style="color: white; font-size: 1.1rem;">
+                    清晰黑白線稿<br>無漸層、邊緣銳利
+                </p>
+            </div>
+
+            <!-- Don'ts -->
+            <div style="
+                background: rgba(255, 0, 0, 0.05);
+                border: 2px solid #ff3333;
+                border-radius: 15px;
+                padding: 2rem;
+                text-align: center;
+            ">
+                <h3 style="color: #ff3333; font-size: 2rem; margin-bottom: 1.5rem;">✘ 錯誤範例</h3>
+                <div style="
+                    width: 100%;
+                    aspect-ratio: 1/1;
+                    overflow: hidden;
+                    border-radius: 10px;
+                    margin-bottom: 1.5rem;
+                ">
+                    <img src="{{ url_for('static', filename='images/guidelines_bad.png') }}" alt="Bad Example"
+                        style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <p style="color: white; font-size: 1.1rem;">
+                    模糊低解析度<br>彩色漸層、雜訊過多
+                </p>
+            </div>
+        </div>
+
+        <!-- Mobile Stack Fix -->
+        <style>
+            @media (max-width: 768px) {
+                div[style*="grid-template-columns: 1fr 1fr"] {
+                    grid-template-columns: 1fr !important;
+                }
+            }
+        </style>
+    </section>
+
+    <!-- Specs Text Section -->
+    <section style="
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 20px;
+        padding: 3rem;
+        max-width: 800px;
+        margin: 0 auto;
+        border-left: 5px solid var(--secondary-color);
+    ">
+        <h3 style="font-size: 1.8rem; margin-bottom: 2rem; color: white;">詳細規格要求</h3>
+        <ul style="
+            list-style: none;
+            padding: 0;
+            font-size: 1.1rem;
+            line-height: 2;
+        ">
+            <li style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <span style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;">➤</span>
+                圖片解析度需設置 <strong>&nbsp;300 dpi 或以上</strong>，以確保雕刻細節。
+            </li>
+            <li style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <span style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;">➤</span>
+                線條寬度 (Stroke weight) 請設定大於 <strong>&nbsp;0.1mm (0.28pt)</strong>，過細可能無法呈現。
+            </li>
+            <li style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <span style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;">➤</span>
+                文字請務必 <strong>&nbsp;建立外框 (Create Outlines)</strong>，避免字型跑版。
+            </li>
+            <li style="display: flex; align-items: center;">
+                <span style="color: var(--secondary-color); margin-right: 15px; font-size: 1.2rem;">➤</span>
+                若使用點陣圖 (JPG/PNG)，請提供 <strong>&nbsp;高對比黑白圖片</strong> 效果最佳。
+            </li>
+        </ul>
+    </section>
+
+    <div style="text-align: center; margin-top: 5rem;">
+        <a href="{{ url_for('booking') }}" class="btn btn-primary"
+            style="padding: 1rem 3rem; font-size: 1.2rem;">已確認規範，立即預約</a>
+    </div>
+
+</div>
+{% endblock %}

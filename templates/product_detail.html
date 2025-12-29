@@ -50,6 +50,13 @@
 
             <a href="{{ url_for('booking') }}?product={{ product.name }}" class="btn btn-primary"
                 style="width: 100%; text-align: center;">立即預約此產品</a>
+
+            <div style="text-align: center; margin-top: 1rem;">
+                <a href="{{ url_for('guidelines') }}"
+                    style="font-size: 0.9rem; color: var(--secondary-color); text-decoration: underline;">
+                    ⚠ 送印檔案規範 (File Guidelines)
+                </a>
+            </div>
             <a href="{{ url_for('products') }}"
                 style="display: block; text-align: center; margin-top: 1rem; color: rgba(255,255,255,0.5); text-decoration: none;">←
                 返回產品列表</a>

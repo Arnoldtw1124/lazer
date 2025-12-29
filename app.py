@@ -86,6 +86,11 @@ def process():
 def terms():
     return render_template('terms.html')
 
+# Route: File Guidelines
+@app.route('/guidelines')
+def guidelines():
+    return render_template('guidelines.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
