@@ -12,14 +12,14 @@
         text-transform: uppercase; 
         letter-spacing: 2px;
         text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
-    ">Material Library</h1>
+    ">材質資料庫</h1>
 
     <!-- Filters -->
     <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 4rem;">
-        <button onclick="filterMaterials('all')" class="filter-btn active">All</button>
-        <button onclick="filterMaterials('metal')" class="filter-btn">Metal</button>
-        <button onclick="filterMaterials('acrylic')" class="filter-btn">Acrylic</button>
-        <button onclick="filterMaterials('paper')" class="filter-btn">Paper</button>
+        <button onclick="filterMaterials('all')" class="filter-btn active">全部</button>
+        <button onclick="filterMaterials('metal')" class="filter-btn">金屬</button>
+        <button onclick="filterMaterials('acrylic')" class="filter-btn">壓克力</button>
+        <button onclick="filterMaterials('paper')" class="filter-btn">紙材</button>
     </div>
 
     <!-- Grid -->
@@ -37,8 +37,8 @@
                 <h3>霧面不鏽鋼 (Stainless Steel)</h3>
                 <p>適用厚度: 0.5mm - 2.0mm</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="rarity">Industrial Grade</span>
-                    <a href="{{ url_for('booking') }}?material=metal" class="craft-btn">[ Craft This ]</a>
+                    <span class="rarity">工業級</span>
+                    <a href="{{ url_for('booking') }}?material=metal" class="craft-btn">[ 立即製作 ]</a>
                 </div>
             </div>
         </div>
@@ -56,8 +56,8 @@
                 <h3>透光紅壓克力 (Translucent Red)</h3>
                 <p>適用厚度: 3mm / 5mm</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="rarity">Epic Rare</span>
-                    <a href="{{ url_for('booking') }}?material=acrylic" class="craft-btn">[ Craft This ]</a>
+                    <span class="rarity">史詩級</span>
+                    <a href="{{ url_for('booking') }}?material=acrylic" class="craft-btn">[ 立即製作 ]</a>
                 </div>
             </div>
         </div>
@@ -75,8 +75,8 @@
                 <h3>進口牛皮紙 (Kraft Paper)</h3>
                 <p>適用厚度: 300g / 450g</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="rarity">Common</span>
-                    <a href="{{ url_for('booking') }}?material=paper" class="craft-btn">[ Craft This ]</a>
+                    <span class="rarity">普通級</span>
+                    <a href="{{ url_for('booking') }}?material=paper" class="craft-btn">[ 立即製作 ]</a>
                 </div>
             </div>
         </div>
@@ -228,7 +228,7 @@
         // Update Buttons
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.classList.remove('active');
-            if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === 'All')) {
+            if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === '全部')) {
                 btn.classList.add('active');
             }
         });
