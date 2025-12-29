@@ -86,6 +86,10 @@ def process():
 def terms():
     return render_template('terms.html')
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
 # Route: File Guidelines
 @app.route('/guidelines')
 def guidelines():

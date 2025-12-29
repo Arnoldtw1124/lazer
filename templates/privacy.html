@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}隱私權政策 (Privacy Policy) - 諾雕 ALE{% endblock %}
+
+{% block content %}
+<section class="terms-section" style="padding: 120px 10%; min-height: 80vh;">
+    <div class="terms-container" style="
+        background: var(--card-bg); 
+        border-radius: 20px; 
+        border: var(--glass-border); 
+        padding: 3rem; 
+        width: 100%; 
+        max-width: 900px; 
+        margin: 0 auto;
+        backdrop-filter: blur(10px);
+        color: var(--text-color);
+    ">
+        <h1 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary-color); text-align: center;">諾雕 ALE
+            隱私權政策</h1>
+        <h2
+            style="font-size: 1.2rem; margin-bottom: 3rem; text-align: center; color: rgba(255,255,255,0.6); font-weight: 400;">
+            Privacy Policy</h2>
+
+        <p style="margin-bottom: 2rem; color: rgba(255,255,255,0.8); text-align: center;">最後更新日期：2025年12月30日</p>
+
+        <div class="terms-content" style="line-height: 1.8;">
+            <p style="margin-bottom: 2rem;">
+                諾雕 ALE（以下簡稱「本品牌」）非常重視您的隱私權。本政策旨在說明我們如何收集、使用及保護您的個人資訊。
+            </p>
+
+            <h3 style="color: var(--secondary-color); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem;">1.
+                資料收集與使用</h3>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                我們僅收集您在預約或訂購時主動提供的必要資訊（包括但不限於姓名、聯絡電話、電子郵件地址、收件地址），這些資訊僅用於：
+            </p>
+            <ul
+                style="list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                <li style="margin-bottom: 0.5rem;">處理您的客製化訂單與製作需求。</li>
+                <li style="margin-bottom: 0.5rem;">寄送訂單確認、製作進度與物流通知。</li>
+                <li style="margin-bottom: 0.5rem;">提供售後服務與客戶支援。</li>
+            </ul>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                我們絕不會將您的個人資料出售、交換或出租給任何第三方，除非是為了完成您要求的服務（例如：提供給物流公司進行配送）。
+            </p>
+
+            <h3 style="color: var(--secondary-color); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem;">2.
+                Cookie 的使用 (Cookies Usage)</h3>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                為了提供更優質的使用者體驗，本網站可能會使用 Cookie 技術來記錄您的瀏覽偏好或分析網站流量。
+            </p>
+            <ul
+                style="list-style-type: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                <li style="margin-bottom: 0.5rem;"><strong>必要性 Cookie：</strong> 維持網站基本運作（如預約表單功能）所必需。</li>
+                <li style="margin-bottom: 0.5rem;"><strong>分析性 Cookie：</strong> 幫助我們了解訪客如何使用網站，以改善服務品質（數據將以匿名方式收集）。</li>
+            </ul>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                您可以透過瀏覽器設定隨時拒絕 Cookie，但这可能會影響網站部分功能的運作。
+            </p>
+
+            <h3 style="color: var(--secondary-color); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem;">3.
+                資料安全</h3>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                我們採用業界標準的安全措施來保護您的個人資料，防止未經授權的存取、修改或洩露。然而，網際網路傳輸無法保證百分之百安全，我們將盡力保護您的資訊安全。
+            </p>
+
+            <h3 style="color: var(--secondary-color); margin-top: 2rem; margin-bottom: 1rem; font-size: 1.5rem;">4.
+                政策修訂</h3>
+            <p style="margin-bottom: 1.5rem; color: rgba(255,255,255,0.9);">
+                本品牌保有隨時修訂本隱私權政策之權利。修訂後的條款將於本網頁公告後即刻生效。
+            </p>
+        </div>
+
+        <div style="margin-top: 3rem; text-align: center;">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">返回首頁</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
