@@ -91,6 +91,11 @@ def terms():
 def guidelines():
     return render_template('guidelines.html')
 
+# Route: Material Library
+@app.route('/materials')
+def materials():
+    return render_template('materials.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():

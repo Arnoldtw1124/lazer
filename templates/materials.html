@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}材質資料庫 (Material Library) - 諾雕 Laser engraving{% endblock %}
+
+{% block content %}
+<section style="padding: 120px 10%; min-height: 100vh; background: #1a1a20;">
+    <h1 style="
+        font-size: 3rem; 
+        margin-bottom: 3rem; 
+        text-align: center; 
+        color: white; 
+        text-transform: uppercase; 
+        letter-spacing: 2px;
+        text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+    ">Material Library</h1>
+
+    <!-- Filters -->
+    <div style="display: flex; justify-content: center; gap: 1.5rem; margin-bottom: 4rem;">
+        <button onclick="filterMaterials('all')" class="filter-btn active">All</button>
+        <button onclick="filterMaterials('metal')" class="filter-btn">Metal</button>
+        <button onclick="filterMaterials('acrylic')" class="filter-btn">Acrylic</button>
+        <button onclick="filterMaterials('paper')" class="filter-btn">Paper</button>
+    </div>
+
+    <!-- Grid -->
+    <div class="material-grid">
+        <!-- Metal Card -->
+        <div class="material-card" data-category="metal">
+            <div class="img-container">
+                <img src="{{ url_for('static', filename='images/mat_metal_raw.png') }}" class="img-raw"
+                    alt="Stainless Steel Raw">
+                <img src="{{ url_for('static', filename='images/mat_metal_engraved.png') }}" class="img-engraved"
+                    alt="Stainless Steel Engraved">
+                <div class="glow-border"></div>
+            </div>
+            <div class="card-info">
+                <h3>霧面不鏽鋼 (Stainless Steel)</h3>
+                <p>適用厚度: 0.5mm - 2.0mm</p>
+                <span class="rarity">Industrial Grade</span>
+            </div>
+        </div>
+
+        <!-- Acrylic Card -->
+        <div class="material-card" data-category="acrylic">
+            <div class="img-container">
+                <img src="{{ url_for('static', filename='images/mat_acrylic_raw.png') }}" class="img-raw"
+                    alt="Acrylic Red Raw">
+                <img src="{{ url_for('static', filename='images/mat_acrylic_engraved.png') }}" class="img-engraved"
+                    alt="Acrylic Red Engraved">
+                <div class="glow-border"></div>
+            </div>
+            <div class="card-info">
+                <h3>透光紅壓克力 (Translucent Red)</h3>
+                <p>適用厚度: 3mm / 5mm</p>
+                <span class="rarity">Epic Rare</span>
+            </div>
+        </div>
+
+        <!-- Paper Card -->
+        <div class="material-card" data-category="paper">
+            <div class="img-container">
+                <img src="{{ url_for('static', filename='images/mat_paper_raw.png') }}" class="img-raw"
+                    alt="Kraft Paper Raw">
+                <img src="{{ url_for('static', filename='images/mat_paper_engraved.png') }}" class="img-engraved"
+                    alt="Kraft Paper Engraved">
+                <div class="glow-border"></div>
+            </div>
+            <div class="card-info">
+                <h3>進口牛皮紙 (Kraft Paper)</h3>
+                <p>適用厚度: 300g / 450g</p>
+                <span class="rarity">Common</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Filter Buttons */
+    .filter-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 30px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: 'Outfit', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 15px rgba(255, 77, 77, 0.5);
+    }
+
+    /* Grid Layout */
+    .material-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Card Style - Game Inventory Look */
+    .material-card {
+        background: rgba(20, 20, 25, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        position: relative;
+    }
+
+    .material-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Image Container with Swap Effect */
+    .img-container {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .img-raw,
+    .img-engraved {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.4s ease;
+    }
+
+    .img-engraved {
+        opacity: 0;
+    }
+
+    /* The Reveal Effect on Hover */
+    .material-card:hover .img-engraved {
+        opacity: 1;
+    }
+
+    /* Glowing Border Effect for "Selected" look */
+    .glow-border {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        box-shadow: inset 0 0 0 0 rgba(255, 77, 77, 0);
+        transition: box-shadow 0.3s ease;
+        pointer-events: none;
+    }
+
+    .material-card:hover .glow-border {
+        box-shadow: inset 0 0 20px 2px rgba(255, 77, 77, 0.6);
+    }
+
+    /* Card Info */
+    .card-info {
+        padding: 1.5rem;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+    }
+
+    .card-info h3 {
+        color: white;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .card-info p {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .rarity {
+        display: inline-block;
+        font-size: 0.8rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ff4d4d;
+        border: 1px solid #ff4d4d;
+        text-transform: uppercase;
+    }
+</style>
+
+<script>
+    function filterMaterials(category) {
+        // Update Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.innerText.toLowerCase() === category || (category === 'all' && btn.innerText === 'All')) {
+                btn.classList.add('active');
+            }
+        });
+
+        // Filter Cards
+        const cards = document.querySelectorAll('.material-card');
+        cards.forEach(card => {
+            if (category === 'all' || card.dataset.category === category) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}
