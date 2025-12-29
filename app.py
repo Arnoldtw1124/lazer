@@ -81,6 +81,11 @@ def product_detail(product_id):
 def process():
     return render_template('process.html')
 
+# Route: Terms of Service
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
