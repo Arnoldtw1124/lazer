@@ -36,7 +36,10 @@
             <div class="card-info">
                 <h3>霧面不鏽鋼 (Stainless Steel)</h3>
                 <p>適用厚度: 0.5mm - 2.0mm</p>
-                <span class="rarity">Industrial Grade</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="rarity">Industrial Grade</span>
+                    <a href="{{ url_for('booking') }}?material=metal" class="craft-btn">[ Craft This ]</a>
+                </div>
             </div>
         </div>
 
@@ -52,7 +55,10 @@
             <div class="card-info">
                 <h3>透光紅壓克力 (Translucent Red)</h3>
                 <p>適用厚度: 3mm / 5mm</p>
-                <span class="rarity">Epic Rare</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="rarity">Epic Rare</span>
+                    <a href="{{ url_for('booking') }}?material=acrylic" class="craft-btn">[ Craft This ]</a>
+                </div>
             </div>
         </div>
 
@@ -68,7 +74,10 @@
             <div class="card-info">
                 <h3>進口牛皮紙 (Kraft Paper)</h3>
                 <p>適用厚度: 300g / 450g</p>
-                <span class="rarity">Common</span>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="rarity">Common</span>
+                    <a href="{{ url_for('booking') }}?material=paper" class="craft-btn">[ Craft This ]</a>
+                </div>
             </div>
         </div>
     </div>
@@ -193,6 +202,24 @@
         color: #ff4d4d;
         border: 1px solid #ff4d4d;
         text-transform: uppercase;
+    }
+
+    .craft-btn {
+        font-size: 0.9rem;
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        padding: 0.3rem 0.6rem;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        letter-spacing: 1px;
+    }
+
+    .craft-btn:hover {
+        color: white;
+        background: var(--secondary-color);
+        box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 </style>
 
