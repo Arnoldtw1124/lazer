@@ -90,8 +90,8 @@
 
         <script>
             function toggleUploadSection() {
-                var productSelect = document.getElementById("product");
-                var uploadSection = document.getElementById("upload-section");
+                const productSelect = document.getElementById("product");
+                const uploadSection = document.getElementById("upload-section");
 
                 if (productSelect.value !== "") {
                     uploadSection.style.display = "block";
@@ -102,10 +102,10 @@
                 }
             }
 
-            // Run on load in case a product is pre-selected via URL
-            window.onload = function () {
+            // Run on DOMContentLoaded to ensure elements exist
+            document.addEventListener("DOMContentLoaded", function () {
                 toggleUploadSection();
-            };
+            });
         </script>
     </div>
 </section>

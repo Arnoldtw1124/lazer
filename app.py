@@ -129,7 +129,7 @@ def booking():
             'name': request.form.get('name'),
             'material': request.form.get('product'), # Map 'product' to 'material' column in Sheets
             'contact': contact_info,
-            'notes': request.form.get('notes') + file_url # Append file info to notes
+            'notes': request.form.get('notes', '') + file_url # Append file info to notes
         }
         
         try:
