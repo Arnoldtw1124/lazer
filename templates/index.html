@@ -81,4 +81,48 @@
         </div>
     </div>
 </section>
-{% endblock %}
+
+<!-- LIVE FEED // X-COMMS -->
+<section class="live-feed" style="
+    background: #000000; 
+    padding: 6rem 10%; 
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+">
+    <h2 style="
+        color: white; 
+        text-transform: uppercase; 
+        letter-spacing: 4px; 
+        margin-bottom: 3rem;
+        font-family: 'Outfit', sans-serif;
+        text-shadow: 2px 0 var(--primary-color), -2px 0 var(--secondary-color);
+    ">LIVE FEED // X-COMMS</h2>
+
+    <div class="feed-container" style="
+        max-width: 500px;
+        margin: 0 auto;
+        border: 1px solid #ff4d4d;
+        box-shadow: 0 0 20px rgba(255, 77, 77, 0.3);
+        padding: 5px;
+        background: rgba(0,0,0,0.8);
+        position: relative;
+    ">
+        <!-- Decoration corners -->
+        <div
+            style="position: absolute; top: -1px; left: -1px; width: 10px; height: 10px; border-top: 2px solid #ff4d4d; border-left: 2px solid #ff4d4d;">
+        </div>
+        <div
+            style="position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-top: 2px solid #ff4d4d; border-right: 2px solid #ff4d4d;">
+        </div>
+        <div
+            style="position: absolute; bottom: -1px; left: -1px; width: 10px; height: 10px; border-bottom: 2px solid #ff4d4d; border-left: 2px solid #ff4d4d;">
+        </div>
+        <div
+            style="position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-bottom: 2px solid #ff4d4d; border-right: 2px solid #ff4d4d;">
+        </div>
+
+        <a class="twitter-timeline" data-width="400" data-height="600" data-theme="dark"
+            href="https://twitter.com/arnold__laser?ref_src=twsrc%5Etfw">Tweets by arnold__laser</a>
+        <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    </div>
+    {% endblock %}
