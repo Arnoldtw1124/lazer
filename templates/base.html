@@ -49,55 +49,100 @@
         {% block content %}{% endblock %}
     </main>
 
-    <footer class="site-footer">
-        <div class="footer-content">
+    <footer class="site-footer" style="
+        background-color: #000000;
+        border-top: 1px solid var(--secondary-color);
+        padding: 4rem 10%;
+        color: #888;
+    ">
+        <div class="footer-content" style="
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr;
+            gap: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        ">
+            <!-- Column 1: Brand Identity -->
             <div class="footer-column">
-                <h4>關於諾雕</h4>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">品牌故事</a></li>
-                    <li><a href="{{ url_for('index') }}#services">服務項目</a></li>
-                    <li><a href="{{ url_for('process') }}">製作流程</a></li>
-                    <li><a href="https://x.com/arnold__laser" target="_blank">追蹤 X (Twitter)</a></li>
+                <h4 style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">諾雕 ALE</h4>
+                <p style="color: #888; margin-bottom: 1.5rem;">銘刻光與金屬的界線</p>
+                <div class="social-links">
+                    <a href="https://x.com/arnold__laser" target="_blank" style="
+                        display: inline-block;
+                        padding: 0.5rem 1rem;
+                        background: rgba(255,255,255,0.1);
+                        border: 1px solid #333;
+                        border-radius: 5px;
+                        color: white;
+                        text-decoration: none;
+                        font-size: 1.2rem;
+                    ">X (Twitter)</a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="footer-column">
+                <h4
+                    style="color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
+                    快速導航</h4>
+                <ul style="list-style: none; padding: 0;">
+                    <li><a href="{{ url_for('process') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">製作流程</a>
+                    </li>
+                    <li><a href="{{ url_for('materials') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">材質資料庫</a>
+                    </li>
+                    <li><a href="{{ url_for('faq') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">常見問題</a>
+                    </li>
+                    <li><a href="{{ url_for('guidelines') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">送印規範</a>
+                    </li>
                 </ul>
             </div>
 
+            <!-- Column 3: Legal & Support -->
             <div class="footer-column">
-                <h4>熱門產品</h4>
-                <ul>
-                    <li><a href="{{ url_for('product_detail', product_id='keychain') }}">客製化鑰匙圈</a></li>
-                    <li><a href="{{ url_for('product_detail', product_id='coaster') }}">原木杯墊</a></li>
-                    <li><a href="{{ url_for('product_detail', product_id='tag') }}">寵物名牌</a></li>
-                    <li><a href="{{ url_for('product_detail', product_id='stand') }}">壓克力立牌</a></li>
-                    <li><a href="{{ url_for('product_detail', product_id='cardcheck') }}">金屬名片</a></li>
+                <h4
+                    style="color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
+                    法律與支援</h4>
+                <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
+                    <li><a href="{{ url_for('terms') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">服務條款</a>
+                    </li>
+                    <li><a href="#"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">隱私權政策</a>
+                    </li>
                 </ul>
-            </div>
-
-            <div class="footer-column">
-                <h4>材質與工藝</h4>
-                <ul>
-                    <li><a href="{{ url_for('booking') }}">原木雷雕</a></li>
-                    <li><a href="{{ url_for('booking') }}">皮革刻印</a></li>
-                    <li><a href="{{ url_for('booking') }}">壓克力切割</a></li>
-                    <li><a href="{{ url_for('booking') }}">金屬蝕刻</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column">
-                <h4>客戶服務</h4>
-                <ul>
-                    <li><a href="{{ url_for('booking') }}">立即預約</a></li>
-                    <li><a href="{{ url_for('products') }}">產品價目表</a></li>
-                    <li><a href="{{ url_for('booking') }}">企業大量採購</a></li>
-                    <li><a href="{{ url_for('booking') }}">特殊客製諮詢</a></li>
-                    <li><a href="{{ url_for('faq') }}">常見問題 (FAQ)</a></li>
-                    <li><a href="{{ url_for('terms') }}">服務條款</a></li>
-                </ul>
+                <a href="{{ url_for('booking') }}" class="btn btn-primary"
+                    style="padding: 0.8rem 2rem; font-size: 1rem; width: auto; display: inline-block;">[ 立即預約 ]</a>
             </div>
         </div>
 
-        <div class="footer-bottom">
+        <div class="footer-bottom" style="
+            border-top: 1px solid #222;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+        ">
             <p>&copy; 2025 諾雕 ALE. All rights reserved.</p>
         </div>
+
+        <style>
+            @media (max-width: 768px) {
+                .footer-content {
+                    grid-template-columns: 1fr !important;
+                    gap: 3rem !important;
+                    text-align: center;
+                }
+            }
+
+            .footer-column ul li a:hover {
+                color: var(--secondary-color) !important;
+                padding-left: 5px;
+            }
+        </style>
     </footer>
 
     <script>
