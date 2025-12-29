@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}常見問題 (FAQ) - 諾雕 Laser engraving{% endblock %}
+
+{% block content %}
+<section style="padding: 120px 10%; min-height: 100vh; background: #0f0f13; color: white;">
+    <h1 style="
+        font-size: 3rem; 
+        margin-bottom: 4rem; 
+        text-align: center; 
+        color: white; 
+        text-transform: uppercase; 
+        letter-spacing: 2px;
+        position: relative;
+    ">
+        Common Questions
+        <span style="
+            display: block; 
+            font-size: 1rem; 
+            color: var(--primary-color); 
+            letter-spacing: 5px; 
+            margin-top: 10px;
+        ">系統資料庫</span>
+    </h1>
+
+    <div class="faq-container">
+
+        <!-- Category: Ordering -->
+        <div class="faq-category">
+            <h2 class="category-title">01 // 訂購流程</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    客製化商品需要多久時間？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>一般件製作時間為確認圖檔後的 3-5 個工作天（不含假日）。若為急件，請先聯繫確認排程，可能會酌收急件費用。</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    可以只做一個嗎？有沒有最低數量限制？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>當然可以！我們專精於客製化服務，即使是單件作品也全心投入製作。大量訂購（20件以上）另有優惠折扣。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: File Issues -->
+        <div class="faq-category">
+            <h2 class="category-title">02 // 檔案問題</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    我不會用 AI 畫圖，可以提供照片嗎？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>可以的。請提供高解析度（300dpi以上）的照片，背景越單純越好。我們也有提供簡單的排版與去背服務。</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    雷雕出來的顏色可以指定嗎？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>不行喔。雷射雕刻是透過高溫燒灼材質表面，顏色取決於材質本身的特性（例如木頭變深褐色、壓克力變霧白），無法像印刷一樣指定 Pantone 色號。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Category: Shipping & After-sales -->
+        <div class="faq-category">
+            <h2 class="category-title">03 // 出貨與售後</h2>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    運送方式有哪些？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>我們配合黑貓宅急便、超商取貨（7-11/全家）。單筆滿 $2000 免運費。</p>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-header">
+                    收到商品有瑕疵怎麼辦？
+                    <span class="icon">+</span>
+                </button>
+                <div class="accordion-content">
+                    <p>若商品有破損或刻印內容與確認圖檔不符，請於收到後 3 日內拍照回傳，我們將無條件為您重新製作補寄。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CTA Section -->
+    <div class="faq-cta" style="
+        margin-top: 6rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    ">
+        <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+        "></div>
+
+        <h3 style="font-size: 2rem; margin-bottom: 2rem; color: white;">還有問題？</h3>
+
+        <div style="
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        ">
+            <a href="https://x.com/arnold__laser" target="_blank" class="btn btn-primary"
+                style="padding: 1rem 2.5rem; display: flex; align-items: center; gap: 10px;">
+                <span>聯絡客服</span>
+                <span style="font-size: 1.2rem;">→</span>
+            </a>
+
+            <div style="text-align: center;">
+                <p style="margin-bottom: 0.5rem; font-size: 0.8rem; color: rgba(255,255,255,0.5);">SCAN ME</p>
+                <img src="{{ url_for('static', filename='images/faq_qr.png') }}" alt="QR Code" style="
+                    width: 100px; 
+                    height: 100px; 
+                    border-radius: 10px; 
+                    border: 2px solid var(--secondary-color);
+                    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+                ">
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<style>
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .faq-category {
+        margin-bottom: 4rem;
+    }
+
+    .category-title {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 0.5rem;
+        letter-spacing: 1px;
+    }
+
+    .accordion-item {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .accordion-item:hover {
+        border-color: rgba(255, 255, 255, 0.2);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .accordion-header {
+        width: 100%;
+        padding: 1.5rem;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: inherit;
+    }
+
+    .accordion-header .icon {
+        font-size: 1.5rem;
+        font-weight: 300;
+        color: var(--primary-color);
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-header.active .icon {
+        transform: rotate(45deg);
+        color: var(--secondary-color);
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        background: rgba(0, 0, 0, 0.2);
+    }
+
+    .accordion-content p {
+        padding: 1.5rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        margin: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+<script>
+    const accordions = document.querySelectorAll('.accordion-header');
+
+    accordions.forEach(acc => {
+        acc.addEventListener('click', function () {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+            }
+        });
+    });
+</script>
+{% endblock %}

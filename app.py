@@ -96,6 +96,11 @@ def guidelines():
 def materials():
     return render_template('materials.html')
 
+# Route: FAQ Page
+@app.route('/faq')
+def faq():
+    return render_template('faq.html')
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
