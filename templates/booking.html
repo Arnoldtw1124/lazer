@@ -61,8 +61,17 @@
                     <option value="" disabled {% if not request.args.get('product') %}selected{% endif %}
                         style="color: black;">請選擇商品</option>
                     {% for key, p in products.items() %}
-                    <option value="{{ p.name }}" {% if request.args.get('product')==p.name %}selected{% endif %}
-                        style="color: black;">{{ p.name }}</option>
+                    <!-- Create a JSON string of variant names -->
+                    {% set variant_names = [] %}
+                    {% if p.variants %}
+                    {% for v in p.variants %}
+                    {% set _ = variant_names.append(v.name) %}
+                    {% endfor %}
+                    {% endif %}
+                    <option value="{{ p.name }}" data-variants='{{ variant_names | tojson }}' {% if
+                        request.args.get('product')==p.name %}selected{% endif %} style="color: black;">
+                        {{ p.name }}
+                    </option>
                     {% endfor %}
                 </select>
             </div>
@@ -107,26 +116,18 @@
         </form>
 
         <script>
-            // Prepare product variant data from backend
-            const productVariants = {};
-            {% for key, p in products.items() %}
-            {% if p.variants %}
-            productVariants["{{ p.name }}"] = [
-                {% for v in p.variants %}
-            "{{ v.name }}",
-                {% endfor %}
-                ];
-            {% endif %}
-            {% endfor %}
-
             function handleProductChange() {
                 const productSelect = document.getElementById("product");
                 const uploadSection = document.getElementById("upload-section");
                 const variantSection = document.getElementById("variant-section");
                 const variantSelect = document.getElementById("variant");
 
+                const selectedOption = productSelect.options[productSelect.selectedIndex];
                 const selectedProduct = productSelect.value;
-                const variants = productVariants[selectedProduct];
+
+                // Get variants from data attribute
+                const variantsData = selectedOption.getAttribute('data-variants');
+                const variants = variantsData ? JSON.parse(variantsData) : [];
 
                 // 1. Handle Upload Section Visibility
                 if (selectedProduct !== "") {
