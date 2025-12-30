@@ -80,7 +80,7 @@
                         <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
                             <select name="status" onchange="this.form.submit()" style="
                                 background: #1a1a1f; 
-                                color: {% if order.status == 'Pending' %}#ff9f43{% elif order.status == 'Processing' %}#00d2d3{% elif order.status == 'Completed' %}#2ecc71{% else %}#ff6b6b{% endif %};
+                                color: {{ '#ff9f43' if order.status == 'Pending' else '#00d2d3' if order.status == 'Processing' else '#2ecc71' if order.status == 'Completed' else '#ff6b6b' }};
                                 border: 1px solid #333; 
                                 padding: 0.3rem; 
                                 border-radius: 4px;
