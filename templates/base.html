@@ -4,11 +4,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}首頁 - 諾雕 ALE{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XMXXH9LHWY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-XMXXH9LHWY');
+    </script>
+
+    <!-- Primary Meta Tags -->
+    <title>{% block title %}諾雕 ALE - 前衛雷射雕刻工藝{% endblock %}</title>
+    <meta name="title" content="諾雕 ALE - 前衛雷射雕刻工藝">
+    <meta name="description" content="專注於金屬、壓克力與皮革的客製化雷雕服務。結合 Cyberpunk 前衛美學與職人工藝，打造獨一無二的個人化精品。">
+    <meta name="keywords" content="雷射雕刻, 客製化禮品, 諾雕, ALE, Cyberpunk, 壓克力立牌, 金屬名片, 皮革鑰匙圈">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.lasercraft.tw/"> <!-- 建議未來購買網域後修改 -->
+    <meta property="og:title" content="諾雕 ALE - 前衛雷射雕刻工藝">
+    <meta property="og:description" content="專注於金屬、壓克力與皮革的客製化雷雕服務。結合 Cyberpunk 前衛美學與職人工藝，打造獨一無二的個人化精品。">
+    <meta property="og:image" content="{{ url_for('static', filename='images/og_preview.png', _external=True) }}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.lasercraft.tw/">
+    <meta property="twitter:title" content="諾雕 ALE - 前衛雷射雕刻工藝">
+    <meta property="twitter:description" content="專注於金屬、壓克力與皮革的客製化雷雕服務。結合 Cyberpunk 前衛美學與職人工藝，打造獨一無二的個人化精品。">
+    <meta property="twitter:image" content="{{ url_for('static', filename='images/og_preview.png', _external=True) }}">
+
+    <!-- Google Fonts -->
     <link
-        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
