@@ -30,6 +30,18 @@
     .status-cancelled {
         color: #ff6b6b !important;
     }
+
+    .flash-admin-success {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+        border: 1px solid #2ecc71;
+    }
+
+    .flash-admin-error {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+    }
 </style>
 <section style="min-height: 100vh; background: #0f0f13; padding: 100px 5%;">
 
@@ -63,14 +75,11 @@
     <div style="max-width: 100%; margin-bottom: 2rem;">
         {% for category, message in messages %}
         {% if 'admin_' in category %}
-        <div class="flash-message" style="
+        <div class="flash-message {{ 'flash-admin-success' if 'success' in category else 'flash-admin-error' }}" style="
             padding: 1rem; 
             border-radius: 8px; 
             margin-bottom: 1rem;
             text-align: center;
-            background: {{ 'rgba(46, 204, 113, 0.2)' if 'success' in category else 'rgba(231, 76, 60, 0.2)' }};
-            color: {{ '#2ecc71' if 'success' in category else '#e74c3c' }};
-            border: 1px solid {{ '#2ecc71' if 'success' in category else '#e74c3c' }};
         ">
             {{ message }}
         </div>
