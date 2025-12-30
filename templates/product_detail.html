@@ -78,6 +78,9 @@
 
                 function changeVariant(btn, imageName, variantName) {
                     const imgElement = document.querySelector('.img-display');
+                    const targetSpec = btn.getAttribute('data-spec');
+                    const specsList = document.getElementById('specs-list');
+                    const listItems = specsList.querySelectorAll('li');
 
                     // If clicking the currently active variant, reset to default (Toggle off)
                     if (currentVariant === variantName) {
@@ -91,6 +94,12 @@
                             b.style.borderColor = 'var(--secondary-color)';
                             b.style.boxShadow = 'none';
                         });
+
+                        // Reset Specs: Show all
+                        listItems.forEach(li => {
+                            li.style.display = 'flex';
+                        });
+
                         return;
                     }
 
@@ -114,6 +123,23 @@
                     btn.style.background = 'var(--secondary-color)';
                     btn.style.color = 'black';
                     btn.style.boxShadow = '0 0 10px var(--secondary-color)';
+
+                    // Update Specs: Show Common (Index 0) + Target Spec
+                    listItems.forEach((li, index) => {
+                        // Always show the first item (Common spec)
+                        if (index === 0) {
+                            li.style.display = 'flex';
+                            return;
+                        }
+
+                        // For others, check if it matches the target spec
+                        const text = li.getAttribute('data-original-text');
+                        if (text === targetSpec) {
+                            li.style.display = 'flex';
+                        } else {
+                            li.style.display = 'none';
+                        }
+                    });
                 }
             </script>
 
