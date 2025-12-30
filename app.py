@@ -35,11 +35,11 @@ products_data = {
             '【圓形款】直徑 98mm / 厚度 5mm',
             '【方形款】直徑 98mm / 厚度 5mm'
         ],
-        'image': 'coaster_default.jpg',
+        'image': 'coaster_default.png',
         'variants': [
-            {'name': '凹槽款', 'image': 'coaster_groove.jpg'},
-            {'name': '圓形款', 'image': 'coaster_round.jpg'},
-            {'name': '方形款', 'image': 'coaster_square.jpg'}
+            {'name': '凹槽款', 'image': 'coaster_groove.png'},
+            {'name': '圓形款', 'image': 'coaster_round.png'},
+            {'name': '方形款', 'image': 'coaster_square.png'}
         ]
     },
     'tag': {
