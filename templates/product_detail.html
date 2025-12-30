@@ -54,19 +54,6 @@
                         {{ variant.name }}
                     </button>
                     {% endfor %}
-                    <button class="variant-btn" onclick="resetVariant(this)" id="reset-btn" style="
-                            padding: 0.5rem 1.5rem; 
-                            border: 1px solid #666; 
-                            background: rgba(0,0,0,0.3); 
-                            color: #aaa; 
-                            border-radius: 5px; 
-                            cursor: pointer;
-                            transition: all 0.3s;
-                            font-family: inherit;
-                            display: none;
-                        ">
-                        重置 (Reset)
-                    </button>
                 </div>
             </div>
             {% endif %}
@@ -87,46 +74,46 @@
 
             <script>
                 const defaultImage = "{{ url_for('static', filename='images/' + product.image) }}";
+                let currentVariant = null;
 
                 function changeVariant(btn, imageName, variantName) {
-                    // Update Image
                     const imgElement = document.querySelector('.img-display');
+
+                    // If clicking the currently active variant, reset to default (Toggle off)
+                    if (currentVariant === variantName) {
+                        imgElement.src = defaultImage;
+                        currentVariant = null;
+
+                        // Reset all buttons style
+                        document.querySelectorAll('.variant-btn').forEach(b => {
+                            b.style.background = 'rgba(0,0,0,0.3)';
+                            b.style.color = 'white';
+                            b.style.borderColor = 'var(--secondary-color)';
+                            b.style.boxShadow = 'none';
+                        });
+                        return;
+                    }
+
+                    // Otherwise, switch to new variant
+                    currentVariant = variantName;
+
+                    // Update Image
                     imgElement.src = "{{ url_for('static', filename='images/') }}" + imageName;
                     imgElement.style.opacity = 0;
                     setTimeout(() => imgElement.style.opacity = 1, 50);
 
-                    // Update UI Buttons
+                    // Update UI Buttons: Reset others, Highlight selected
                     document.querySelectorAll('.variant-btn').forEach(b => {
                         b.style.background = 'rgba(0,0,0,0.3)';
                         b.style.color = 'white';
                         b.style.borderColor = 'var(--secondary-color)';
+                        b.style.boxShadow = 'none';
                     });
 
-                    // Highlight selected
+                    // Apply Active Style
                     btn.style.background = 'var(--secondary-color)';
                     btn.style.color = 'black';
                     btn.style.boxShadow = '0 0 10px var(--secondary-color)';
-
-                    // Show Reset Button
-                    document.getElementById('reset-btn').style.display = 'block';
-                }
-
-                function resetVariant(btn) {
-                    // Reset Image
-                    const imgElement = document.querySelector('.img-display');
-                    imgElement.src = defaultImage;
-
-                    // Reset Buttons
-                    document.querySelectorAll('.variant-btn').forEach(b => {
-                        if (b.id !== 'reset-btn') {
-                            b.style.background = 'rgba(0,0,0,0.3)';
-                            b.style.color = 'white';
-                            b.style.boxShadow = 'none';
-                        }
-                    });
-
-                    // Hide Reset Button
-                    btn.style.display = 'none';
                 }
             </script>
 
