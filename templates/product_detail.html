@@ -40,7 +40,7 @@
                 <h4 style="margin-bottom: 1rem; color: var(--text-color);">選擇款式 (Select Style)：</h4>
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     {% for variant in product.variants %}
-                    <button class="variant-btn"
+                    <button class="variant-btn" data-spec="{{ variant.spec_text }}"
                         onclick="changeVariant(this, '{{ variant.image }}', '{{ variant.name }}')" style="
                             padding: 0.5rem 1.5rem; 
                             border: 1px solid var(--secondary-color); 
@@ -60,9 +60,9 @@
 
             <div style="margin-bottom: 2rem; background: rgba(0,0,0,0.2); padding: 1.5rem; border-radius: 10px;">
                 <h4 style="margin-bottom: 1rem; color: var(--text-color);">產品規格：</h4>
-                <ul style="list-style: none; padding-left: 0;">
+                <ul id="specs-list" style="list-style: none; padding-left: 0;">
                     {% for spec in product.specs %}
-                    <li
+                    <li data-original-text="{{ spec }}"
                         style="margin-bottom: 0.5rem; color: rgba(255,255,255,0.7); display: flex; align-items: center;">
                         <span
                             style="display: inline-block; width: 6px; height: 6px; background: var(--secondary-color); border-radius: 50%; margin-right: 10px;"></span>
