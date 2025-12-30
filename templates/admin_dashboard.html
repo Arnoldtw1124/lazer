@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block title %}管理控制台 - 諾雕 ALE{% endblock %}
+
+{% block content %}
+<section style="min-height: 100vh; background: #0f0f13; padding: 100px 5%;">
+
+    <div style="
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 3rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        padding-bottom: 1rem;
+    ">
+        <h1 style="color: white; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">
+            COMMAND CENTRE <span style="font-size: 1rem; color: var(--secondary-color);">// ADMIN</span>
+        </h1>
+        <a href="{{ url_for('admin_logout') }}" style="
+            color: #ff4d4d; 
+            text-decoration: none; 
+            border: 1px solid #ff4d4d; 
+            padding: 0.5rem 1rem; 
+            border-radius: 5px;
+            transition: all 0.3s;
+        " onmouseover="this.style.background='#ff4d4d'; this.style.color='white'"
+            onmouseout="this.style.background='transparent'; this.style.color='#ff4d4d'">
+            LOGOUT
+        </a>
+    </div>
+
+    <!-- Orders Table -->
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--secondary-color); text-align: left;">
+                    <th style="padding: 1rem; color: var(--secondary-color);">ID</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">日期</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">姓名</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">產品/材質</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">聯絡方式</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">狀態</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;"
+                    onmouseover="this.style.background='rgba(255,255,255,0.02)'"
+                    onmouseout="this.style.background='transparent'">
+
+                    <td style="padding: 1rem; font-family: monospace;">#{{ order.id }}</td>
+                    <td style="padding: 1rem; font-size: 0.9rem; color: #888;">{{ order.date.strftime('%Y-%m-%d %H:%M')
+                        }}</td>
+                    <td style="padding: 1rem; font-weight: bold;">{{ order.name }}</td>
+                    <td style="padding: 1rem;">
+                        <span style="
+                            background: rgba(0, 255, 255, 0.1); 
+                            color: var(--secondary-color); 
+                            padding: 0.2rem 0.5rem; 
+                            border-radius: 3px; 
+                            font-size: 0.8rem;
+                        ">{{ order.material }}</span>
+                    </td>
+                    <td style="padding: 1rem; font-size: 0.9rem;">{{ order.contact }}</td>
+                    <td style="padding: 1rem;">
+                        {% if order.status == 'Pending' %}
+                        <span style="color: #ff9f43;">🟠 待處理</span>
+                        {% else %}
+                        <span style="color: #2ecc71;">🟢 已完成</span>
+                        {% endif %}
+                    </td>
+                    <td style="padding: 1rem;">
+                        <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST"
+                            style="display: inline;">
+                            {% if order.status == 'Pending' %}
+                            <button type="submit" class="btn" style="
+                                padding: 0.3rem 0.8rem; 
+                                font-size: 0.8rem; 
+                                background: transparent; 
+                                border: 1px solid #2ecc71; 
+                                color: #2ecc71;
+                            ">完成</button>
+                            {% else %}
+                            <button type="submit" class="btn" style="
+                                padding: 0.3rem 0.8rem; 
+                                font-size: 0.8rem; 
+                                background: transparent; 
+                                border: 1px solid #ff9f43; 
+                                color: #ff9f43;
+                            ">重置</button>
+                            {% endif %}
+                        </form>
+                    </td>
+                </tr>
+                <!-- Expandable Row for Notes/File -->
+                {% if order.notes or order.file_url %}
+                <tr style="background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <td colspan="7" style="padding: 1rem; padding-left: 2rem; font-size: 0.9rem; color: #aaa;">
+                        <div style="display: flex; gap: 2rem;">
+                            {% if order.notes %}
+                            <div style="flex: 1;">
+                                <strong style="color: white;">📝 備註：</strong> {{ order.notes }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+{% endblock %}

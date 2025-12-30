@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}系統登入 - 諾雕 ALE{% endblock %}
+
+{% block content %}
+<section style="
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    min-height: 80vh; 
+    background: #0f0f13;
+    padding-top: 80px;
+">
+    <div style="
+        background: rgba(255, 255, 255, 0.05); 
+        padding: 3rem; 
+        border-radius: 15px; 
+        width: 100%; 
+        max-width: 400px;
+        border: 1px solid rgba(0, 255, 255, 0.2);
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        text-align: center;
+    ">
+        <h2 style="
+            color: white; 
+            margin-bottom: 2rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px;
+            font-family: 'Orbitron', sans-serif;
+        ">
+            SYSTEM ACCESS
+        </h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div style="
+            background: rgba(255, 0, 0, 0.1); 
+            border: 1px solid red; 
+            color: red; 
+            padding: 0.5rem; 
+            border-radius: 5px; 
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        ">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('admin_login') }}">
+            <div style="margin-bottom: 2rem;">
+                <input type="password" name="password" placeholder="輸入存取密碼 (Password)" required style="
+                    width: 100%; 
+                    padding: 1rem; 
+                    background: rgba(0, 0, 0, 0.5); 
+                    border: 1px solid #333; 
+                    border-radius: 5px; 
+                    color: white; 
+                    text-align: center;
+                    font-family: 'Orbitron', sans-serif;
+                    letter-spacing: 2px;
+                    outline: none;
+                    transition: border-color 0.3s;
+                " onfocus="this.style.borderColor='var(--secondary-color)'" onblur="this.style.borderColor='#333'">
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="
+                width: 100%; 
+                padding: 1rem; 
+                font-family: 'Orbitron', sans-serif;
+                letter-spacing: 2px;
+            ">
+                LOGIN
+            </button>
+        </form>
+
+        <div style="margin-top: 2rem; font-size: 0.8rem; color: #555;">
+            SECURE CONNECTION // ALE CORP.
+        </div>
+    </div>
+</section>
+{% endblock %}

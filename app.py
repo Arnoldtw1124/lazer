@@ -1,18 +1,155 @@
-import os
-import requests
-from flask import Flask, render_template, request, flash, redirect, url_for
-from werkzeug.utils import secure_filename
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here' # Required for flash messages
+app.secret_key = 'your_secret_key_here' # Required for flash messages and session
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///orders.db' # Local SQLite DB
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+db = SQLAlchemy(app)
+
+# Database Model
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    material = db.Column(db.String(100), nullable=False)
+    contact = db.Column(db.String(100), nullable=False)
+    notes = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(20), default='Pending') # Pending, Completed
+    date = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Order {self.id}>'
+
+# Create DB on startup
+with app.app_context():
+    db.create_all()
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+# Admin Configuration
+ADMIN_PASSWORD = "admin" # Default password, change this!
+
 # Google Sheets Web App URL
 GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJXwUNqd8y7yMZ5z1Vt7cug_q3_8iIZuq-aP_fuAx2zhV4f84K/exec'
+
+# Product Data (unchanged)
+# ... (rest of product data initialization if needed, but here we replace the top section)
+
+# ... (Previous product data code - ensure this block replaces correctly from line 6 down)
+
+# ... (Route: Home Page -> /products -> /product/<id> -> /process -> /terms -> /privacy -> /guidelines -> /materials -> /faq)
+
+# Route: Admin Login
+@app.route('/login', methods=['GET', 'POST'])
+def admin_login():
+    if request.method == 'POST':
+        password = request.form.get('password')
+        if password == ADMIN_PASSWORD:
+            session['logged_in'] = True
+            flash('登入成功', 'success')
+            return redirect(url_for('admin_dashboard'))
+        else:
+            flash('密碼錯誤', 'error')
+    return render_template('admin_login.html')
+
+# Route: Admin Logout
+@app.route('/logout')
+def admin_logout():
+    session.pop('logged_in', None)
+    return redirect(url_for('admin_login'))
+
+# Route: Admin Dashboard (Protected)
+@app.route('/admin')
+def admin_dashboard():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    # Get all orders ordered by date (newest first)
+    orders = Order.query.order_by(Order.date.desc()).all()
+    return render_template('admin_dashboard.html', orders=orders)
+
+# Route: Update Order Status
+@app.route('/admin/update_status/<int:order_id>', methods=['POST'])
+def update_status(order_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+        
+    order = Order.query.get_or_404(order_id)
+    if order.status == 'Pending':
+        order.status = 'Completed'
+    else:
+        order.status = 'Pending'
+    
+    db.session.commit()
+    return redirect(url_for('admin_dashboard'))
+
+# Route: Booking Page
+@app.route('/booking', methods=['GET', 'POST'])
+def booking():
+    if request.method == 'POST':
+        # Handle file upload
+        file = request.files.get('file')
+        filename = "無附檔"
+        file_url = ""
+
+        if file and file.filename:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            # Generate a local URL (or you could upload to a cloud service)
+            # For this context, we'll store the filename to reference
+            file_url = f" (附檔: {filename})"
+        
+        # Extract data from form
+        contact_info = request.form.get('email')
+        
+        product_name = request.form.get('product')
+        variant_name = request.form.get('variant')
+        
+        # Combine product and variant
+        full_product_name = f"{product_name} - {variant_name}" if variant_name else product_name
+        
+        notes_content = request.form.get('notes', '') + file_url
+
+        # 1. Save to Local SQLite DB
+        try:
+            new_order = Order(
+                name=request.form.get('name'),
+                material=full_product_name,
+                contact=contact_info,
+                notes=notes_content
+            )
+            db.session.add(new_order)
+            db.session.commit()
+        except Exception as e:
+            print(f"Database Error: {e}") # Log error but continue to sheets
+
+        # 2. Send to Google Sheets
+        data = {
+            'name': request.form.get('name'),
+            'material': full_product_name, 
+            'contact': contact_info,
+            'notes': notes_content 
+        }
+        
+        try:
+            # Send data to Google Sheets
+            response = requests.post(GOOGLE_SCRIPT_URL, json=data)
+            
+            if response.status_code == 200:
+                flash('預約成功！我們將盡快與您聯繫。', 'success')
+            else:
+                flash('預約系統暫時忙碌中，請稍後再試。', 'error')
+        except Exception as e:
+            flash(f'發生錯誤：{str(e)}', 'error')
+            
+        return redirect(url_for('booking'))
+        
+    return render_template('booking.html', products=products_data)
 
 # Product Data
 products_data = {
