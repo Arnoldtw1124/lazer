@@ -1,5 +1,9 @@
+import os
+import requests
 from datetime import datetime
+from flask import Flask, render_template, request, flash, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here' # Required for flash messages and session
@@ -252,53 +256,7 @@ def materials():
 def faq():
     return render_template('faq.html')
 
-# Route: Booking Page
-@app.route('/booking', methods=['GET', 'POST'])
-def booking():
-    if request.method == 'POST':
-        # Handle file upload
-        file = request.files.get('file')
-        filename = "無附檔"
-        file_url = ""
 
-        if file and file.filename:
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            # Generate a local URL (or you could upload to a cloud service)
-            # For this context, we'll store the filename to reference
-            file_url = f" (附檔: {filename})"
-        
-        # Extract data from form
-        contact_info = request.form.get('email')
-        
-        product_name = request.form.get('product')
-        variant_name = request.form.get('variant')
-        
-        # Combine product and variant for the sheet
-        full_product_name = f"{product_name} - {variant_name}" if variant_name else product_name
-
-        data = {
-            'name': request.form.get('name'),
-            'material': full_product_name, # Map 'product' to 'material' column in Sheets
-            'contact': contact_info,
-            'notes': request.form.get('notes', '') + file_url # Append file info to notes
-        }
-        
-        try:
-            # Send data to Google Sheets
-            response = requests.post(GOOGLE_SCRIPT_URL, json=data)
-            
-            if response.status_code == 200:
-                flash('預約成功！我們將盡快與您聯繫。', 'success')
-            else:
-                flash('預約系統暫時忙碌中，請稍後再試。', 'error')
-        except Exception as e:
-            flash(f'發生錯誤：{str(e)}', 'error')
-            
-        return redirect(url_for('booking'))
-        
-    return render_template('booking.html', products=products_data)
 
 
 
