@@ -3,6 +3,34 @@
 {% block title %}管理控制台 - 諾雕 ALE{% endblock %}
 
 {% block content %}
+<style>
+    .status-select {
+        background: #1a1a1f;
+        border: 1px solid #333;
+        padding: 0.3rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        outline: none;
+        color: #fff;
+        /* Default fallback */
+    }
+
+    .status-pending {
+        color: #ff9f43 !important;
+    }
+
+    .status-processing {
+        color: #00d2d3 !important;
+    }
+
+    .status-completed {
+        color: #2ecc71 !important;
+    }
+
+    .status-cancelled {
+        color: #ff6b6b !important;
+    }
+</style>
 <section style="min-height: 100vh; background: #0f0f13; padding: 100px 5%;">
 
     <div style="
@@ -78,15 +106,8 @@
                     <td style="padding: 1rem;">
                         <!-- Status Update Form -->
                         <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
-                            <select name="status" onchange="this.form.submit()" style="
-                                background: #1a1a1f; 
-                                color: {{ '#ff9f43' if order.status == 'Pending' else '#00d2d3' if order.status == 'Processing' else '#2ecc71' if order.status == 'Completed' else '#ff6b6b' }};
-                                border: 1px solid #333; 
-                                padding: 0.3rem; 
-                                border-radius: 4px;
-                                font-size: 0.9rem;
-                                outline: none;
-                            ">
+                            <select name="status" onchange="this.form.submit()"
+                                class="status-select status-{{ order.status|lower }}">
                                 <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠 待確認
                                 </option>
                                 <option value="Processing" {% if order.status=='Processing' %}selected{% endif %}>🔵 製作中
