@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key_here' # Required for flash messages and session
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///orders.db' # Local SQLite DB
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///orders_v2.db' # Local SQLite DB (v2 with filename)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -21,7 +21,8 @@ class Order(db.Model):
     material = db.Column(db.String(100), nullable=False)
     contact = db.Column(db.String(100), nullable=False)
     notes = db.Column(db.Text, nullable=True)
-    status = db.Column(db.String(20), default='Pending') # Pending, Completed
+    filename = db.Column(db.String(255), nullable=True) # New column for image filename
+    status = db.Column(db.String(20), default='Pending') # Pending, Processing, Completed, Cancelled
     date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
@@ -83,13 +84,39 @@ def update_status(order_id):
         return redirect(url_for('admin_login'))
         
     order = Order.query.get_or_404(order_id)
-    if order.status == 'Pending':
-        order.status = 'Completed'
-    else:
-        order.status = 'Pending'
+    new_status = request.form.get('status')
+    if new_status:
+        order.status = new_status
+        db.session.commit()
+        flash(f'訂單 #{order.id} 狀態已更新為 {new_status}', 'success')
     
-    db.session.commit()
     return redirect(url_for('admin_dashboard'))
+
+# Route: Delete Order
+@app.route('/admin/delete_order/<int:order_id>', methods=['POST'])
+def delete_order(order_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+        
+    order = Order.query.get_or_404(order_id)
+    db.session.delete(order)
+    db.session.commit()
+    flash(f'訂單 #{order.id} 已刪除', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+# Route: Customer Tracking Page
+@app.route('/tracking', methods=['GET', 'POST'])
+def tracking():
+    order = None
+    if request.method == 'POST':
+        email = request.form.get('email')
+        if email:
+            # Find the most recent order for this email
+            order = Order.query.filter_by(contact=email).order_by(Order.date.desc()).first()
+            if not order:
+                flash('找不到相關訂單，請確認 Email 是否正確。', 'error')
+    
+    return render_template('tracking.html', order=order)
 
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
@@ -99,6 +126,7 @@ def booking():
         file = request.files.get('file')
         filename = "無附檔"
         file_url = ""
+        db_filename = None # For DB
 
         if file and file.filename:
             filename = secure_filename(file.filename)
@@ -107,6 +135,7 @@ def booking():
             # Generate a local URL (or you could upload to a cloud service)
             # For this context, we'll store the filename to reference
             file_url = f" (附檔: {filename})"
+            db_filename = filename
         
         # Extract data from form
         contact_info = request.form.get('email')
@@ -125,7 +154,8 @@ def booking():
                 name=request.form.get('name'),
                 material=full_product_name,
                 contact=contact_info,
-                notes=notes_content
+                notes=notes_content,
+                filename=db_filename # Check if None is allowed
             )
             db.session.add(new_order)
             db.session.commit()

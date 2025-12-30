@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}訂單查詢 - 諾雕 ALE{% endblock %}
+
+{% block content %}
+<section class="hero"
+    style="min-height: 80vh; display: flex; justify-content: center; align-items: center; padding-top: 100px;">
+
+    <div style="
+        background: rgba(20, 20, 24, 0.9); 
+        padding: 3rem; 
+        border-radius: 15px; 
+        border: 1px solid var(--primary-color); 
+        box-shadow: 0 0 30px rgba(0, 255, 234, 0.1); 
+        max-width: 600px; 
+        width: 100%;
+        backdrop-filter: blur(10px);
+    ">
+        <h2 style="text-align: center; color: white; margin-bottom: 2rem; font-family: 'Orbitron', sans-serif;">
+            TRACK ORDER <span style="color: var(--secondary-color);">// 進度查詢</span>
+        </h2>
+
+        <!-- Search Form -->
+        <form method="POST" action="{{ url_for('tracking') }}" style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+            <input type="email" name="email" placeholder="請輸入預約時的 Email" required style="
+                flex: 1; 
+                padding: 1rem; 
+                border-radius: 5px; 
+                border: 1px solid #333; 
+                background: #0f0f13; 
+                color: white; 
+                outline: none;
+            ">
+            <button type="submit" class="btn">查詢</button>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash-{{ category }}"
+            style="margin-bottom: 1rem; padding: 10px; border-radius: 5px; text-align: center; 
+                   {% if category == 'error' %}background: rgba(255,0,0,0.2); color: #ff6b6b; border: 1px solid #ff6b6b;{% endif %}
+                   {% if category == 'success' %}background: rgba(0,255,0,0.2); color: #2ecc71; border: 1px solid #2ecc71;{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <!-- Order Result Card -->
+        {% if order %}
+        <div style="
+            background: #1a1a1f; 
+            padding: 2rem; 
+            border-radius: 10px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeIn 0.5s ease;
+        ">
+            <div
+                style="display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid #333; padding-bottom: 0.5rem;">
+                <span style="color: #888;">訂單編號</span>
+                <span style="color: var(--secondary-color); font-family: monospace;">#{{ order.id }}</span>
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <h3 style="color: white; margin-bottom: 0.5rem;">{{ order.material }}</h3>
+                <p style="color: #aaa; font-size: 0.9rem;">預約人: {{ order.name }}</p>
+                <p style="color: #aaa; font-size: 0.9rem;">日期: {{ order.date.strftime('%Y-%m-%d') }}</p>
+            </div>
+
+            <!-- Progress Bar -->
+            <div style="margin-top: 2rem;">
+                <p style="color: white; margin-bottom: 0.5rem;">目前狀態:
+                    <strong style="
+                        color: {% if order.status == 'Pending' %}#ff9f43
+                               {% elif order.status == 'Processing' %}#00d2d3
+                               {% elif order.status == 'Completed' %}#2ecc71
+                               {% else %}#ff6b6b{% endif %};
+                    ">
+                        {% if order.status == 'Pending' %}🟠 待確認 (Pending)
+                        {% elif order.status == 'Processing' %}🔵 製作中 (Processing)
+                        {% elif order.status == 'Completed' %}🟢 已完成 (Completed)
+                        {% else %}🔴 已取消 (Cancelled){% endif %}
+                    </strong>
+                </p>
+
+                <div style="
+                    height: 10px; 
+                    background: #333; 
+                    border-radius: 5px; 
+                    overflow: hidden; 
+                    position: relative;
+                ">
+                    <!-- Progress Fill -->
+                    <div style="
+                        height: 100%; 
+                        width: {% if order.status == 'Pending' %}33%
+                               {% elif order.status == 'Processing' %}66%
+                               {% elif order.status == 'Completed' %}100%
+                               {% else %}100%{% endif %};
+                        background: {% if order.status == 'Cancelled' %}#ff6b6b{% else %}linear-gradient(90deg, var(--primary-color), var(--secondary-color)){% endif %};
+                        transition: width 1s ease;
+                        box-shadow: 0 0 10px var(--primary-color);
+                    "></div>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                    <span>收到訂單</span>
+                    <span>製作中</span>
+                    <span>完成</span>
+                </div>
+            </div>
+
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+
+<style>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+{% endblock %}

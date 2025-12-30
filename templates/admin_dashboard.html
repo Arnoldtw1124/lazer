@@ -14,7 +14,7 @@
         padding-bottom: 1rem;
     ">
         <h1 style="color: white; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">
-            COMMAND CENTRE <span style="font-size: 1rem; color: var(--secondary-color);">// ADMIN</span>
+            COMMAND CENTRE <span style="font-size: 1rem; color: var(--secondary-color);">// ADMIN V2</span>
         </h1>
         <a href="{{ url_for('admin_logout') }}" style="
             color: #ff4d4d; 
@@ -38,7 +38,7 @@
                     <th style="padding: 1rem; color: var(--secondary-color);">日期</th>
                     <th style="padding: 1rem; color: var(--secondary-color);">姓名</th>
                     <th style="padding: 1rem; color: var(--secondary-color);">產品/材質</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">聯絡方式</th>
+                    <th style="padding: 1rem; color: var(--secondary-color);">圖片</th>
                     <th style="padding: 1rem; color: var(--secondary-color);">狀態</th>
                     <th style="padding: 1rem; color: var(--secondary-color);">操作</th>
                 </tr>
@@ -52,7 +52,8 @@
                     <td style="padding: 1rem; font-family: monospace;">#{{ order.id }}</td>
                     <td style="padding: 1rem; font-size: 0.9rem; color: #888;">{{ order.date.strftime('%Y-%m-%d %H:%M')
                         }}</td>
-                    <td style="padding: 1rem; font-weight: bold;">{{ order.name }}</td>
+                    <td style="padding: 1rem; font-weight: bold;">{{ order.name }}<br><span
+                            style="font-size:0.8rem; color:#666;">{{ order.contact }}</span></td>
                     <td style="padding: 1rem;">
                         <span style="
                             background: rgba(0, 255, 255, 0.1); 
@@ -62,48 +63,65 @@
                             font-size: 0.8rem;
                         ">{{ order.material }}</span>
                     </td>
-                    <td style="padding: 1rem; font-size: 0.9rem;">{{ order.contact }}</td>
                     <td style="padding: 1rem;">
-                        {% if order.status == 'Pending' %}
-                        <span style="color: #ff9f43;">🟠 待處理</span>
+                        {% if order.filename %}
+                        <a href="{{ url_for('static', filename='uploads/' + order.filename) }}" target="_blank">
+                            <img src="{{ url_for('static', filename='uploads/' + order.filename) }}" alt="Upload"
+                                style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #555; border-radius: 4px; transition: transform 0.2s;"
+                                onmouseover="this.style.transform='scale(2)'"
+                                onmouseout="this.style.transform='scale(1)'">
+                        </a>
                         {% else %}
-                        <span style="color: #2ecc71;">🟢 已完成</span>
+                        <span style="color: #444; font-size: 0.8rem;">無圖片</span>
                         {% endif %}
                     </td>
                     <td style="padding: 1rem;">
-                        <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST"
-                            style="display: inline;">
-                            {% if order.status == 'Pending' %}
-                            <button type="submit" class="btn" style="
-                                padding: 0.3rem 0.8rem; 
-                                font-size: 0.8rem; 
+                        <!-- Status Update Form -->
+                        <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
+                            <select name="status" onchange="this.form.submit()" style="
+                                background: #1a1a1f; 
+                                color: {% if order.status == 'Pending' %}#ff9f43{% elif order.status == 'Processing' %}#00d2d3{% elif order.status == 'Completed' %}#2ecc71{% else %}#ff6b6b{% endif %};
+                                border: 1px solid #333; 
+                                padding: 0.3rem; 
+                                border-radius: 4px;
+                                font-size: 0.9rem;
+                                outline: none;
+                            ">
+                                <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠 待確認
+                                </option>
+                                <option value="Processing" {% if order.status=='Processing' %}selected{% endif %}>🔵 製作中
+                                </option>
+                                <option value="Completed" {% if order.status=='Completed' %}selected{% endif %}>🟢 已完成
+                                </option>
+                                <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>🔴 已取消
+                                </option>
+                            </select>
+                        </form>
+                    </td>
+                    <td style="padding: 1rem;">
+                        <!-- Delete Form -->
+                        <form action="{{ url_for('delete_order', order_id=order.id) }}" method="POST"
+                            style="display: inline;" onsubmit="return confirm('確定要刪除訂單 #{{ order.id }} 嗎？此動作無法復原！');">
+                            <button type="submit" style="
                                 background: transparent; 
-                                border: 1px solid #2ecc71; 
-                                color: #2ecc71;
-                            ">完成</button>
-                            {% else %}
-                            <button type="submit" class="btn" style="
-                                padding: 0.3rem 0.8rem; 
-                                font-size: 0.8rem; 
-                                background: transparent; 
-                                border: 1px solid #ff9f43; 
-                                color: #ff9f43;
-                            ">重置</button>
-                            {% endif %}
+                                border: 1px solid #ff4757; 
+                                color: #ff4757; 
+                                width: 30px; 
+                                height: 30px; 
+                                border-radius: 5px; 
+                                cursor: pointer;
+                                display: flex; align-items: center; justify-content: center;
+                            " title="刪除訂單">
+                                🗑️
+                            </button>
                         </form>
                     </td>
                 </tr>
-                <!-- Expandable Row for Notes/File -->
-                {% if order.notes or order.file_url %}
+                <!-- Expandable Row for Notes -->
+                {% if order.notes %}
                 <tr style="background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <td colspan="7" style="padding: 1rem; padding-left: 2rem; font-size: 0.9rem; color: #aaa;">
-                        <div style="display: flex; gap: 2rem;">
-                            {% if order.notes %}
-                            <div style="flex: 1;">
-                                <strong style="color: white;">📝 備註：</strong> {{ order.notes }}
-                            </div>
-                            {% endif %}
-                        </div>
+                    <td colspan="7" style="padding: 0.5rem 1rem; padding-left: 2rem; font-size: 0.85rem; color: #aaa;">
+                        <strong>📝 備註：</strong> {{ order.notes }}
                     </td>
                 </tr>
                 {% endif %}
