@@ -134,10 +134,16 @@ def booking():
         
         # Extract data from form
         contact_info = request.form.get('email')
+        
+        product_name = request.form.get('product')
+        variant_name = request.form.get('variant')
+        
+        # Combine product and variant for the sheet
+        full_product_name = f"{product_name} - {variant_name}" if variant_name else product_name
 
         data = {
             'name': request.form.get('name'),
-            'material': request.form.get('product'), # Map 'product' to 'material' column in Sheets
+            'material': full_product_name, # Map 'product' to 'material' column in Sheets
             'contact': contact_info,
             'notes': request.form.get('notes', '') + file_url # Append file info to notes
         }
@@ -155,7 +161,7 @@ def booking():
             
         return redirect(url_for('booking'))
         
-    return render_template('booking.html')
+    return render_template('booking.html', products=products_data)
 
 
 

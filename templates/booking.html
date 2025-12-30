@@ -57,21 +57,22 @@
                 <label for="product" style="display: block; margin-bottom: 0.5rem;">商品選擇 (Product Selection)</label>
                 <select id="product" name="product" required
                     style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;"
-                    onchange="toggleUploadSection()">
+                    onchange="handleProductChange()">
                     <option value="" disabled {% if not request.args.get('product') %}selected{% endif %}
                         style="color: black;">請選擇商品</option>
-                    <option value="皮革鑰匙圈" {% if request.args.get('product')=='皮革鑰匙圈' %}selected{% endif %}
-                        style="color: black;">皮革鑰匙圈</option>
-                    <option value="軟木杯墊" {% if request.args.get('product')=='軟木杯墊' %}selected{% endif %}
-                        style="color: black;">軟木杯墊</option>
-                    <option value="寵物名牌" {% if request.args.get('product')=='寵物名牌' %}selected{% endif %}
-                        style="color: black;">寵物名牌</option>
-                    <option value="壓克力立牌" {% if request.args.get('product')=='壓克力立牌' %}selected{% endif %}
-                        style="color: black;">壓克力立牌</option>
-                    <option value="金屬名片/銘版" {% if request.args.get('product')=='金屬名片/銘版' %}selected{% endif %}
-                        style="color: black;">金屬名片/銘版</option>
-                    <option value="特殊客製需求" {% if request.args.get('product')=='特殊客製需求' %}selected{% endif %}
-                        style="color: black;">特殊客製需求</option>
+                    {% for key, p in products.items() %}
+                    <option value="{{ p.name }}" {% if request.args.get('product')==p.name %}selected{% endif %}
+                        style="color: black;">{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Dynamic Variant Section -->
+            <div id="variant-section" class="form-group" style="margin-bottom: 1.5rem; display: none;">
+                <label for="variant" style="display: block; margin-bottom: 0.5rem;">款式選擇 (Style/Variant)</label>
+                <select id="variant" name="variant"
+                    style="width: 100%; padding: 0.8rem; border-radius: 8px; border: none; background: rgba(255, 255, 255, 0.1); color: white;">
+                    <option value="" disabled selected style="color: black;">請選擇款式</option>
                 </select>
             </div>
 
@@ -106,22 +107,74 @@
         </form>
 
         <script>
-            function toggleUploadSection() {
+            // Prepare product variant data from backend
+            const productVariants = {};
+            {% for key, p in products.items() %}
+            {% if p.variants %}
+            productVariants["{{ p.name }}"] = [
+                {% for v in p.variants %}
+            "{{ v.name }}",
+                {% endfor %}
+                ];
+            {% endif %}
+            {% endfor %}
+
+            function handleProductChange() {
                 const productSelect = document.getElementById("product");
                 const uploadSection = document.getElementById("upload-section");
+                const variantSection = document.getElementById("variant-section");
+                const variantSelect = document.getElementById("variant");
 
-                if (productSelect.value !== "") {
+                const selectedProduct = productSelect.value;
+                const variants = productVariants[selectedProduct];
+
+                // 1. Handle Upload Section Visibility
+                if (selectedProduct !== "") {
                     uploadSection.style.display = "block";
-                    // Add a small fade-in effect
                     uploadSection.style.animation = "fadeIn 0.5s";
                 } else {
                     uploadSection.style.display = "none";
                 }
+
+                // 2. Handle Variant Selection
+                variantSelect.innerHTML = '<option value="" disabled selected style="color: black;">請選擇款式</option>'; // Reset
+
+                if (variants && variants.length > 0) {
+                    variantSection.style.display = "block";
+                    variantSelect.required = true;
+
+                    variants.forEach(v => {
+                        const option = document.createElement("option");
+                        option.value = v;
+                        option.textContent = v;
+                        option.style.color = "black";
+                        variantSelect.appendChild(option);
+                    });
+                } else {
+                    variantSection.style.display = "none";
+                    variantSelect.required = false;
+                }
             }
 
-            // Run on DOMContentLoaded to ensure elements exist
+            // Run on load to handle pre-filled data (from URL)
             document.addEventListener("DOMContentLoaded", function () {
-                toggleUploadSection();
+                handleProductChange();
+
+                // Pre-select variant if in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const variantParam = urlParams.get('variant');
+                if (variantParam) {
+                    const variantSelect = document.getElementById("variant");
+                    // Wait a tick for the select to be populated? No, handleProductChange is synchronous.
+                    // But we need to make sure the options are there.
+                    // Loop through options to find match
+                    for (let i = 0; i < variantSelect.options.length; i++) {
+                        if (variantSelect.options[i].value === variantParam) {
+                            variantSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
             });
         </script>
     </div>
