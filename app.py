@@ -37,9 +37,9 @@ products_data = {
         ],
         'image': 'coaster_default.png',
         'variants': [
-            {'name': '凹槽款', 'image': 'coaster_groove.png'},
-            {'name': '圓形款', 'image': 'coaster_round.png'},
-            {'name': '方形款', 'image': 'coaster_square.png'}
+            {'name': '凹槽款', 'image': 'coaster_groove.png', 'spec_text': '【凹槽款】直徑 100mm / 厚度 10mm'},
+            {'name': '圓形款', 'image': 'coaster_round.png', 'spec_text': '【圓形款】直徑 98mm / 厚度 5mm'},
+            {'name': '方形款', 'image': 'coaster_square.png', 'spec_text': '【方形款】直徑 98mm / 厚度 5mm'}
         ]
     },
     'tag': {
