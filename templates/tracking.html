@@ -37,10 +37,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
-        <div class="flash-{{ category }}"
-            style="margin-bottom: 1rem; padding: 10px; border-radius: 5px; text-align: center; 
-                   {% if category == 'error' %}background: rgba(255,0,0,0.2); color: #ff6b6b; border: 1px solid #ff6b6b;{% endif %}
-                   {% if category == 'success' %}background: rgba(0,255,0,0.2); color: #2ecc71; border: 1px solid #2ecc71;{% endif %}">
+        <div class="flash-message flash-{{ category }}">
             {{ message }}
         </div>
         {% endfor %}
@@ -71,12 +68,7 @@
             <!-- Progress Bar -->
             <div style="margin-top: 2rem;">
                 <p style="color: white; margin-bottom: 0.5rem;">目前狀態:
-                    <strong style="
-                        color: {% if order.status == 'Pending' %}#ff9f43
-                               {% elif order.status == 'Processing' %}#00d2d3
-                               {% elif order.status == 'Completed' %}#2ecc71
-                               {% else %}#ff6b6b{% endif %};
-                    ">
+                    <strong class="status-text-{{ order.status|lower }}">
                         {% if order.status == 'Pending' %}🟠 待確認 (Pending)
                         {% elif order.status == 'Processing' %}🔵 製作中 (Processing)
                         {% elif order.status == 'Completed' %}🟢 已完成 (Completed)
@@ -92,16 +84,7 @@
                     position: relative;
                 ">
                     <!-- Progress Fill -->
-                    <div style="
-                        height: 100%; 
-                        width: {% if order.status == 'Pending' %}33%
-                               {% elif order.status == 'Processing' %}66%
-                               {% elif order.status == 'Completed' %}100%
-                               {% else %}100%{% endif %};
-                        background: {% if order.status == 'Cancelled' %}#ff6b6b{% else %}linear-gradient(90deg, var(--primary-color), var(--secondary-color)){% endif %};
-                        transition: width 1s ease;
-                        box-shadow: 0 0 10px var(--primary-color);
-                    "></div>
+                    <div class="progress-fill progress-{{ order.status|lower }}"></div>
                 </div>
 
                 <div
@@ -129,6 +112,71 @@
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    /* Flash Messages */
+    .flash-message {
+        margin-bottom: 1rem;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    .flash-error {
+        background: rgba(255, 0, 0, 0.2);
+        color: #ff6b6b;
+        border: 1px solid #ff6b6b;
+    }
+
+    .flash-success {
+        background: rgba(0, 255, 0, 0.2);
+        color: #2ecc71;
+        border: 1px solid #2ecc71;
+    }
+
+    /* Status Text Colors */
+    .status-text-pending {
+        color: #ff9f43;
+    }
+
+    .status-text-processing {
+        color: #00d2d3;
+    }
+
+    .status-text-completed {
+        color: #2ecc71;
+    }
+
+    .status-text-cancelled {
+        color: #ff6b6b;
+    }
+
+    /* Progress Bar widths */
+    .progress-fill {
+        height: 100%;
+        transition: width 1s ease;
+        box-shadow: 0 0 10px var(--primary-color);
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        /* Default */
+    }
+
+    .progress-pending {
+        width: 33%;
+    }
+
+    .progress-processing {
+        width: 66%;
+    }
+
+    .progress-completed {
+        width: 100%;
+    }
+
+    /* Cancelled specific style */
+    .progress-cancelled {
+        width: 100%;
+        background: #ff6b6b;
+        box-shadow: none;
     }
 </style>
 {% endblock %}
