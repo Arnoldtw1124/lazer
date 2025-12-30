@@ -57,6 +57,29 @@
         </a>
     </div>
 
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div style="max-width: 100%; margin-bottom: 2rem;">
+        {% for category, message in messages %}
+        {% if 'admin_' in category %}
+        <div class="flash-message" style="
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-bottom: 1rem;
+            text-align: center;
+            background: {{ 'rgba(46, 204, 113, 0.2)' if 'success' in category else 'rgba(231, 76, 60, 0.2)' }};
+            color: {{ '#2ecc71' if 'success' in category else '#e74c3c' }};
+            border: 1px solid {{ '#2ecc71' if 'success' in category else '#e74c3c' }};
+        ">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
     <!-- Orders Table -->
     <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">

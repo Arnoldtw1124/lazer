@@ -88,7 +88,7 @@ def update_status(order_id):
     if new_status:
         order.status = new_status
         db.session.commit()
-        flash(f'訂單 #{order.id} 狀態已更新為 {new_status}', 'success')
+        flash(f'訂單 #{order.id} 狀態已更新為 {new_status}', 'admin_success')
     
     return redirect(url_for('admin_dashboard'))
 
@@ -101,7 +101,7 @@ def delete_order(order_id):
     order = Order.query.get_or_404(order_id)
     db.session.delete(order)
     db.session.commit()
-    flash(f'訂單 #{order.id} 已刪除', 'success')
+    flash(f'訂單 #{order.id} 已刪除', 'admin_success')
     return redirect(url_for('admin_dashboard'))
 
 # Route: Customer Tracking Page
