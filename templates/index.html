@@ -4,6 +4,11 @@
 
 {% block content %}
 <section class="hero">
+    <video autoplay muted loop playsinline class="hero-video"
+        poster="{{ url_for('static', filename='images/hero_poster.jpg') }}">
+        <source src="{{ url_for('static', filename='videos/hero_bg.mp4') }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
     <div class="hero-content">
         <h1 style="text-transform: uppercase;">刻畫你的賽博靈魂<br><span
                 style="font-size: 0.5em; color: var(--secondary-color); display: block; margin-top: 10px;">Engrave Your
