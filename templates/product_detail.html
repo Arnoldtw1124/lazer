@@ -82,6 +82,9 @@
                     const specsList = document.getElementById('specs-list');
                     const listItems = specsList.querySelectorAll('li');
 
+                    const bookingBtn = document.getElementById('booking-btn');
+                    const baseUrl = "{{ url_for('booking') }}?product={{ product.name }}";
+
                     // If clicking the currently active variant, reset to default (Toggle off)
                     if (currentVariant === variantName) {
                         imgElement.src = defaultImage;
@@ -99,6 +102,9 @@
                         listItems.forEach(li => {
                             li.style.display = 'flex';
                         });
+
+                        // Reset Booking Link
+                        bookingBtn.href = baseUrl;
 
                         return;
                     }
@@ -140,10 +146,13 @@
                             li.style.display = 'none';
                         }
                     });
+
+                    // Update Booking Link
+                    bookingBtn.href = baseUrl + "&variant=" + encodeURIComponent(variantName);
                 }
             </script>
 
-            <a href="{{ url_for('booking') }}?product={{ product.name }}" class="btn btn-primary"
+            <a id="booking-btn" href="{{ url_for('booking') }}?product={{ product.name }}" class="btn btn-primary"
                 style="width: 100%; text-align: center;">立即預約此產品</a>
 
             <div style="text-align: center; margin-top: 1rem;">
