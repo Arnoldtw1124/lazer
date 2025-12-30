@@ -242,7 +242,10 @@ products_data = {
 # Route: Home Page
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Select Top 3 Popular Products
+    popular_ids = ['coaster', 'keychain', 'stand'] 
+    popular_products = [products_data[pid] for pid in popular_ids if pid in products_data]
+    return render_template('index.html', popular_products=popular_products)
 
 # Route: Products List
 @app.route('/products')
