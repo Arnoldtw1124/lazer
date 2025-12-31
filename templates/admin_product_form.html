@@ -76,9 +76,14 @@
                 <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品圖片</label>
                 {% if product and product.image %}
                 <div style="margin-bottom: 0.5rem;">
-                    <img src="{{ url_for('static', filename='images/' + product.image) }}"
-                        onerror="this.src='{{ url_for('static', filename='uploads/' + product.image) }}';"
+                    <img id="product-preview" src="{{ url_for('static', filename='images/' + product.image) }}"
+                        data-fallback="{{ url_for('static', filename='uploads/' + product.image) }}"
                         style="height: 100px; border-radius: 5px;">
+                    <script>
+                        document.getElementById('product-preview').addEventListener('error', function () {
+                            this.src = this.getAttribute('data-fallback');
+                        });
+                    </script>
                 </div>
                 {% endif %}
                 <input type="file" name="image" accept="image/*"
