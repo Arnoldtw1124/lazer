@@ -373,10 +373,8 @@ def format_price(value):
         return value
         
     # If starts with digit, assume it needs prefix (e.g. "100", "20起")
-    if value and value[0].isdigit():
-        return f"NT$ {value}"
-        
-    return value
+    # UPDATED: Always add prefix per user request "Just add NT$ in front"
+    return f"NT$ {value}"
 
 @app.route('/admin/products/new', methods=['GET', 'POST'])
 @login_required
