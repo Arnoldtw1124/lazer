@@ -249,7 +249,11 @@ products_data = {
             '材質：防潑水白橡木紋植纖板',
             '特色：工業級耐用 / 高對比雷雕 / 支援 QR Code'
         ],
-        'image': 'priceboard_mockup.png'
+        'image': 'priceboard_mockup.png',
+        'addons': [
+            {'name': '急件處理 (24hr出貨)', 'price': '+NT$ 100', 'desc': '優先排程製作，確保活動前送達'},
+            {'name': '雙面雕刻', 'price': '+NT$ 150', 'desc': '背面可增加備註資訊或更多菜單'}
+        ]
     }
 }
 

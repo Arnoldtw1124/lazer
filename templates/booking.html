@@ -178,6 +178,21 @@
                         }
                     }
                 }
+
+                // Handle Addons param
+                const addonsParam = urlParams.get('addons');
+                if (addonsParam) {
+                    const notesField = document.getElementById("notes");
+                    // Append nicely formatted addons to the notes
+                    const currentNotes = notesField.value;
+                    const addonsText = "【加購項目】: " + addonsParam;
+
+                    if (currentNotes) {
+                        notesField.value = currentNotes + "\n" + addonsText;
+                    } else {
+                        notesField.value = addonsText;
+                    }
+                }
             });
         </script>
     </div>
