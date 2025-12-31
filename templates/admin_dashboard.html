@@ -14,7 +14,7 @@
         <div class="admin-header">
             <h2 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">DASHBOARD_V2 <span
                     style="font-size: 0.8rem; color: var(--secondary-color);">// ONLINE</span></h2>
-            <div style="color: #666; font-family: monospace;">SYSTEM_TIME: {{ now_time }}</div>
+            <div id="system-time" style="color: #666; font-family: monospace;">SYSTEM_TIME: {{ now_time }}</div>
         </div>
 
         <!-- Flash Messages -->
@@ -168,4 +168,38 @@
                 color: #888;
             }
         </style>
+
+        <script>
+            function updateSystemTime() {
+                const now = new Date();
+                const options = {
+                    timeZone: 'Asia/Taipei',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false
+                };
+
+                // Format: YYYY-MM-DD HH:mm:ss
+                // Intl.DateTimeFormat is robust for timezone conversion
+                const formatter = new Intl.DateTimeFormat('en-CA', options); // en-CA gives YYYY-MM-DD format usually
+                const parts = formatter.formatToParts(now);
+
+                // Manually construct mostly to be safe and consistent with "YYYY-MM-DD HH:mm:ss"
+                // Actually, 'en-CA' outputs "2023-10-25, 14:30:00" or similar depending on browser. 
+                // Let's use a explicit mapping for robustness.
+                const typeVal = {};
+                parts.forEach(p => typeVal[p.type] = p.value);
+
+                const formatted = `${typeVal.year}-${typeVal.month}-${typeVal.day} ${typeVal.hour}:${typeVal.minute}:${typeVal.second}`;
+
+                document.getElementById('system-time').innerText = 'SYSTEM_TIME: ' + formatted;
+            }
+
+            setInterval(updateSystemTime, 1000);
+            updateSystemTime(); // Initial call
+        </script>
         {% endblock %}
