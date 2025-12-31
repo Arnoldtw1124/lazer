@@ -467,6 +467,28 @@ def admin_product_delete(product_id):
     flash(f'商品 {product.name} 已刪除', 'admin_success')
     return redirect(url_for('admin_products'))
 
+# Route: Toggle Product Recommendation (AJAX)
+@app.route('/admin/product/toggle_recommend/<product_id>', methods=['POST'])
+@login_required
+def admin_product_toggle_recommend(product_id):
+    try:
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'success': False, 'message': 'Product not found'}), 404
+            
+        # Toggle logic
+        if product.sort_order > 0:
+            product.sort_order = 0
+            is_recommended = False
+        else:
+            product.sort_order = 10
+            is_recommended = True
+            
+        db.session.commit()
+        return jsonify({'success': True, 'is_recommended': is_recommended})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
