@@ -197,6 +197,7 @@
                                 <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
                                     <th style="padding: 10px; text-align: left;">款式名稱</th>
                                     <th style="padding: 10px; text-align: left;">價格 (Price)</th>
+                                    <th style="padding: 10px; text-align: left;">缺貨?</th>
                                     <th style="padding: 10px; text-align: left;">規格描述</th>
                                     <th style="padding: 10px; text-align: left;">圖片</th>
                                     <th style="padding: 10px; width: 50px;">操作</th>
@@ -321,6 +322,13 @@
                                     <input type="text" value="${(variant.price || '').replace('NT$ ', '').replace('NT$', '')}" onchange="updateVariant(${index}, 'price', this.value)" 
                                         placeholder="100" 
                                         style="flex: 1; padding: 8px; background: transparent; border: none; color: white; outline: none; width: 60px;">
+                                </div>
+                            </td>
+                            <td style="padding: 5px;">
+                                <div style="display: flex; justify-content: center; align-items: center;">
+                                    <input type="checkbox" name="variant_oos_${index}" 
+                                        ${variant.is_out_of_stock ? 'checked' : ''}
+                                        style="width: 20px; height: 20px; cursor: pointer;">
                                 </div>
                             </td>
                             <td style="padding: 5px;">
