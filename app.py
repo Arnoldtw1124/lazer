@@ -122,8 +122,14 @@ def admin_dashboard():
     # Get all orders ordered by date (newest first)
     orders = Order.query.order_by(Order.date.desc()).all()
     
+    
     # Stats for V2 Dashboard
-    product_count = Product.query.count()
+    try:
+        product_count = Product.query.count()
+    except Exception as e:
+        print(f"Error fetching product count: {e}")
+        product_count = 0
+        
     now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     return render_template('admin_dashboard.html', orders=orders, product_count=product_count, now_time=now_time)
