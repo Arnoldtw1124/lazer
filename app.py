@@ -53,7 +53,7 @@ class Order(db.Model):
     notes = db.Column(db.Text, nullable=True)
     filename = db.Column(db.String(255), nullable=True) # New column for image filename
     status = db.Column(db.String(20), default='Pending') # Pending, Processing, Completed, Cancelled
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    date = db.Column(db.DateTime, default=lambda: datetime.utcnow() + timedelta(hours=8))
 
     def __repr__(self):
         return f'<Order {self.id}>'
