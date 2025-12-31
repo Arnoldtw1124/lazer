@@ -58,7 +58,7 @@
                     <thead>
                         <tr
                             style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
-                            <th style="padding: 1rem; color: #888; font-weight: normal;">排序</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">狀態 (Status)</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">圖片</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">ID</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">名稱</th>
@@ -72,7 +72,13 @@
                             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
                             onmouseout="this.style.background='transparent'">
 
-                            <td style="padding: 1rem;">{{ product.sort_order }}</td>
+                            <td style="padding: 1rem;">
+                                {% if product.sort_order > 0 %}
+                                <span style="color: #f1c40f; font-size: 1.2rem;" title="本期推薦">⭐</span>
+                                {% else %}
+                                <span style="color: #333;">-</span>
+                                {% endif %}
+                            </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
                                     alt="{{ product.name }}" class="product-thumb"
