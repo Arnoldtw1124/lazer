@@ -27,10 +27,29 @@ def migrate():
             print("Column 'is_visible' MISSING. Adding it now...")
             cursor.execute("ALTER TABLE product ADD COLUMN is_visible BOOLEAN DEFAULT 1")
             print("Column added successfully.")
+
+        if 'images' in columns:
+            print("Column 'images' already exists.")
+        else:
+            print("Column 'images' MISSING. Adding it now...")
+            cursor.execute("ALTER TABLE product ADD COLUMN images TEXT DEFAULT '[]'")
+            print("Column 'images' added successfully.")
             
         # Force Update Data
         print("Updating all products to be visible...")
         cursor.execute("UPDATE product SET is_visible = 1 WHERE is_visible IS NULL")
+        
+        # Migrate single image to images list
+        print("Migrating single images to gallery list...")
+        cursor.execute("SELECT id, image, images FROM product")
+        rows = cursor.fetchall()
+        for row in rows:
+            pid, img, imgs = row
+            if img and (not imgs or imgs == '[]'):
+                new_imgs = f'["{img}"]'
+                cursor.execute("UPDATE product SET images = ? WHERE id = ?", (new_imgs, pid))
+                print(f"Migrated image for {pid}")
+
         conn.commit()
         print("Data updated and committed.")
         

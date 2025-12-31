@@ -67,6 +67,7 @@ class Product(db.Model):
     discount_label = db.Column(db.String(50), nullable=True)
     desc = db.Column(db.Text, nullable=False)
     image = db.Column(db.String(100), nullable=False)
+    images = db.Column(db.Text, default='[]') # New: Store list of all product images
     specs = db.Column(db.Text, nullable=True) # Stored as JSON string
     variants = db.Column(db.Text, nullable=True) # Stored as JSON string
     addons = db.Column(db.Text, nullable=True) # Stored as JSON string
@@ -403,13 +404,26 @@ def admin_product_new():
     
     if request.method == 'POST':
         try:
-            # Handle Image Upload
-            file = request.files.get('image')
-            if file and file.filename:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            else:
-                filename = 'default_product.jpg' # Fallback
+            # Handle Image Gallery (New Logic)
+            # 1. New Uploads
+            new_files = request.files.getlist('new_images')
+            new_filenames = []
+            for file in new_files:
+                if file and file.filename:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    new_filenames.append(filename)
+            
+            # 2. Existing Images (Not applicable for New Product usually, but good for consistency or draft)
+            # For strict 'New', it's just new_filenames.
+            images_list = new_filenames
+            
+            # 3. Main Image Fallback
+            main_image = images_list[0] if images_list else 'default_product.jpg'
+            images_json = json.dumps(images_list)
+            
+            # Old logic fallback (if someone uses old UI? unlikely):
+            filename = main_image
 
             # Process Variants Image Uploads
             raw_variants = request.form.get('variants')
@@ -446,7 +460,8 @@ def admin_product_new():
                 original_price=format_price(request.form.get('original_price')),
                 discount_label=request.form.get('discount_label'),
                 desc=request.form.get('desc'),
-                image=filename,
+                image=main_image,
+                images=images_json, # Save gallery list
                 specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
                 variants=json.dumps(variants_list), # Processed list back to JSON string
                 addons=json.dumps(addons_list),
@@ -472,12 +487,31 @@ def admin_product_edit(product_id):
     
     if request.method == 'POST':
         try:
-            # Handle Image Upload
-            file = request.files.get('image')
-            if file and file.filename:
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                product.image = filename # Update image only if new file uploaded
+            # Handle Image Gallery Updates
+            # 1. Get Preserved Existing Images (Ordered)
+            existing_images_raw = request.form.get('existing_images', '[]')
+            try:
+                images_list = json.loads(existing_images_raw)
+            except:
+                images_list = []
+            
+            # 2. Add New Uploads
+            new_files = request.files.getlist('new_images')
+            for file in new_files:
+                if file and file.filename:
+                    filename = secure_filename(file.filename)
+                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                    images_list.append(filename)
+            
+            # 3. Sync Main Image
+            if images_list:
+                product.image = images_list[0]
+            # If deleted all? Keep old image or set to default? 
+            # If empty, set default.
+            if not images_list:
+                product.image = 'default_product.jpg'
+                
+            product.images = json.dumps(images_list)
 
             # Process Variants Image Uploads & Prices
             raw_variants = request.form.get('variants')

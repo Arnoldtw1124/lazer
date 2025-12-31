@@ -109,29 +109,35 @@
             <div class="admin-section">
                 <h3>基本設定 (Basic Info)</h3>
 
-                <!-- Image -->
+                <!-- Image Gallery -->
                 <div class="form-grid">
                     <div class="form-label">商品圖片 <span class="required">*</span></div>
                     <div>
-                        {% if product and product.image %}
-                        <div style="margin-bottom: 10px;">
-                            <img id="preview-image" src="{{ url_for('static', filename='images/' + product.image) }}"
-                                data-fallback="{{ url_for('static', filename='uploads/' + (product.image if product else 'default_product.jpg')) }}"
-                                style="max-width: 150px; border-radius: 5px; border: 1px solid #444;">
-                            <script>
-                                document.getElementById('preview-image').addEventListener('error', function () {
-                                    if (this.dataset.failed) return;
-                                    this.dataset.failed = true;
-                                    this.src = this.getAttribute('data-fallback');
-                                });
-                            </script>
+                        <!-- Gallery Container -->
+                        <div id="gallery-container"
+                            style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                            <!-- Images rendered here -->
                         </div>
-                        {% endif %}
-                        <input type="file" name="image" accept="image/*" class="file-input"
-                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-                        {% if not product %}
-                        <small style="color: #e74c3c; display:block; margin-top:5px;">* 必須上傳圖片</small>
-                        {% endif %}
+
+                        <!-- Add Button -->
+                        <div style="margin-top: 10px;">
+                            <label for="new-images-input"
+                                style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; display: inline-block;">
+                                + 新增圖片 (可多選)
+                            </label>
+                            <input type="file" id="new-images-input" name="new_images" accept="image/*" multiple
+                                style="display: none;" onchange="handleNewImages(this)">
+                        </div>
+                        <small style="color: #666; display: block; margin-top: 5px;">拖曳可排序 (TBD) /
+                            請使用箭頭排序。第一張將作為封面圖。</small>
+
+                        <!-- Hidden Inputs -->
+                        <input type="hidden" name="existing_images" id="existing_images_input">
+                        <!-- We just start with basic Existing Images reordering + New Append. 
+                             Advanced 'Interleaved' reordering requires complex manifest logic. 
+                             For now, let's Stick to: Existing List (Sortable) + New List (Appended).
+                             Actually, let's try the 'Manifest' approach for best UX if user asked 'Swap Order'.
+                        -->
                     </div>
                 </div>
 
@@ -344,7 +350,130 @@
                     addonsData = [];
                 }
 
-                const specsContainer = document.getElementById('specs-container');
+                // --- Gallery Logic ---
+                // Parse existing images from server
+                // product.images is a JSON string of filenames e.g. ["a.jpg", "b.jpg"]
+                // If product.images is empty but product.image exists, we use [product.image] (Migration handled this, but be safe)
+                const imagesRaw = '{{ product.images | safe if product and product.images else "[]" }}';
+                let galleryData = [];
+                try {
+                    galleryData = JSON.parse(imagesRaw);
+                    if (!Array.isArray(galleryData) && '{{ product.image }}') {
+                        galleryData = ['{{ product.image }}'];
+                    }
+                } catch (e) {
+                    galleryData = [];
+                }
+
+                // We keep track of "New" files separately for preview, 
+                // but we can't easily interleave them in the form submission without AJAX.
+                // Compromise: 
+                // 1. Existing Images: allow delete/reorder.
+                // 2. New Images: Preview at the end, allow delete.
+                // On submit: Send "existing_images" (ordered list of filenames) + "new_images" (files).
+                // Backend appends New to Existing.
+
+                let newFilesData = []; // Array of File objects
+
+                const galleryContainer = document.getElementById('gallery-container');
+                const existingImagesInput = document.getElementById('existing_images_input');
+
+                function renderGallery() {
+                    galleryContainer.innerHTML = '';
+
+                    // 1. Render Existing Images
+                    galleryData.forEach((img, index) => {
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.style.width = '100px';
+                        div.style.height = '100px';
+                        div.style.border = '1px solid #444';
+                        div.style.borderRadius = '5px';
+                        div.style.overflow = 'hidden';
+
+                        div.innerHTML = `
+                            <img src="/static/images/${img}" 
+                                 onerror="this.src='/static/uploads/${img}'; this.onerror=null;"
+                                 style="width:100%; height:100%; object-fit:cover;">
+                            <div style="position:absolute; top:0; right:0; background:rgba(0,0,0,0.7); pading:2px;">
+                                <button type="button" onclick="removeGalleryImage(${index}, 'existing')" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+                            </div>
+                            <!-- Sort Arrows -->
+                            <div style="position:absolute; bottom:0; left:0; width:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:space-between; padding:2px;">
+                                <button type="button" onclick="moveGalleryImage(${index}, -1)" style="background:none; border:none; color:white; cursor:pointer; font-size:12px;">◀</button>
+                                <button type="button" onclick="moveGalleryImage(${index}, 1)" style="background:none; border:none; color:white; cursor:pointer; font-size:12px;">▶</button>
+                            </div>
+                        `;
+                        galleryContainer.appendChild(div);
+                    });
+
+                    // 2. Render New Files
+                    newFilesData.forEach((file, index) => {
+                        const div = document.createElement('div');
+                        div.style.position = 'relative';
+                        div.style.width = '100px';
+                        div.style.height = '100px';
+                        div.style.border = '1px dashed #666'; // Dashed for new
+                        div.style.borderRadius = '5px';
+                        div.style.overflow = 'hidden';
+
+                        // Create URL for preview
+                        const url = URL.createObjectURL(file);
+
+                        div.innerHTML = `
+                            <img src="${url}" style="width:100%; height:100%; object-fit:cover; opacity: 0.8;">
+                            <div style="position:absolute; top:0; right:0; background:rgba(0,0,0,0.7); pading:2px;">
+                                <button type="button" onclick="removeGalleryImage(${index}, 'new')" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+                            </div>
+                            <div style="position:absolute; bottom:0; width:100%; text-align:center; background:rgba(0,0,0,0.7); color:#aaa; font-size:10px;">New</div>
+                        `;
+                        galleryContainer.appendChild(div);
+                    });
+
+                    // Update Hidden Input for Existing Order
+                    existingImagesInput.value = JSON.stringify(galleryData);
+                }
+
+                function removeGalleryImage(index, type) {
+                    if (type === 'existing') {
+                        galleryData.splice(index, 1);
+                    } else {
+                        newFilesData.splice(index, 1);
+                        updateFileInput(); // Update the actual input.files
+                    }
+                    renderGallery();
+                }
+
+                function moveGalleryImage(index, dir) {
+                    const newIndex = index + dir;
+                    if (newIndex >= 0 && newIndex < galleryData.length) {
+                        // Swap
+                        [galleryData[index], galleryData[newIndex]] = [galleryData[newIndex], galleryData[index]];
+                        renderGallery();
+                    }
+                }
+
+                function handleNewImages(input) {
+                    if (input.files) {
+                        Array.from(input.files).forEach(file => {
+                            newFilesData.push(file);
+                        });
+                        renderGallery();
+                        // Note: We cannot easily manipulate the 'files' property of the input to match newFilesData exactly if we remove some.
+                        // But we can use a DataTransfer object to reconstruct it on submit or change.
+                        updateFileInput();
+                    }
+                }
+
+                function updateFileInput() {
+                    const dataTransfer = new DataTransfer();
+                    newFilesData.forEach(file => dataTransfer.items.add(file));
+                    document.getElementById('new-images-input').files = dataTransfer.files;
+                }
+
+
+                // Initialize Gallery
+                renderGallery();
                 const variantsContainer = document.getElementById('variants-container');
                 const addonsContainer = document.getElementById('addons-container');
 
