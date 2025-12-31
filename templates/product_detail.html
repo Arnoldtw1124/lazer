@@ -22,7 +22,26 @@
             style="flex: 1; min-width: 300px; height: 300px; overflow: hidden; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
             <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
                 class="img-display"
-                style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;">
+                style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease; {% if product.is_out_of_stock %}opacity: 0.5; filter: grayscale(100%);{% endif %}">
+
+            {% if product.is_out_of_stock %}
+            <div style="
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(-15deg);
+                background: rgba(231, 76, 60, 0.9);
+                color: white;
+                padding: 10px 30px;
+                font-size: 2rem;
+                font-weight: bold;
+                border: 2px solid white;
+                border-radius: 5px;
+                white-space: nowrap;
+                pointer-events: none;
+                z-index: 10;
+            ">SOLD OUT</div>
+            {% endif %}
         </div>
 
         <div style="flex: 1; min-width: 300px;">
@@ -242,8 +261,15 @@
                 });
             </script>
 
+            {% if product.is_out_of_stock %}
+            <button class="btn btn-primary" disabled
+                style="width: 100%; text-align: center; background: #555; cursor: not-allowed; border-color: #555;">
+                商品暫時缺貨 (Out of Stock)
+            </button>
+            {% else %}
             <a id="booking-btn" href="{{ url_for('booking') }}?product={{ product.name }}" class="btn btn-primary"
                 style="width: 100%; text-align: center;">立即預約此產品</a>
+            {% endif %}
 
             <div style="text-align: center; margin-top: 1rem;">
                 <a href="{{ url_for('guidelines') }}"

@@ -168,6 +168,43 @@
             });
     }
 
+    function toggleStock(productId) {
+        const icon = document.getElementById('stock-' + productId);
+        const text = document.getElementById('stock-text-' + productId);
+
+        fetch(`/admin/product/toggle_stock/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': "{{ csrf_token() }}",
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.is_out_of_stock) {
+                        // Now Out of Stock
+                        icon.className = 'fas fa-times-circle stock-icon out';
+                        text.innerText = '缺貨';
+                    } else {
+                        // Now In Stock
+                        icon.className = 'fas fa-check-circle stock-icon in';
+                        text.innerText = '現貨';
+                    }
+                } else {
+                    alert('操作失敗: ' + (data.message || '未知錯誤'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試。');
+            });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.product-thumb').forEach(img => {
             img.addEventListener('error', function () {

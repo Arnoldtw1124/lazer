@@ -65,6 +65,7 @@ class Product(db.Model):
     variants = db.Column(db.Text, nullable=True) # Stored as JSON string
     addons = db.Column(db.Text, nullable=True) # Stored as JSON string
     sort_order = db.Column(db.Integer, default=0)
+    is_out_of_stock = db.Column(db.Boolean, default=False) # New: Out of Stock Flag
 
     def to_dict(self):
         return {
@@ -77,7 +78,8 @@ class Product(db.Model):
             'image': self.image,
             'specs': json.loads(self.specs) if self.specs else [],
             'variants': json.loads(self.variants) if self.variants else [],
-            'addons': json.loads(self.addons) if self.addons else []
+            'addons': json.loads(self.addons) if self.addons else [],
+            'is_out_of_stock': self.is_out_of_stock
         }
 
 # SiteConfig Model for Dynamic Settings
@@ -524,6 +526,22 @@ def admin_product_toggle_recommend(product_id):
             
         db.session.commit()
         return jsonify({'success': True, 'is_recommended': is_recommended})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/admin/product/toggle_stock/<product_id>', methods=['POST'])
+@login_required
+def admin_product_toggle_stock(product_id):
+    try:
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'success': False, 'message': 'Product not found'}), 404
+            
+        # Toggle Stock Logic
+        product.is_out_of_stock = not product.is_out_of_stock
+        db.session.commit()
+        
+        return jsonify({'success': True, 'is_out_of_stock': product.is_out_of_stock})
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
