@@ -253,7 +253,43 @@ def update_status(order_id):
         db.session.commit()
         flash(f'訂單 #{order.id} 狀態已更新為 {new_status}', 'admin_success')
     
+    # Check for redirect target
+    redirect_target = request.form.get('redirect_to')
+    if redirect_target == 'admin_orders':
+        return redirect(url_for('admin_orders'))
+    
     return redirect(url_for('admin_dashboard'))
+
+# Route: Admin Orders Management
+@app.route('/admin/orders')
+def admin_orders():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    status_filter = request.args.get('status')
+    search_query = request.args.get('search', '').strip()
+    
+    query = Order.query
+    
+    # Apply Status Filter
+    if status_filter and status_filter != 'All':
+        query = query.filter_by(status=status_filter)
+        
+    # Apply Search
+    if search_query:
+        # Search by ID or Name or Contact
+        if search_query.isdigit():
+            query = query.filter(Order.id == int(search_query))
+        else:
+            query = query.filter(
+                (Order.name.contains(search_query)) | 
+                (Order.contact.contains(search_query))
+            )
+            
+    # Order by date desc
+    orders = query.order_by(Order.date.desc()).all()
+    
+    return render_template('admin_orders.html', orders=orders, current_status=status_filter, search_query=search_query)
 
 # Route: Delete Order
 @app.route('/admin/delete_order/<int:order_id>', methods=['POST'])
@@ -265,6 +301,12 @@ def delete_order(order_id):
     db.session.delete(order)
     db.session.commit()
     flash(f'訂單 #{order.id} 已刪除', 'admin_success')
+    
+    # Check for redirect target
+    redirect_target = request.form.get('redirect_to')
+    if redirect_target == 'admin_orders':
+        return redirect(url_for('admin_orders'))
+        
     return redirect(url_for('admin_dashboard'))
 
 # Route: Customer Tracking Page

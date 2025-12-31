@@ -9,7 +9,7 @@
             class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
             <i class="fas fa-tachometer-alt"></i> 儀表板 (Dashboard)
         </a>
-        <a href="#" class="sidebar-item disabled"> <!-- Placeholder for later -->
+        <a href="{{ url_for('admin_orders') }}" class="sidebar-item {% if active_page == 'orders' %}active{% endif %}">
             <i class="fas fa-shopping-cart"></i> 訂單管理 (Orders)
         </a>
         <a href="{{ url_for('admin_products') }}"
