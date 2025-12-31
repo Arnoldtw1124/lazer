@@ -110,15 +110,22 @@
                     <thead>
                         <tr
                             style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">推薦</th>
-
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">狀態</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">圖片</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">ID</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; min-width: 150px;">名稱</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">價格</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">補貨中</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">操作</th>
+                            <th
+                                style="padding: 12px; width: 60px; text-align: center; color: #888; font-weight: normal;">
+                                推薦</th>
+                            <th
+                                style="padding: 12px; width: 90px; text-align: center; color: #888; font-weight: normal;">
+                                狀態</th>
+                            <th
+                                style="padding: 12px; width: 80px; text-align: center; color: #888; font-weight: normal;">
+                                圖片</th>
+                            <th style="padding: 12px; width: 120px; color: #888; font-weight: normal;">ID</th>
+                            <th style="padding: 12px; color: #888; font-weight: normal; min-width: 200px;">名稱</th>
+                            <th style="padding: 12px; width: 120px; color: #888; font-weight: normal;">價格</th>
+                            <th
+                                style="padding: 12px; width: 80px; text-align: center; color: #888; font-weight: normal;">
+                                補貨中</th>
+                            <th style="padding: 12px; width: 140px; color: #888; font-weight: normal;">操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -127,27 +134,28 @@
                             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
                             onmouseout="this.style.background='transparent'">
 
-                            <td style="padding: 1rem; cursor: pointer; text-align: center;"
+                            <td style="padding: 12px; text-align: center; vertical-align: middle; cursor: pointer;"
                                 onclick="toggleRecommend('{{ product.id }}')" title="點擊切換推薦狀態">
                                 <i id="star-{{ product.id }}"
                                     class="fas fa-star star-icon {% if product.sort_order > 0 %}active{% endif %}"></i>
                             </td>
                             <!-- Status Column -->
-                            <td style="padding: 1rem;">
+                            <td style="padding: 12px; text-align: center; vertical-align: middle;">
                                 {% if product.is_visible %}
                                 <span class="status-badge status-visible">上架中</span>
                                 {% else %}
                                 <span class="status-badge status-hidden">未上架</span>
                                 {% endif %}
                             </td>
-                            <td style="padding: 1rem;">
+                            <td style="padding: 12px; text-align: center; vertical-align: middle;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
                                     alt="{{ product.name }}" class="product-thumb"
                                     data-fallback="{{ url_for('static', filename='uploads/' + product.image) }}"
                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; border: 1px solid #333;">
                             </td>
-                            <td style="padding: 1rem; font-family: monospace; color: #aaa;">{{ product.id }}</td>
-                            <td style="padding: 1rem; font-weight: bold;">
+                            <td style="padding: 12px; vertical-align: middle; font-family: monospace; color: #aaa;">{{
+                                product.id }}</td>
+                            <td style="padding: 12px; vertical-align: middle; font-weight: bold;">
                                 <a href="{{ url_for('admin_product_edit', product_id=product.id) }}"
                                     style="color: white; text-decoration: none; transition: color 0.3s;"
                                     onmouseover="this.style.color='var(--secondary-color)'"
@@ -158,8 +166,15 @@
                                 <br><span style="font-size: 0.8rem; color: #2ecc71;">{{ product.discount_label }}</span>
                                 {% endif %}
                             </td>
-                            <td style="padding: 1rem;">{{ product.price }}</td>
-                            <td style="padding: 1rem;">
+                            <td style="padding: 12px; vertical-align: middle;">{{ product.price }}</td>
+                            <td style="padding: 12px; vertical-align: middle; text-align: center;">
+                                {% if product.is_out_of_stock %}
+                                <span style="color: #e74c3c;">補貨中</span>
+                                {% else %}
+                                <span style="color: #555;">-</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 12px; vertical-align: middle;">
                                 <a href="{{ url_for('admin_product_edit', product_id=product.id) }}" style="
                                     color: var(--secondary-color);
                                     text-decoration: none;
