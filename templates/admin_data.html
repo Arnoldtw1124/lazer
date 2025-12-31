@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}數據中心 - Admin V2{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    {% include 'admin_sidebar.html' %}
+
+    <div class="admin-main">
+        <header class="dashboard-header">
+            <div>
+                <h2 class="glitch" data-text="DATA CENTER">DATA CENTER</h2>
+                <p>數據分析與業務洞察</p>
+            </div>
+            <div class="user-profile">
+                <span>ADMINISTRATOR</span>
+                <div class="avatar">AD</div>
+            </div>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Chart 1: Sales Trend -->
+            <div class="data-card full-width">
+                <h3><i class="fas fa-chart-line"></i> 銷售趨勢 (近7日)</h3>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Status Distribution -->
+            <div class="data-card">
+                <h3><i class="fas fa-chart-pie"></i> 訂單狀態分佈</h3>
+                <div class="chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Top Products -->
+            <div class="data-card">
+                <h3><i class="fas fa-crown"></i> 熱門商品排行</h3>
+                <div class="chart-container">
+                    <canvas id="productsChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Reuse Admin Layout Styles from Dashboard */
+    .admin-layout {
+        display: flex;
+        min-height: 100vh;
+        background: #0a0a0c;
+        padding-top: 60px;
+        /* Navbar height */
+    }
+
+    .admin-main {
+        flex: 1;
+        padding: 2rem;
+        margin-left: 260px;
+        /* Sidebar width */
+    }
+
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 1rem;
+    }
+
+    .dashboard-header h2 {
+        font-family: 'Orbitron', sans-serif;
+        color: white;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+
+    .data-card {
+        background: rgba(20, 20, 24, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .data-card.full-width {
+        grid-column: span 2;
+    }
+
+    .data-card h3 {
+        color: var(--secondary-color);
+        margin-bottom: 1.5rem;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+        border-left: 3px solid var(--secondary-color);
+        padding-left: 10px;
+    }
+
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/admin/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                initCharts(data);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    });
+
+    function initCharts(data) {
+        // Shared Config
+        Chart.defaults.color = '#888';
+        Chart.defaults.borderColor = 'rgba(255,255,255,0.1)';
+        Chart.defaults.font.family = "'Noto Sans TC', sans-serif";
+
+        // 1. Sales Trend (Line)
+        new Chart(document.getElementById('salesChart'), {
+            type: 'line',
+            data: {
+                labels: data.daily_orders.labels,
+                datasets: [{
+                    label: '每日訂單數',
+                    data: data.daily_orders.data,
+                    borderColor: '#0effff',
+                    backgroundColor: 'rgba(14, 255, 255, 0.1)',
+                    borderWidth: 2,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#000',
+                    pointBorderColor: '#0effff',
+                    pointBorderWidth: 2,
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+
+        // 2. Status Distribution (Doughnut)
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['待確認', '製作中', '已完成', '已取消'],
+                datasets: [{
+                    data: [
+                        data.status_distribution.Pending,
+                        data.status_distribution.Processing,
+                        data.status_distribution.Completed,
+                        data.status_distribution.Cancelled
+                    ],
+                    backgroundColor: [
+                        '#f1c40f', // Pending - Yellow
+                        '#3498db', // Processing - Blue
+                        '#2ecc71', // Completed - Green
+                        '#e74c3c'  // Cancelled - Red
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'right' }
+                }
+            }
+        });
+
+        // 3. Top Products (Bar)
+        new Chart(document.getElementById('productsChart'), {
+            type: 'bar',
+            data: {
+                labels: data.top_products.labels,
+                datasets: [{
+                    label: '銷售量',
+                    data: data.top_products.data,
+                    backgroundColor: '#9b59b6',
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'y',
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

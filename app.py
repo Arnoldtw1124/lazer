@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -177,6 +177,56 @@ def admin_dashboard():
     now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, now_time=now_time)
+
+# Route: Admin Data Center (Page)
+@app.route('/admin/data')
+def admin_data():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    return render_template('admin_data.html')
+
+# Route: Admin Stats API (JSON)
+@app.route('/admin/api/stats')
+def admin_stats_api():
+    if not session.get('logged_in'):
+        return {"error": "Unauthorized"}, 401
+    
+    # 1. Status Distribution
+    orders = Order.query.all()
+    status_counts = {'Pending': 0, 'Processing': 0, 'Completed': 0, 'Cancelled': 0}
+    for o in orders:
+        s = o.status if o.status else 'Pending'
+        if s in status_counts:
+            status_counts[s] += 1
+        else:
+            status_counts['Pending'] += 1 # Default fallback
+            
+    # 2. Orders Last 7 Days
+    today = datetime.now().date()
+    dates = [(today - timedelta(days=i)).strftime('%Y-%m-%d') for i in range(6, -1, -1)]
+    daily_orders = {date: 0 for date in dates}
+    
+    for o in orders:
+        if o.date:
+            o_date = o.date.date().strftime('%Y-%m-%d')
+            if o_date in daily_orders:
+                daily_orders[o_date] += 1
+                
+    # 3. Top Products
+    product_sales = {}
+    for o in orders:
+        # Simple string matching for now (e.g. "keychain - Variant")
+        p_name = o.material.split(' - ')[0] if o.material else 'Unknown'
+        product_sales[p_name] = product_sales.get(p_name, 0) + 1
+        
+    # Sort top 5
+    top_products = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:5]
+    
+    return {
+        "status_distribution": status_counts,
+        "daily_orders": {"labels": list(daily_orders.keys()), "data": list(daily_orders.values())},
+        "top_products": {"labels": [p[0] for p in top_products], "data": [p[1] for p in top_products]}
+    }
 
 @app.errorhandler(500)
 def internal_error(error):
