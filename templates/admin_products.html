@@ -81,7 +81,12 @@
                             </td>
                             <td style="padding: 1rem; font-family: monospace; color: #aaa;">{{ product.id }}</td>
                             <td style="padding: 1rem; font-weight: bold;">
-                                {{ product.name }}
+                                <a href="{{ url_for('admin_product_edit', product_id=product.id) }}"
+                                    style="color: white; text-decoration: none; transition: color 0.3s;"
+                                    onmouseover="this.style.color='var(--secondary-color)'"
+                                    onmouseout="this.style.color='white'">
+                                    {{ product.name }}
+                                </a>
                                 {% if product.discount_label %}
                                 <br><span style="font-size: 0.8rem; color: #2ecc71;">{{ product.discount_label }}</span>
                                 {% endif %}
