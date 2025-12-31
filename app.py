@@ -357,7 +357,8 @@ def delete_order(order_id):
 @app.route('/admin/products')
 @login_required
 def admin_products():
-    products = Product.query.order_by(Product.sort_order).all()
+    # Sort by Recommended logic (sort_order desc) then by ID
+    products = Product.query.order_by(Product.sort_order.desc(), Product.id.asc()).all()
     return render_template('admin_products.html', products=products)
 
 # Route: Admin Add Product
