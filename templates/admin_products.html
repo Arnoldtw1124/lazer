@@ -74,16 +74,8 @@
 
                             <td style="padding: 1rem; cursor: pointer;" onclick="toggleRecommend('{{ product.id }}')"
                                 title="點擊切換推薦狀態">
-                                <span id="star-{{ product.id }}" style="
-                                    font-size: 1.2rem; 
-                                    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-                                    display: inline-block;
-                                    {% if product.sort_order > 0 %}
-                                    color: #f1c40f; transform: scale(1.1);
-                                    {% else %}
-                                    color: #333; transform: scale(1);
-                                    {% endif %}
-                                ">⭐</span>
+                                <span id="star-{{ product.id }}"
+                                    class="star-icon {% if product.sort_order > 0 %}active{% endif %}">⭐</span>
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -161,17 +153,18 @@
             .then(data => {
                 if (data.success) {
                     // Update UI based on server response (Source of Truth)
-                    if (data.is_recommended) {
-                        star.style.color = '#f1c40f';
-                        star.style.transform = 'scale(1.1)';
+                    if (data.success) {
+                        // Update UI based on server response (Source of Truth)
+                        if (data.is_recommended) {
+                            star.classList.add('active');
+                        } else {
+                            star.classList.remove('active');
+                        }
                     } else {
-                        star.style.color = '#333';
-                        star.style.transform = 'scale(1)';
+                    } else {
+                        alert('操作失敗: ' + (data.message || '未知錯誤'));
                     }
-                } else {
-                    alert('操作失敗: ' + (data.message || '未知錯誤'));
-                }
-            })
+                })
             .catch(error => {
                 console.error('Error:', error);
                 alert('發生錯誤: ' + error.message + '\n請重新整理頁面再試。');
@@ -187,5 +180,26 @@
             });
         });
     });
+        });
+    });
 </script>
+
+<style>
+    .star-icon {
+        font-size: 1.2rem;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-block;
+        color: #333;
+        /* Default inactive (Dark Gray) */
+        transform: scale(1);
+    }
+
+    .star-icon.active {
+        color: #f1c40f;
+        /* Active (Gold) */
+        transform: scale(1.1);
+        text-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+        /* Add glow effect */
+    }
+</style>
 {% endblock %}
