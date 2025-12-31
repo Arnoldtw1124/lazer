@@ -425,7 +425,6 @@ def admin_product_new():
                 desc=request.form.get('desc'),
                 image=filename,
                 specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
-                specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
                 variants=json.dumps(variants_list), # Processed list back to JSON string
                 addons=json.dumps(addons_list),
                 sort_order=int(request.form.get('sort_order', 0)),
