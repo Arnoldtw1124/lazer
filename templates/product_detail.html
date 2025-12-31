@@ -211,101 +211,98 @@
                         priceElement.innerText = defaultPrice;
                     }
 
-                    // Update UI Buttons: Reset others, Highlight selected
+                    // Update UI Buttons: Reset others
                     document.querySelectorAll('.variant-btn').forEach(b => {
                         b.style.background = 'rgba(0,0,0,0.3)';
                         b.style.color = 'white';
-                        b.style.borderColor = 'var(--secondary-color)';
-                        b.style.boxShadow = 'none';
-                        // Update UI Buttons: Reset others, Highlight selected
-                        document.querySelectorAll('.variant-btn').forEach(b => {
-                            b.style.background = 'rgba(0,0,0,0.3)';
-                            b.style.color = 'white';
-                            // Keep the strikethrough/gray if OOS
-                            if (b.innerText.includes('(缺貨)')) {
-                                b.style.color = '#aaa';
-                                b.style.borderColor = '#666';
-                            } else {
-                                b.style.borderColor = 'var(--secondary-color)';
-                            }
-                            b.style.boxShadow = 'none';
-                        });
 
-                        // Apply Active Style
-                        btn.style.background = 'var(--secondary-color)';
-                        btn.style.color = 'black';
-                        btn.style.boxShadow = '0 0 10px var(--secondary-color)';
-
-                        // Update Specs: Show Common (Index 0) + Target Spec
-                        listItems.forEach((li, index) => {
-                            // Always show the first item (Common spec)
-                            if (index === 0) {
-                                li.style.display = 'flex';
-                                return;
-                            }
-
-                            // For others, check if it matches the target spec
-                            const text = li.getAttribute('data-original-text');
-                            if (text === targetSpec) {
-                                li.style.display = 'flex';
-                            } else {
-                                li.style.display = 'none';
-                            }
-                        });
-
-                        // Update Booking Link
-                        // Update Booking Link & Check OOS
-                        updateBookingLink();
-
-                        if (isOos === 'True' || isOos === 'true' || isOos === true) {
-                            // Enable button but change to Contact mode
-                            bookingBtn.classList.remove('disabled');
-                            bookingBtn.style.pointerEvents = 'auto';
-                            bookingBtn.style.background = '#3498db'; // Info Blue
-                            bookingBtn.innerText = '此樣式缺貨 - 聯絡詢問 (Contact Us)';
-                            bookingBtn.href = 'https://x.com/arnold__laser'; // Social Link
-                            bookingBtn.target = '_blank';
+                        // Keep the red/dashed style if OOS
+                        if (b.innerText.includes('(缺貨)')) {
+                            b.style.color = '#ff6b6b';
+                            b.style.borderColor = '#ff6b6b';
+                            b.style.borderStyle = 'dashed';
                         } else {
-                            bookingBtn.classList.remove('disabled');
-                            bookingBtn.removeAttribute('target');
-                            bookingBtn.style.pointerEvents = 'auto';
-                            bookingBtn.style.background = 'var(--primary-color)';
-                            bookingBtn.innerText = '立即預約此產品';
+                            b.style.borderColor = 'var(--secondary-color)';
+                            b.style.borderStyle = 'solid';
                         }
+                        b.style.boxShadow = 'none';
+                    });
+
+                    // Apply Active Style
+                    btn.style.background = 'var(--secondary-color)';
+                    btn.style.color = 'black';
+                    btn.style.boxShadow = '0 0 10px var(--secondary-color)';
+
+                    // Update Specs: Show Common (Index 0) + Target Spec
+                    listItems.forEach((li, index) => {
+                        // Always show the first item (Common spec)
+                        if (index === 0) {
+                            li.style.display = 'flex';
+                            return;
+                        }
+
+                        // For others, check if it matches the target spec
+                        const text = li.getAttribute('data-original-text');
+                        if (text === targetSpec) {
+                            li.style.display = 'flex';
+                        } else {
+                            li.style.display = 'none';
+                        }
+                    });
+
+                    // Update Booking Link
+                    // Update Booking Link & Check OOS
+                    updateBookingLink();
+
+                    if (isOos === 'True' || isOos === 'true' || isOos === true) {
+                        // Enable button but change to Contact mode
+                        bookingBtn.classList.remove('disabled');
+                        bookingBtn.style.pointerEvents = 'auto';
+                        bookingBtn.style.background = '#3498db'; // Info Blue
+                        bookingBtn.innerText = '此樣式缺貨 - 聯絡詢問 (Contact Us)';
+                        bookingBtn.href = 'https://x.com/arnold__laser'; // Social Link
+                        bookingBtn.target = '_blank';
+                    } else {
+                        bookingBtn.classList.remove('disabled');
+                        bookingBtn.removeAttribute('target');
+                        bookingBtn.style.pointerEvents = 'auto';
+                        bookingBtn.style.background = 'var(--primary-color)';
+                        bookingBtn.innerText = '立即預約此產品';
                     }
+                }
 
                 function updateBookingLink() {
-                            const bookingBtn = document.getElementById('booking-btn');
-                            const baseUrl = "{{ url_for('booking') }}?product={{ product.name }}";
-                            let finalUrl = baseUrl;
+                    const bookingBtn = document.getElementById('booking-btn');
+                    const baseUrl = "{{ url_for('booking') }}?product={{ product.name }}";
+                    let finalUrl = baseUrl;
 
-                            // Append Variant
-                            if (currentVariant) {
-                                finalUrl += "&variant=" + encodeURIComponent(currentVariant);
-                            }
+                    // Append Variant
+                    if (currentVariant) {
+                        finalUrl += "&variant=" + encodeURIComponent(currentVariant);
+                    }
 
-                            // Append Addons
-                            const selectedAddons = [];
-                            document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
-                                selectedAddons.push(cb.value);
-                            });
+                    // Append Addons
+                    const selectedAddons = [];
+                    document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+                        selectedAddons.push(cb.value);
+                    });
 
-                            if (selectedAddons.length > 0) {
-                                // Pass addons as a generic note or a specific param if booking supports it.
-                                // Ideally, we pass it as 'notes' preamble or a new param.
-                                // Let's pass it as 'addons' param
-                                finalUrl += "&addons=" + encodeURIComponent(selectedAddons.join(', '));
-                            }
+                    if (selectedAddons.length > 0) {
+                        // Pass addons as a generic note or a specific param if booking supports it.
+                        // Ideally, we pass it as 'notes' preamble or a new param.
+                        // Let's pass it as 'addons' param
+                        finalUrl += "&addons=" + encodeURIComponent(selectedAddons.join(', '));
+                    }
 
-                            bookingBtn.href = finalUrl;
-                        }
+                    bookingBtn.href = finalUrl;
+                }
 
                 // Add event listeners for addons
                 document.addEventListener('DOMContentLoaded', () => {
-                            document.querySelectorAll('.addon-checkbox').forEach(cb => {
-                                cb.addEventListener('change', updateBookingLink);
-                            });
-                        });
+                    document.querySelectorAll('.addon-checkbox').forEach(cb => {
+                        cb.addEventListener('change', updateBookingLink);
+                    });
+                });
             </script>
 
             {% if product.is_out_of_stock %}
