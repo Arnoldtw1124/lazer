@@ -86,8 +86,33 @@
     </div>
 </section>
 
+<!-- Recommended Section (Admin Curated) -->
 <section class="services" style="padding-top: 0;">
-    <h2 style="margin-bottom: 3rem;">熱門產品</h2>
+    <h2 style="margin-bottom: 2rem; color: var(--secondary-color);">本期推薦 (FEATURED)</h2>
+    <div class="service-grid">
+        {% for product in recommended_products %}
+        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="card"
+            style="display: flex; flex-direction: column; justify-content: space-between; text-decoration: none; color: inherit; padding: 0; overflow: hidden; border: 1px solid var(--secondary-color);">
+            <div style="width: 100%; height: 200px; background-color: rgba(255,255,255,0.05); overflow: hidden;">
+                <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div style="padding: 2rem;">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">{{ product.name }}</h3>
+                <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
+                    {{ product.desc[:40] }}...
+                </p>
+                <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color); margin-bottom: 1.5rem;">
+                    {{ product.price }}</div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Popular Section (Sales Data Driven) -->
+<section class="services" style="padding-top: 0;">
+    <h2 style="margin-bottom: 2rem;">熱門產品 (BEST SELLERS)</h2>
     <div class="service-grid">
         {% for product in popular_products %}
         <a href="{{ url_for('product_detail', product_id=product.id) }}" class="card"
@@ -101,14 +126,16 @@
                 <p style="margin-bottom: 1rem; color: rgba(255,255,255,0.8);">
                     {{ product.desc[:40] }}...
                 </p>
-                <div style="font-size: 1.8rem; font-weight: 700; color: var(--secondary-color); margin-bottom: 1.5rem;">
+                <div style="font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 1.5rem;">
                     {{ product.price }}</div>
             </div>
         </a>
         {% endfor %}
     </div>
-    <div style="margin-top: 3rem;">
-        <a href="{{ url_for('products') }}" class="btn btn-primary">查看所有產品</a>
+
+    <div style="margin-top: 5rem;">
+        <a href="{{ url_for('products') }}" class="btn btn-primary"
+            style="padding: 1rem 4rem; font-size: 1.2rem;">查看所有產品</a>
     </div>
 </section>
 

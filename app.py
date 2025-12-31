@@ -687,15 +687,47 @@ products_data = {
 # Route: Home Page
 @app.route('/')
 def index():
-    # Select Top 3 Popular Products by Sort Order (High to Low)
+    # 1. Recommended Products (Admin Controlled - sort_order)
     try:
-        top_products = Product.query.order_by(Product.sort_order.desc()).limit(3).all()
-        popular_products = [p.to_dict() for p in top_products]
+        # Get products with highest sort_order
+        rec_query = Product.query.order_by(Product.sort_order.desc()).limit(3).all()
+        recommended_products = [p.to_dict() for p in rec_query]
     except Exception as e:
-        print(f"Error fetching popular products: {e}")
+        print(f"Error fetching recommended: {e}")
+        recommended_products = []
+
+    # 2. Popular Products (Data Driven - Order Count)
+    try:
+        orders = Order.query.all()
+        product_sales = {}
+        for o in orders:
+            # Parse Title from "ProductName - VariantName"
+            if o.material:
+                p_name = o.material.split(' - ')[0]
+                product_sales[p_name] = product_sales.get(p_name, 0) + 1
+        
+        # Sort by sales count desc
+        sorted_sales = sorted(product_sales.items(), key=lambda x: x[1], reverse=True)[:3]
+        top_names = [x[0] for x in sorted_sales]
+        
+        # Fetch product details for these names
+        # Note: In a real app we'd join on ID, but here we match Name
+        popular_products = []
+        for name in top_names:
+            p = Product.query.filter_by(name=name).first()
+            if p:
+                popular_products.append(p.to_dict())
+                
+        # Fallback if no orders yet: use newest 3
+        if not popular_products:
+             newest = Product.query.order_by(Product.id.desc()).limit(3).all()
+             popular_products = [p.to_dict() for p in newest]
+
+    except Exception as e:
+        print(f"Error fetching popular: {e}")
         popular_products = []
     
-    return render_template('index.html', popular_products=popular_products)
+    return render_template('index.html', recommended_products=recommended_products, popular_products=popular_products)
 
 # Route: Products List
 @app.route('/products')
