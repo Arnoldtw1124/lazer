@@ -45,14 +45,7 @@
 
 <body>
     {% if not request.path.startswith('/admin') %}
-    <!-- Dynamic Marquee (Public Only) -->
-    <div
-        style="background: var(--secondary-color); color: black; padding: 5px 0; overflow: hidden; white-space: nowrap; font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: bold;">
-        <div style="display: inline-block; animation: marquee 20s linear infinite;">
-            {{ marquee_text }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text
-            }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text }}
-        </div>
-    </div>
+    <!-- Dynamic Marquee Removed (Merged into Index) -->
 
     <!-- Public Navbar -->
     <nav class="navbar">
