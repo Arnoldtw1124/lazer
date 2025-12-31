@@ -88,8 +88,8 @@ GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJ
 @app.context_processor
 def inject_navbar_products():
     try:
-        # Fetch all products for the navbar dropdown
-        navbar_products = Product.query.order_by(Product.sort_order).all()
+        # Fetch top 4 products for the navbar dropdown
+        navbar_products = Product.query.order_by(Product.sort_order).limit(4).all()
         return dict(navbar_products=navbar_products)
     except Exception:
         return dict(navbar_products=[])
