@@ -72,10 +72,10 @@
                             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
                             onmouseout="this.style.background='transparent'">
 
-                            <td style="padding: 1rem; cursor: pointer;" onclick="toggleRecommend('{{ product.id }}')"
-                                title="點擊切換推薦狀態">
-                                <span id="star-{{ product.id }}"
-                                    class="star-icon {% if product.sort_order > 0 %}active{% endif %}">⭐</span>
+                            <td style="padding: 1rem; cursor: pointer; text-align: center;"
+                                onclick="toggleRecommend('{{ product.id }}')" title="點擊切換推薦狀態">
+                                <i id="star-{{ product.id }}"
+                                    class="fas fa-star star-icon {% if product.sort_order > 0 %}active{% endif %}"></i>
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -184,7 +184,7 @@
         font-size: 1.2rem;
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         display: inline-block;
-        color: #333;
+        color: #444;
         /* Default inactive (Dark Gray) */
         transform: scale(1);
     }
