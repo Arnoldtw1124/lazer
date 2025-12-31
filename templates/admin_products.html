@@ -50,6 +50,58 @@
         {% endif %}
         {% endwith %}
 
+        <!-- Tabs -->
+        <div style="margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <a href="{{ url_for('admin_products', status='all') }}"
+                class="tab-link {{ 'active' if current_status == 'all' else '' }}">全部</a>
+            <a href="{{ url_for('admin_products', status='visible') }}"
+                class="tab-link {{ 'active' if current_status == 'visible' else '' }}">架上商品</a>
+            <a href="{{ url_for('admin_products', status='hidden') }}"
+                class="tab-link {{ 'active' if current_status == 'hidden' else '' }}">未上架</a>
+            <a href="{{ url_for('admin_products', status='out_of_stock') }}"
+                class="tab-link {{ 'active' if current_status == 'out_of_stock' else '' }}">補貨中</a>
+        </div>
+
+        <style>
+            .tab-link {
+                display: inline-block;
+                padding: 10px 20px;
+                color: #aaa;
+                text-decoration: none;
+                border-bottom: 2px solid transparent;
+                transition: color 0.3s, border-color 0.3s;
+                margin-right: 10px;
+            }
+
+            .tab-link:hover {
+                color: white;
+            }
+
+            .tab-link.active {
+                color: var(--secondary-color);
+                border-color: var(--secondary-color);
+            }
+
+            .status-badge {
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 0.8rem;
+                display: inline-block;
+            }
+
+            .status-visible {
+                background: rgba(46, 204, 113, 0.2);
+                color: #2ecc71;
+                border: 1px solid rgba(46, 204, 113, 0.3);
+            }
+
+            .status-hidden {
+                background: rgba(100, 100, 100, 0.2);
+                color: #aaa;
+                border: 1px solid rgba(100, 100, 100, 0.3);
+            }
+        </style>
+
         <!-- Products Table -->
         <div
             style="background: #0f0f12; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;">
@@ -59,7 +111,8 @@
                         <tr
                             style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
                             <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">推薦</th>
-                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">上架?</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">推薦</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">狀態</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">圖片</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal; white-space: nowrap;">ID</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal; min-width: 150px;">名稱</th>
@@ -79,11 +132,13 @@
                                 <i id="star-{{ product.id }}"
                                     class="fas fa-star star-icon {% if product.sort_order > 0 %}active{% endif %}"></i>
                             </td>
-                            <!-- Visibility Toggle -->
-                            <td style="padding: 1rem; cursor: pointer; text-align: center;"
-                                onclick="toggleVisibility('{{ product.id }}')" title="點擊切換上下架">
-                                <i id="eye-{{ product.id }}"
-                                    class="fas fa-eye visibility-icon {% if product.is_visible %}visible{% else %}hidden{% endif %}"></i>
+                            <!-- Status Column -->
+                            <td style="padding: 1rem;">
+                                {% if product.is_visible %}
+                                <span class="status-badge status-visible">上架中</span>
+                                {% else %}
+                                <span class="status-badge status-hidden">未上架</span>
+                                {% endif %}
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -214,9 +269,7 @@
     }
 
     function toggleVisibility(productId) {
-        const icon = document.getElementById('eye-' + productId);
-
-        // Optimistic UI could go here, but let's wait for server
+        if (!confirm('確定要執行此操作嗎？')) return;
 
         fetch(`/admin/product/toggle_visibility/${productId}`, {
             method: 'POST',
@@ -232,19 +285,8 @@
             })
             .then(data => {
                 if (data.success) {
-                    if (data.is_visible) {
-                        icon.style.color = '';
-                        icon.classList.remove('fa-eye-slash');
-                        icon.classList.add('fa-eye');
-                        icon.classList.remove('hidden');
-                        icon.classList.add('visible');
-                    } else {
-                        icon.style.color = '';
-                        icon.classList.remove('fa-eye');
-                        icon.classList.add('fa-eye-slash');
-                        icon.classList.remove('visible');
-                        icon.classList.add('hidden');
-                    }
+                    // Reload page to reflect status change in tabs/list
+                    window.location.reload();
                 } else {
                     alert('切換失敗: ' + (data.message || 'Error'));
                 }
