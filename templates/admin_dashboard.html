@@ -57,7 +57,7 @@
                 </div>
                 <div class="kpi-info">
                     <h4>待處理</h4>
-                    <div class="value">{{ orders|selectattr('status', 'equalto', 'Pending')|list|length }}</div>
+                    <div class="value">{{ pending_count }}</div>
                     <div style="font-size: 0.8rem; color: #666;">需盡快處理</div>
                 </div>
             </div>
