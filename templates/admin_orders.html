@@ -222,16 +222,27 @@
         padding: 0.5rem 1rem;
         border: 1px solid #333;
         border-radius: 5px;
+        background: transparent;
+        /* Fix default button background */
         color: #888;
         text-decoration: none;
         transition: all 0.3s ease;
+        cursor: pointer;
+        /* Add pointer cursor */
     }
 
-    .filter-btn:hover,
+    .filter-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
     .filter-btn.active {
         background: var(--primary-color);
-        color: black;
+        color: white;
+        /* White text on purple looks better than black */
         border-color: var(--primary-color);
+        box-shadow: 0 0 10px var(--primary-color);
+        /* Soft glow */
     }
 
     .search-form {
