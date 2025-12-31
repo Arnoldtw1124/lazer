@@ -111,15 +111,8 @@
                             </td>
                             <td style="padding: 1rem;">
                                 <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
-                                    <select name="status" onchange="this.form.submit()" style="
-                                        background: transparent; 
-                                        border: 1px solid rgba(255,255,255,0.2); 
-                                        color: {% if order.status == 'Pending' %}#ff9f43{% elif order.status == 'Completed' %}#2ecc71{% elif order.status == 'Processing' %}#00d2d3{% else %}#ff6b6b{% endif %};
-                                        padding: 4px 8px;
-                                        border-radius: 4px;
-                                        outline: none;
-                                        cursor: pointer;
-                                    ">
+                                    <select name="status" onchange="this.form.submit()"
+                                        class="status-select status-{{ order.status|lower }}">
                                         <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠
                                             待確認</option>
                                         <option value="Processing" {% if order.status=='Processing' %}selected{% endif

@@ -579,3 +579,29 @@ body {
     font-family: 'Orbitron', sans-serif;
     margin: 5px 0;
 }
+
+/* Status Colors */
+.status-select {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 8px;
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+}
+
+.status-pending {
+    color: #ff9f43;
+}
+
+.status-processing {
+    color: #00d2d3;
+}
+
+.status-completed {
+    color: #2ecc71;
+}
+
+.status-cancelled {
+    color: #ff6b6b;
+}
