@@ -136,8 +136,27 @@
 
                 <script>
                     // Initial Data
-                    let specsData = {{ product.specs | safe if product and product.specs else '[]' }};
-                    let variantsData = {{ product.variants | safe if product and product.variants else '[]' }};
+                    // Use templating to inject JSON string, then parse it. 
+                    // This prevents IDE syntax errors and handles potential nulls gracefully.
+                    const specsRaw = '{{ product.specs | replace("\'", "\\\'") | safe if product and product.specs else "[]" }}';
+                    const variantsRaw = '{{ product.variants | replace("\'", "\\\'") | safe if product and product.variants else "[]" }}';
+
+                    let specsData = [];
+                    let variantsData = [];
+
+                    try {
+                        specsData = JSON.parse(specsRaw);
+                    } catch (e) {
+                        console.error("Error parsing specs JSON", e);
+                        specsData = [];
+                    }
+
+                    try {
+                        variantsData = JSON.parse(variantsRaw);
+                    } catch (e) {
+                        console.error("Error parsing variants JSON", e);
+                        variantsData = [];
+                    }
 
                     const specsContainer = document.getElementById('specs-container');
                     const variantsContainer = document.getElementById('variants-container');
