@@ -124,10 +124,8 @@
                             transition: all 0.3s;
                             font-family: inherit;
                             {% if variant.is_out_of_stock %}
-                            opacity: 0.5;
-                            border-color: #666;
-                            color: #aaa;
-                            text-decoration: line-through;
+                            border: 1px dashed #ff6b6b;
+                            color: #ff6b6b;
                             {% endif %}
                         ">
                         {{ variant.name }} {% if variant.is_out_of_stock %}(缺貨){% endif %}
