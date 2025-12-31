@@ -367,21 +367,9 @@ def delete_order(order_id):
 @app.route('/admin/products')
 @login_required
 def admin_products():
-    status = request.args.get('status', 'all')
-    
-    query = Product.query
-    
-    if status == 'visible':
-        query = query.filter_by(is_visible=True)
-    elif status == 'hidden':
-        query = query.filter_by(is_visible=False)
-    elif status == 'out_of_stock':
-        query = query.filter_by(is_out_of_stock=True)
-        
-    # Sort by Recommended logic (sort_order desc) then by ID
-    products = query.order_by(Product.sort_order.desc(), Product.id.asc()).all()
-    
-    return render_template('admin_products.html', products=products, current_status=status)
+    # Client-side filtering implementation
+    products = Product.query.order_by(Product.sort_order.desc(), Product.id.asc()).all()
+    return render_template('admin_products.html', products=products, current_status='all')
 
 # Route: Admin Add Product
 # Helper: Auto-format price to NTD
