@@ -452,7 +452,6 @@ def admin_product_new():
                 addons=json.dumps(addons_list),
                 sort_order=int(request.form.get('sort_order', 0)),
                 is_out_of_stock=('is_out_of_stock' in request.form),
-                is_out_of_stock=('is_out_of_stock' in request.form),
                 is_visible=(request.form.get('action') == 'publish') # Visibility Action
             )
             db.session.add(new_product)
