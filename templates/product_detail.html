@@ -188,6 +188,7 @@
                         // Reset Booking Link
                         // Reset Booking Link and Style
                         bookingBtn.href = baseUrl;
+                        bookingBtn.removeAttribute('target'); // Reset target
                         bookingBtn.classList.remove('disabled');
                         bookingBtn.style.pointerEvents = 'auto';
                         bookingBtn.innerText = '立即預約此產品';
@@ -259,13 +260,16 @@
                         updateBookingLink();
 
                         if (isOos === 'True' || isOos === 'true' || isOos === true) {
-                            bookingBtn.classList.add('disabled');
-                            bookingBtn.style.pointerEvents = 'none';
-                            bookingBtn.style.background = '#555';
-                            bookingBtn.innerText = '此樣式缺貨 (Sold Out)';
-                            bookingBtn.href = 'javascript:void(0)';
+                            // Enable button but change to Contact mode
+                            bookingBtn.classList.remove('disabled');
+                            bookingBtn.style.pointerEvents = 'auto';
+                            bookingBtn.style.background = '#3498db'; // Info Blue
+                            bookingBtn.innerText = '此樣式缺貨 - 聯絡詢問 (Contact Us)';
+                            bookingBtn.href = 'https://x.com/arnold__laser'; // Social Link
+                            bookingBtn.target = '_blank';
                         } else {
                             bookingBtn.classList.remove('disabled');
+                            bookingBtn.removeAttribute('target');
                             bookingBtn.style.pointerEvents = 'auto';
                             bookingBtn.style.background = 'var(--primary-color)';
                             bookingBtn.innerText = '立即預約此產品';
