@@ -86,8 +86,9 @@
                     <td style="padding: 1rem;">{{ product.sort_order }}</td>
                     <td style="padding: 1rem;">
                         <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
-                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; border: 1px solid #333;"
-                            onerror="this.src='{{ url_for('static', filename='uploads/' + product.image) }}';">
+                            class="product-thumb"
+                            data-fallback="{{ url_for('static', filename='uploads/' + product.image) }}"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; border: 1px solid #333;">
                         <!-- Try images dir first, then uploads (if uploaded via admin) -->
                     </td>
                     <td style="padding: 1rem; font-family: monospace; color: #aaa;">{{ product.id }}</td>
@@ -124,4 +125,14 @@
     </div>
 
 </section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.product-thumb').forEach(img => {
+            img.addEventListener('error', function () {
+                this.src = this.getAttribute('data-fallback');
+            });
+        });
+    });
+</script>
 {% endblock %}
