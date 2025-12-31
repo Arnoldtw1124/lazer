@@ -476,8 +476,10 @@ def admin_product_toggle_recommend(product_id):
         if not product:
             return jsonify({'success': False, 'message': 'Product not found'}), 404
             
-        # Toggle logic
-        if product.sort_order > 0:
+        # Toggle logic (Robust check)
+        current_sort = int(product.sort_order) if product.sort_order is not None else 0
+        
+        if current_sort > 0:
             product.sort_order = 0
             is_recommended = False
         else:
