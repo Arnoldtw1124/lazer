@@ -84,6 +84,16 @@ GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJ
 
 # ... (Route: Home Page -> /products -> /product/<id> -> /process -> /terms -> /privacy -> /guidelines -> /materials -> /faq)
 
+# Context Processor to inject data into all templates
+@app.context_processor
+def inject_navbar_products():
+    try:
+        # Fetch all products for the navbar dropdown
+        navbar_products = Product.query.order_by(Product.sort_order).all()
+        return dict(navbar_products=navbar_products)
+    except Exception:
+        return dict(navbar_products=[])
+
 # Route: Admin Login
 @app.route('/login', methods=['GET', 'POST'])
 def admin_login():

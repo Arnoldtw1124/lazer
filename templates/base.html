@@ -61,11 +61,10 @@
             <div class="dropdown">
                 <a href="{{ url_for('products') }}" class="dropbtn">產品介紹 ▾</a>
                 <div class="dropdown-content">
-                    <a href="{{ url_for('product_detail', product_id='keychain') }}">皮革鑰匙圈</a>
-                    <a href="{{ url_for('product_detail', product_id='coaster') }}">軟木杯墊</a>
-                    <a href="{{ url_for('product_detail', product_id='tag') }}">寵物名牌</a>
-                    <a href="{{ url_for('product_detail', product_id='stand') }}">壓克力立牌</a>
-                    <a href="{{ url_for('product_detail', product_id='cardcheck') }}">金屬名片/銘版</a>
+                    {% for product in navbar_products %}
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+                    {% endfor %}
+                    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
                     <a href="{{ url_for('products') }}">查看所有產品</a>
                 </div>
             </div>
