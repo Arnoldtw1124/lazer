@@ -72,6 +72,7 @@ class Product(db.Model):
     addons = db.Column(db.Text, nullable=True) # Stored as JSON string
     sort_order = db.Column(db.Integer, default=0)
     is_out_of_stock = db.Column(db.Boolean, default=False) # New: Out of Stock Flag
+    is_visible = db.Column(db.Boolean, default=True) # New: Visibility Flag
 
     def to_dict(self):
         return {
