@@ -425,9 +425,11 @@ def admin_product_new():
                 desc=request.form.get('desc'),
                 image=filename,
                 specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
+                specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
                 variants=json.dumps(variants_list), # Processed list back to JSON string
                 addons=json.dumps(addons_list),
-                sort_order=int(request.form.get('sort_order', 0))
+                sort_order=int(request.form.get('sort_order', 0)),
+                is_out_of_stock=('is_out_of_stock' in request.form) # Boolean Toggle
             )
             db.session.add(new_product)
             db.session.commit()
@@ -485,6 +487,7 @@ def admin_product_edit(product_id):
             product.variants = json.dumps(variants_list) # Save processed list
             product.addons = json.dumps(addons_list) # Save processed list
             product.sort_order = int(request.form.get('sort_order', 0))
+            product.is_out_of_stock = ('is_out_of_stock' in request.form) # Boolean Toggle
             
             db.session.commit()
             flash('商品更新成功！', 'admin_success')
