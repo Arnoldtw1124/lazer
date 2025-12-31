@@ -1,4 +1,5 @@
 import os
+import json
 import requests
 from datetime import datetime
 from flask import Flask, render_template, request, flash, redirect, url_for, session
@@ -28,9 +29,44 @@ class Order(db.Model):
     def __repr__(self):
         return f'<Order {self.id}>'
 
+# Product Model
+class Product(db.Model):
+    id = db.Column(db.String(50), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    price = db.Column(db.String(50), nullable=False)
+    original_price = db.Column(db.String(50), nullable=True)
+    discount_label = db.Column(db.String(50), nullable=True)
+    desc = db.Column(db.Text, nullable=False)
+    image = db.Column(db.String(100), nullable=False)
+    specs = db.Column(db.Text, nullable=True) # Stored as JSON string
+    variants = db.Column(db.Text, nullable=True) # Stored as JSON string
+    addons = db.Column(db.Text, nullable=True) # Stored as JSON string
+    sort_order = db.Column(db.Integer, default=0)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'price': self.price,
+            'original_price': self.original_price,
+            'discount_label': self.discount_label,
+            'desc': self.desc,
+            'image': self.image,
+            'specs': json.loads(self.specs) if self.specs else [],
+            'variants': json.loads(self.variants) if self.variants else [],
+            'addons': json.loads(self.addons) if self.addons else []
+        }
+
 # Create DB on startup
 with app.app_context():
     db.create_all()
+    
+    # Check if products exist, if not seed from dictionary
+    # Note: We need to access products_data here, but it's defined later in the file in the original code.
+    # We should move products_data definition UP or handle this seeding after products_data is defined.
+    # Strategy: We will move the seeding logic to the bottom of the file, before app.run, or move products_data up.
+    # Let's check where products_data is. It's at line 188.
+    # To avoid massive reordering, let's keep the db.create_all() here but add a separate seeding block at the end of the file.
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -118,9 +154,110 @@ def tracking():
     
     return render_template('tracking.html', order=order)
 
+# --------------------------
+# Admin Product Management
+# --------------------------
+
+# Route: Admin Product List
+@app.route('/admin/products')
+def admin_products():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    products = Product.query.order_by(Product.sort_order).all()
+    return render_template('admin_products.html', products=products)
+
+# Route: Admin Add Product
+@app.route('/admin/products/new', methods=['GET', 'POST'])
+def admin_product_new():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    if request.method == 'POST':
+        try:
+            # Handle Image Upload
+            file = request.files.get('image')
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            else:
+                filename = 'default_product.jpg' # Fallback
+
+            new_product = Product(
+                id=request.form.get('id'),
+                name=request.form.get('name'),
+                price=request.form.get('price'),
+                original_price=request.form.get('original_price'),
+                discount_label=request.form.get('discount_label'),
+                desc=request.form.get('desc'),
+                image=filename,
+                specs=request.form.get('specs'), # Expecting JSON string from form
+                variants=request.form.get('variants'), # Expecting JSON string from form
+                addons=request.form.get('addons'), # Expecting JSON string from form
+                sort_order=int(request.form.get('sort_order', 0))
+            )
+            db.session.add(new_product)
+            db.session.commit()
+            flash('商品新增成功！', 'admin_success')
+            return redirect(url_for('admin_products'))
+        except Exception as e:
+            flash(f'新增失敗：{str(e)}', 'admin_error')
+            
+    return render_template('admin_product_form.html', product=None)
+
+# Route: Admin Edit Product
+@app.route('/admin/products/edit/<product_id>', methods=['GET', 'POST'])
+def admin_product_edit(product_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    product = Product.query.get_or_404(product_id)
+    
+    if request.method == 'POST':
+        try:
+            # Handle Image Upload
+            file = request.files.get('image')
+            if file and file.filename:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                product.image = filename # Update image only if new file uploaded
+
+            product.name = request.form.get('name')
+            product.price = request.form.get('price')
+            product.original_price = request.form.get('original_price')
+            product.discount_label = request.form.get('discount_label')
+            product.desc = request.form.get('desc')
+            product.specs = request.form.get('specs')
+            product.variants = request.form.get('variants')
+            product.addons = request.form.get('addons')
+            product.sort_order = int(request.form.get('sort_order', 0))
+            
+            db.session.commit()
+            flash('商品更新成功！', 'admin_success')
+            return redirect(url_for('admin_products'))
+        except Exception as e:
+            flash(f'更新失敗：{str(e)}', 'admin_error')
+
+    return render_template('admin_product_form.html', product=product)
+
+# Route: Admin Delete Product
+@app.route('/admin/products/delete/<product_id>', methods=['POST'])
+def admin_product_delete(product_id):
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    product = Product.query.get_or_404(product_id)
+    db.session.delete(product)
+    db.session.commit()
+    flash(f'商品 {product.name} 已刪除', 'admin_success')
+    return redirect(url_for('admin_products'))
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():
+    # Fetch all products from DB
+    all_products = Product.query.all()
+    products_map = {p.id: p.to_dict() for p in all_products}
+
     if request.method == 'POST':
         # Handle file upload
         file = request.files.get('file')
@@ -183,7 +320,7 @@ def booking():
             
         return redirect(url_for('booking'))
         
-    return render_template('booking.html', products=products_data)
+    return render_template('booking.html', products=products_map)
 
 # Product Data
 products_data = {
@@ -263,21 +400,30 @@ products_data = {
 def index():
     # Select Top 3 Popular Products
     popular_ids = ['coaster', 'keychain', 'stand'] 
-    popular_products = [products_data[pid] for pid in popular_ids if pid in products_data]
+    popular_products = []
+    
+    for pid in popular_ids:
+        product = Product.query.get(pid)
+        if product:
+             popular_products.append(product.to_dict())
+    
     return render_template('index.html', popular_products=popular_products)
 
 # Route: Products List
 @app.route('/products')
 def products():
-    return render_template('products.html', products=products_data)
+    products_list = Product.query.all()
+    # Convert to dict for template compatibility if it uses .items(), or check template.
+    # Assuming template iterates over dict values or we pass a list.
+    # To be safe and compatible with potential {% for key, val in products.items() %} in template:
+    products_map = {p.id: p.to_dict() for p in products_list}
+    return render_template('products.html', products=products_map)
 
 # Route: Product Detail
 @app.route('/product/<product_id>')
 def product_detail(product_id):
-    product = products_data.get(product_id)
-    if not product:
-        return redirect(url_for('products'))
-    return render_template('product_detail.html', product=product)
+    product = Product.query.get_or_404(product_id)
+    return render_template('product_detail.html', product=product.to_dict())
 
 # Route: Production Process
 @app.route('/process')
@@ -312,6 +458,28 @@ def faq():
 
 
 
+
+# Seed Database with Product Data
+with app.app_context():
+    if Product.query.count() == 0:
+        print("Seeding products to database...")
+        for pid, p_data in products_data.items():
+            new_product = Product(
+                id=pid,
+                name=p_data['name'],
+                price=p_data['price'],
+                original_price=p_data.get('original_price'),
+                discount_label=p_data.get('discount_label'),
+                desc=p_data['desc'],
+                image=p_data['image'],
+                specs=json.dumps(p_data['specs']) if 'specs' in p_data else None,
+                variants=json.dumps(p_data['variants']) if 'variants' in p_data else None,
+                addons=json.dumps(p_data['addons']) if 'addons' in p_data else None,
+                sort_order=0 # Default order
+            )
+            db.session.add(new_product)
+        db.session.commit()
+        print("Seeding complete.")
 
 if __name__ == '__main__':
     app.run(debug=True)
