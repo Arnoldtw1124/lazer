@@ -134,131 +134,201 @@
                     <input type="hidden" name="variants" id="variants-input">
                 </div>
 
-                <script>
-                    // Initial Data
-                    // Use templating to inject JSON string, then parse it. 
-                    // This prevents IDE syntax errors and handles potential nulls gracefully.
-                    const specsRaw = '{{ product.specs | replace("\'", "\\\'") | safe if product and product.specs else "[]" }}';
-                    const variantsRaw = '{{ product.variants | replace("\'", "\\\'") | safe if product and product.variants else "[]" }}';
-
-                    let specsData = [];
-                    let variantsData = [];
-
-                    try {
-                        specsData = JSON.parse(specsRaw);
-                    } catch (e) {
-                        console.error("Error parsing specs JSON", e);
-                        specsData = [];
-                    }
-
-                    try {
-                        variantsData = JSON.parse(variantsRaw);
-                    } catch (e) {
-                        console.error("Error parsing variants JSON", e);
-                        variantsData = [];
-                    }
-
-                    const specsContainer = document.getElementById('specs-container');
-                    const variantsContainer = document.getElementById('variants-container');
-
-                    // Render Specs
-                    function renderSpecs() {
-                        specsContainer.innerHTML = '';
-                        specsData.forEach((spec, index) => {
-                            const div = document.createElement('div');
-                            div.style.marginBottom = '5px';
-                            div.style.display = 'flex';
-                            div.style.gap = '10px';
-                            div.innerHTML = `
-                                <input type="text" value="${spec}" onchange="updateSpec(${index}, this.value)" placeholder="例如：尺寸：10cm" style="flex:1; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-                                <button type="button" onclick="removeSpec(${index})" style="background: #e74c3c; color: white; border: none; padding: 0 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
-                            `;
-                            specsContainer.appendChild(div);
-                        });
-                    }
-
-                    function addSpec() {
-                        specsData.push('');
-                        renderSpecs();
-                    }
-
-                    function removeSpec(index) {
-                        specsData.splice(index, 1);
-                        renderSpecs();
-                    }
-
-                    function updateSpec(index, value) {
-                        specsData[index] = value;
-                    }
-
-                    // Render Variants
-                    function renderVariants() {
-                        variantsContainer.innerHTML = '';
-                        variantsData.forEach((variant, index) => {
-                            const tr = document.createElement('tr');
-                            tr.innerHTML = `
-                                <td style="padding: 5px;">
-                                    <input type="text" value="${variant.name || ''}" onchange="updateVariant(${index}, 'name', this.value)" placeholder="款式名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-                                </td>
-                                <td style="padding: 5px;">
-                                    <input type="text" value="${variant.spec_text || ''}" onchange="updateVariant(${index}, 'spec_text', this.value)" placeholder="對應規格" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-                                </td>
-                                <td style="padding: 5px;">
-                                    ${variant.image ? `<div style="margin-bottom:5px;"><img src="/static/uploads/${variant.image}" height="40" style="vertical-align:middle; margin-right:5px;"></div>` : ''}
-                                    <input type="file" class="variant-file-input" data-index="${index}" style="color: #aaa; font-size: 0.9em;">
-                                    <input type="hidden" value="${variant.image || ''}"> <!-- Keep existing image -->
-                                </td>
-                                <td style="padding: 5px; text-align: center;">
-                                    <button type="button" onclick="removeVariant(${index})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
-                                </td>
-                            `;
-                            variantsContainer.appendChild(tr);
-                        });
-                    }
-
-                    function addVariant() {
-                        variantsData.push({ name: '', image: '', spec_text: '' });
-                        renderVariants();
-                    }
-
-                    function removeVariant(index) {
-                        variantsData.splice(index, 1);
-                        renderVariants();
-                    }
-
-                    function updateVariant(index, key, value) {
-                        variantsData[index][key] = value;
-                    }
-
-                    // Initialize
-                    renderSpecs();
-                    renderVariants();
-
-                    // Form Submit Handler
-                    document.querySelector('form').addEventListener('submit', function (e) {
-                        // 1. Serialize Specs
-                        document.getElementById('specs-input').value = JSON.stringify(specsData.filter(s => s.trim() !== ''));
-
-                        // 2. Serialize Variants (Text Data)
-                        // Note: New images are handled by file inputs. Existing images are preserved in variantsData.
-                        // We will allow the backend to merge them.
-                        document.getElementById('variants-input').value = JSON.stringify(variantsData);
-
-                        // 3. Rename File Inputs to match index order (variant_image_0, variant_image_1...)
-                        const fileInputs = document.querySelectorAll('.variant-file-input');
-                        fileInputs.forEach(input => {
-                            const index = input.dataset.index;
-                            input.name = 'variant_image_' + index;
-                        });
-                    });
-                </script>
-
-                <div>
+                <!-- Visual Add-on Builder -->
+                <div style="margin-bottom: 2rem;">
                     <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">加購項 (Add-ons)</label>
-                    <textarea name="addons" rows="3" placeholder='[{"name": "加購品", "price": "+$100", "desc": "說明"}]'
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: #a29bfe; font-family: monospace; border-radius: 5px;">{{ product.addons if product else '' }}</textarea>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
+                                    <th style="padding: 10px; text-align: left;">名稱</th>
+                                    <th style="padding: 10px; text-align: left;">價格 (如 +NT$ 100)</th>
+                                    <th style="padding: 10px; text-align: left;">說明</th>
+                                    <th style="padding: 10px; width: 50px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="addons-container">
+                                <!-- Rows will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" onclick="addAddon()"
+                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
+                        新增加購項</button>
+                    <input type="hidden" name="addons" id="addons-input">
                 </div>
             </div>
+
+            <script>
+                // Initial Data
+                // Use templating to inject JSON string, then parse it. 
+                // This prevents IDE syntax errors and handles potential nulls gracefully.
+                const specsRaw = '{{ product.specs | replace("\'", "\\\'") | safe if product and product.specs else "[]" }}';
+                const variantsRaw = '{{ product.variants | replace("\'", "\\\'") | safe if product and product.variants else "[]" }}';
+                const addonsRaw = '{{ product.addons | replace("\'", "\\\'") | safe if product and product.addons else "[]" }}';
+
+                let specsData = [];
+                let variantsData = [];
+                let addonsData = [];
+
+                try {
+                    specsData = JSON.parse(specsRaw);
+                } catch (e) {
+                    console.error("Error parsing specs JSON", e);
+                    specsData = [];
+                }
+
+                try {
+                    variantsData = JSON.parse(variantsRaw);
+                } catch (e) {
+                    console.error("Error parsing variants JSON", e);
+                    variantsData = [];
+                }
+
+                try {
+                    addonsData = JSON.parse(addonsRaw);
+                } catch (e) {
+                    console.error("Error parsing addons JSON", e);
+                    addonsData = [];
+                }
+
+                const specsContainer = document.getElementById('specs-container');
+                const variantsContainer = document.getElementById('variants-container');
+                const addonsContainer = document.getElementById('addons-container');
+
+                // Render Specs
+                function renderSpecs() {
+                    specsContainer.innerHTML = '';
+                    specsData.forEach((spec, index) => {
+                        const div = document.createElement('div');
+                        div.style.marginBottom = '5px';
+                        div.style.display = 'flex';
+                        div.style.gap = '10px';
+                        div.innerHTML = `
+                            <input type="text" value="${spec}" onchange="updateSpec(${index}, this.value)" placeholder="例如：尺寸：10cm" style="flex:1; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            <button type="button" onclick="removeSpec(${index})" style="background: #e74c3c; color: white; border: none; padding: 0 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                        `;
+                        specsContainer.appendChild(div);
+                    });
+                }
+
+                function addSpec() {
+                    specsData.push('');
+                    renderSpecs();
+                }
+
+                function removeSpec(index) {
+                    specsData.splice(index, 1);
+                    renderSpecs();
+                }
+
+                function updateSpec(index, value) {
+                    specsData[index] = value;
+                }
+
+                // Render Variants
+                function renderVariants() {
+                    variantsContainer.innerHTML = '';
+                    variantsData.forEach((variant, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="padding: 5px;">
+                                <input type="text" value="${variant.name || ''}" onchange="updateVariant(${index}, 'name', this.value)" placeholder="款式名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px;">
+                                <input type="text" value="${variant.spec_text || ''}" onchange="updateVariant(${index}, 'spec_text', this.value)" placeholder="對應規格" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px;">
+                                ${variant.image ? `<div style="margin-bottom:5px;"><img src="/static/uploads/${variant.image}" height="40" style="vertical-align:middle; margin-right:5px;"></div>` : ''}
+                                <input type="file" class="variant-file-input" data-index="${index}" style="color: #aaa; font-size: 0.9em;">
+                                <input type="hidden" value="${variant.image || ''}"> <!-- Keep existing image -->
+                            </td>
+                            <td style="padding: 5px; text-align: center;">
+                                <button type="button" onclick="removeVariant(${index})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                            </td>
+                        `;
+                        variantsContainer.appendChild(tr);
+                    });
+                }
+
+                function addVariant() {
+                    variantsData.push({ name: '', image: '', spec_text: '' });
+                    renderVariants();
+                }
+
+                function removeVariant(index) {
+                    variantsData.splice(index, 1);
+                    renderVariants();
+                }
+
+                function updateVariant(index, key, value) {
+                    variantsData[index][key] = value;
+                }
+
+                // Render Addons
+                function renderAddons() {
+                    addonsContainer.innerHTML = '';
+                    addonsData.forEach((addon, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="padding: 5px;">
+                                <input type="text" value="${addon.name || ''}" onchange="updateAddon(${index}, 'name', this.value)" placeholder="加購品名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px;">
+                                <input type="text" value="${addon.price || ''}" onchange="updateAddon(${index}, 'price', this.value)" placeholder="+NT$ 100" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px;">
+                                <input type="text" value="${addon.desc || ''}" onchange="updateAddon(${index}, 'desc', this.value)" placeholder="說明 (選填)" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px; text-align: center;">
+                                <button type="button" onclick="removeAddon(${index})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                            </td>
+                        `;
+                        addonsContainer.appendChild(tr);
+                    });
+                }
+
+                function addAddon() {
+                    addonsData.push({ name: '', price: '', desc: '' });
+                    renderAddons();
+                }
+
+                function removeAddon(index) {
+                    addonsData.splice(index, 1);
+                    renderAddons();
+                }
+
+                function updateAddon(index, key, value) {
+                    addonsData[index][key] = value;
+                }
+
+                // Initialize
+                renderSpecs();
+                renderVariants();
+                renderAddons();
+
+                // Form Submit Handler
+                document.querySelector('form').addEventListener('submit', function (e) {
+                    // 1. Serialize Specs
+                    document.getElementById('specs-input').value = JSON.stringify(specsData.filter(s => s.trim() !== ''));
+
+                    // 2. Serialize Variants (Text Data)
+                    // Note: New images are handled by file inputs. Existing images are preserved in variantsData.
+                    // We will allow the backend to merge them.
+                    document.getElementById('variants-input').value = JSON.stringify(variantsData);
+
+                    // 3. Serialize Addons
+                    document.getElementById('addons-input').value = JSON.stringify(addonsData);
+
+                    // 4. Rename File Inputs to match index order (variant_image_0, variant_image_1...)
+                    const fileInputs = document.querySelectorAll('.variant-file-input');
+                    fileInputs.forEach(input => {
+                        const index = input.dataset.index;
+                        input.name = 'variant_image_' + index;
+                    });
+                });
+            </script>
 
             <button type="submit" style="
                 width: 100%;
