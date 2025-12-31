@@ -21,16 +21,11 @@
         <!-- Filter & Search Bar -->
         <div class="filter-bar">
             <div class="status-filters">
-                <a href="{{ url_for('admin_orders', status='All') }}"
-                    class="filter-btn {% if not current_status or current_status == 'All' %}active{% endif %}">全部</a>
-                <a href="{{ url_for('admin_orders', status='Pending') }}"
-                    class="filter-btn {% if current_status == 'Pending' %}active{% endif %}">待確認</a>
-                <a href="{{ url_for('admin_orders', status='Processing') }}"
-                    class="filter-btn {% if current_status == 'Processing' %}active{% endif %}">製作中</a>
-                <a href="{{ url_for('admin_orders', status='Completed') }}"
-                    class="filter-btn {% if current_status == 'Completed' %}active{% endif %}">已完成</a>
-                <a href="{{ url_for('admin_orders', status='Cancelled') }}"
-                    class="filter-btn {% if current_status == 'Cancelled' %}active{% endif %}">已取消</a>
+                <button onclick="filterOrders('All')" class="filter-btn active" id="btn-All">全部</button>
+                <button onclick="filterOrders('Pending')" class="filter-btn" id="btn-Pending">待確認</button>
+                <button onclick="filterOrders('Processing')" class="filter-btn" id="btn-Processing">製作中</button>
+                <button onclick="filterOrders('Completed')" class="filter-btn" id="btn-Completed">已完成</button>
+                <button onclick="filterOrders('Cancelled')" class="filter-btn" id="btn-Cancelled">已取消</button>
             </div>
 
             <form action="{{ url_for('admin_orders') }}" method="GET" class="search-form">
@@ -54,7 +49,7 @@
                     </thead>
                     <tbody>
                         {% for order in orders %}
-                        <tr>
+                        <tr class="order-row" data-status="{{ order.status }}">
                             <td>#{{ order.id }}</td>
                             <td>
                                 {{ order.name }}
@@ -143,6 +138,37 @@
             row.style.display = 'none';
         }
     }
+
+    function filterOrders(status) {
+        // 1. Update Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('btn-' + status).classList.add('active');
+
+        // 2. Filter Rows
+        const rows = document.querySelectorAll('.order-row');
+        rows.forEach(row => {
+            if (status === 'All' || row.dataset.status === status) {
+                row.style.display = 'table-row';
+            } else {
+                row.style.display = 'none';
+                // Also hide details row if open
+                const nextRow = row.nextElementSibling;
+                if (nextRow && nextRow.classList.contains('details-row')) {
+                    nextRow.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // Initial Filter Support (Optional, if deep linking needed in future)
+    // currently defaults to 'All' via HTML, but checks URL param just in case
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const status = urlParams.get('status');
+        if (status) {
+            filterOrders(status);
+        }
+    });
 </script>
 
 <style>

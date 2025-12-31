@@ -305,8 +305,10 @@ def admin_orders():
     query = Order.query
     
     # Apply Status Filter
-    if status_filter and status_filter != 'All':
-        query = query.filter_by(status=status_filter)
+    # NOTE: We now fetch ALL orders to allow instant client-side filtering. 
+    # The status_filter variable is still passed to set the initial active tab.
+    # if status_filter and status_filter != 'All':
+    #    query = query.filter_by(status=status_filter)
         
     # Apply Search
     if search_query:
