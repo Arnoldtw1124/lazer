@@ -113,7 +113,7 @@
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     {% for variant in product.variants %}
                     <button class="variant-btn" data-spec="{{ variant.spec_text }}" data-price="{{ variant.price }}"
-                        onclick="changeVariant(this, '{{ variant.image }}', '{{ variant.name }}', '{{ variant.price }}')"
+                        onclick="changeVariant(this, '{{ variant.image }}', '{{ variant.name }}', '{{ variant.price }}', '{{ variant.is_out_of_stock }}')"
                         style="
                             padding: 0.5rem 1.5rem; 
                             border: 1px solid var(--secondary-color); 
@@ -123,8 +123,14 @@
                             cursor: pointer;
                             transition: all 0.3s;
                             font-family: inherit;
+                            {% if variant.is_out_of_stock %}
+                            opacity: 0.5;
+                            border-color: #666;
+                            color: #aaa;
+                            text-decoration: line-through;
+                            {% endif %}
                         ">
-                        {{ variant.name }}
+                        {{ variant.name }} {% if variant.is_out_of_stock %}(缺貨){% endif %}
                     </button>
                     {% endfor %}
                 </div>
@@ -150,7 +156,7 @@
                 const defaultPrice = "{{ product.price }}";
                 let currentVariant = null;
 
-                function changeVariant(btn, imageName, variantName, variantPrice) {
+                function changeVariant(btn, imageName, variantName, variantPrice, isOos) {
                     const imgElement = document.querySelector('.img-display');
                     const priceElement = document.getElementById('product-price');
                     const targetSpec = btn.getAttribute('data-spec');
@@ -180,7 +186,13 @@
                         });
 
                         // Reset Booking Link
+                        // Reset Booking Link and Style
                         bookingBtn.href = baseUrl;
+                        bookingBtn.classList.remove('disabled');
+                        bookingBtn.style.pointerEvents = 'auto';
+                        bookingBtn.innerText = '立即預約此產品';
+                        bookingBtn.style.background = 'var(--primary-color)';
+                        bookingBtn.style.color = 'white';
 
                         return;
                     }
@@ -206,66 +218,92 @@
                         b.style.color = 'white';
                         b.style.borderColor = 'var(--secondary-color)';
                         b.style.boxShadow = 'none';
-                    });
+                        // Update UI Buttons: Reset others, Highlight selected
+                        document.querySelectorAll('.variant-btn').forEach(b => {
+                            b.style.background = 'rgba(0,0,0,0.3)';
+                            b.style.color = 'white';
+                            // Keep the strikethrough/gray if OOS
+                            if (b.innerText.includes('(缺貨)')) {
+                                b.style.color = '#aaa';
+                                b.style.borderColor = '#666';
+                            } else {
+                                b.style.borderColor = 'var(--secondary-color)';
+                            }
+                            b.style.boxShadow = 'none';
+                        });
 
-                    // Apply Active Style
-                    btn.style.background = 'var(--secondary-color)';
-                    btn.style.color = 'black';
-                    btn.style.boxShadow = '0 0 10px var(--secondary-color)';
+                        // Apply Active Style
+                        btn.style.background = 'var(--secondary-color)';
+                        btn.style.color = 'black';
+                        btn.style.boxShadow = '0 0 10px var(--secondary-color)';
 
-                    // Update Specs: Show Common (Index 0) + Target Spec
-                    listItems.forEach((li, index) => {
-                        // Always show the first item (Common spec)
-                        if (index === 0) {
-                            li.style.display = 'flex';
-                            return;
-                        }
+                        // Update Specs: Show Common (Index 0) + Target Spec
+                        listItems.forEach((li, index) => {
+                            // Always show the first item (Common spec)
+                            if (index === 0) {
+                                li.style.display = 'flex';
+                                return;
+                            }
 
-                        // For others, check if it matches the target spec
-                        const text = li.getAttribute('data-original-text');
-                        if (text === targetSpec) {
-                            li.style.display = 'flex';
+                            // For others, check if it matches the target spec
+                            const text = li.getAttribute('data-original-text');
+                            if (text === targetSpec) {
+                                li.style.display = 'flex';
+                            } else {
+                                li.style.display = 'none';
+                            }
+                        });
+
+                        // Update Booking Link
+                        // Update Booking Link & Check OOS
+                        updateBookingLink();
+
+                        if (isOos === 'True' || isOos === 'true' || isOos === true) {
+                            bookingBtn.classList.add('disabled');
+                            bookingBtn.style.pointerEvents = 'none';
+                            bookingBtn.style.background = '#555';
+                            bookingBtn.innerText = '此樣式缺貨 (Sold Out)';
+                            bookingBtn.href = 'javascript:void(0)';
                         } else {
-                            li.style.display = 'none';
+                            bookingBtn.classList.remove('disabled');
+                            bookingBtn.style.pointerEvents = 'auto';
+                            bookingBtn.style.background = 'var(--primary-color)';
+                            bookingBtn.innerText = '立即預約此產品';
                         }
-                    });
-
-                    // Update Booking Link
-                    updateBookingLink();
-                }
+                    }
 
                 function updateBookingLink() {
-                    const bookingBtn = document.getElementById('booking-btn');
-                    const baseUrl = "{{ url_for('booking') }}?product={{ product.name }}";
-                    let finalUrl = baseUrl;
+                            const bookingBtn = document.getElementById('booking-btn');
+                            const baseUrl = "{{ url_for('booking') }}?product={{ product.name }}";
+                            let finalUrl = baseUrl;
 
-                    // Append Variant
-                    if (currentVariant) {
-                        finalUrl += "&variant=" + encodeURIComponent(currentVariant);
-                    }
+                            // Append Variant
+                            if (currentVariant) {
+                                finalUrl += "&variant=" + encodeURIComponent(currentVariant);
+                            }
 
-                    // Append Addons
-                    const selectedAddons = [];
-                    document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
-                        selectedAddons.push(cb.value);
-                    });
+                            // Append Addons
+                            const selectedAddons = [];
+                            document.querySelectorAll('.addon-checkbox:checked').forEach(cb => {
+                                selectedAddons.push(cb.value);
+                            });
 
-                    if (selectedAddons.length > 0) {
-                        // Pass addons as a generic note or a specific param if booking supports it.
-                        // Ideally, we pass it as 'notes' preamble or a new param.
-                        // Let's pass it as 'addons' param
-                        finalUrl += "&addons=" + encodeURIComponent(selectedAddons.join(', '));
-                    }
+                            if (selectedAddons.length > 0) {
+                                // Pass addons as a generic note or a specific param if booking supports it.
+                                // Ideally, we pass it as 'notes' preamble or a new param.
+                                // Let's pass it as 'addons' param
+                                finalUrl += "&addons=" + encodeURIComponent(selectedAddons.join(', '));
+                            }
 
-                    bookingBtn.href = finalUrl;
-                }
+                            bookingBtn.href = finalUrl;
+                        }
 
                 // Add event listeners for addons
                 document.addEventListener('DOMContentLoaded', () => {
-                    document.querySelectorAll('.addon-checkbox').forEach(cb => {
-                        cb.addEventListener('change', updateBookingLink);
-                    });
-                });
+                            document.querySelectorAll('.addon-checkbox').forEach(cb => {
+                                cb.addEventListener('change', updateBookingLink);
+                            });
+                        });
             </script>
 
             {% if product.is_out_of_stock %}
