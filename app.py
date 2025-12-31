@@ -6,10 +6,14 @@ from flask import Flask, render_template, request, flash, redirect, url_for, ses
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+from flask_wtf.csrf import CSRFProtect
+from functools import wraps
 
 load_dotenv() # Load environment variables from .env file
 
 app = Flask(__name__)
+csrf = CSRFProtect(app) # Initialize CSRF Protection
+
 app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key') # Use env var or default
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
@@ -17,6 +21,22 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///orders_v2.db' # Local SQLite 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+# Security & Utils
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'pdf', 'ai', 'cdr', 'svg'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Login Required Decorator
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('logged_in'):
+            return redirect(url_for('admin_login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 # Database Model
 class Order(db.Model):
@@ -90,9 +110,8 @@ def inject_site_config():
 
 # Route: Admin Marketing (Marquee Settings)
 @app.route('/admin/marketing', methods=['GET', 'POST'])
+@login_required
 def admin_marketing():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     if request.method == 'POST':
         marquee_text = request.form.get('marquee_text')
@@ -156,9 +175,8 @@ def admin_logout():
 
 # Route: Admin Dashboard (Protected)
 @app.route('/admin')
+@login_required
 def admin_dashboard():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     # Get all orders ordered by date (newest first)
     try:
@@ -183,16 +201,14 @@ def admin_dashboard():
 
 # Route: Admin Data Center (Page)
 @app.route('/admin/data')
+@login_required
 def admin_data():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     return render_template('admin_data.html')
 
 # Route: Admin Stats API (JSON)
 @app.route('/admin/api/stats')
+@login_required
 def admin_stats_api():
-    if not session.get('logged_in'):
-        return {"error": "Unauthorized"}, 401
     
     # 1. Status Distribution
     orders = Order.query.all()
@@ -245,9 +261,8 @@ def internal_error(error):
 
 # Route: Update Order Status
 @app.route('/admin/update_status/<int:order_id>', methods=['POST'])
+@login_required
 def update_status(order_id):
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
         
     order = Order.query.get_or_404(order_id)
     new_status = request.form.get('status')
@@ -265,9 +280,8 @@ def update_status(order_id):
 
 # Route: Admin Orders Management
 @app.route('/admin/orders')
+@login_required
 def admin_orders():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     status_filter = request.args.get('status')
     search_query = request.args.get('search', '').strip()
@@ -299,9 +313,8 @@ def admin_orders():
 
 # Route: Delete Order
 @app.route('/admin/delete_order/<int:order_id>', methods=['POST'])
+@login_required
 def delete_order(order_id):
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
         
     order = Order.query.get_or_404(order_id)
     db.session.delete(order)
@@ -324,17 +337,15 @@ def delete_order(order_id):
 
 # Route: Admin Product List
 @app.route('/admin/products')
+@login_required
 def admin_products():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     products = Product.query.order_by(Product.sort_order).all()
     return render_template('admin_products.html', products=products)
 
 # Route: Admin Add Product
 @app.route('/admin/products/new', methods=['GET', 'POST'])
+@login_required
 def admin_product_new():
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     if request.method == 'POST':
         try:
@@ -370,9 +381,8 @@ def admin_product_new():
 
 # Route: Admin Edit Product
 @app.route('/admin/products/edit/<product_id>', methods=['GET', 'POST'])
+@login_required
 def admin_product_edit(product_id):
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     product = Product.query.get_or_404(product_id)
     
@@ -405,9 +415,8 @@ def admin_product_edit(product_id):
 
 # Route: Admin Delete Product
 @app.route('/admin/products/delete/<product_id>', methods=['POST'])
+@login_required
 def admin_product_delete(product_id):
-    if not session.get('logged_in'):
-        return redirect(url_for('admin_login'))
     
     product = Product.query.get_or_404(product_id)
     db.session.delete(product)
@@ -430,6 +439,10 @@ def booking():
         db_filename = None # For DB
 
         if file and file.filename:
+            if not allowed_file(file.filename):
+                flash('不支援的檔案格式。請上傳圖片 (png, jpg) 或設計檔 (ai, pdf, cdr)。', 'error')
+                return redirect(url_for('booking'))
+                
             filename = secure_filename(file.filename)
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)

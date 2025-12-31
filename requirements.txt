@@ -3,3 +3,4 @@ requests
 gunicorn
 Flask-SQLAlchemy
 python-dotenv
+Flask-WTF

@@ -43,6 +43,7 @@
 
         <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-color);">預約雷雕服務</h2>
         <form method="POST" action="{{ url_for('booking') }}" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="form-group">
                 <label for="name">暱稱 (Nickname)</label>
                 <input type="text" id="name" name="name" required placeholder="請輸入您的稱呼"

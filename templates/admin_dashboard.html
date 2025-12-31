@@ -111,6 +111,7 @@
                             </td>
                             <td style="padding: 1rem;">
                                 <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <select name="status" onchange="this.form.submit()"
                                         class="status-select status-{{ order.status|lower }}">
                                         <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠
@@ -127,6 +128,7 @@
                             <td style="padding: 1rem; text-align: right;">
                                 <form action="{{ url_for('delete_order', order_id=order.id) }}" method="POST"
                                     style="display: inline;" onsubmit="return confirm('確定要刪除訂單 #{{ order.id }} 嗎？');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit"
                                         style="background: transparent; border: none; color: #444; cursor: pointer; transition: color 0.3s;"
                                         onmouseover="this.style.color='#ff4757'" onmouseout="this.style.color='#444'">

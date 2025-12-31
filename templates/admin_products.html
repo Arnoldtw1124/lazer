@@ -104,6 +104,7 @@
                                 <form action="{{ url_for('admin_product_delete', product_id=product.id) }}"
                                     method="POST" style="display: inline;"
                                     onsubmit="return confirm('確定要刪除商品 {{ product.name }} 嗎？');">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" style="
                                         background: transparent; 
                                         border: none;

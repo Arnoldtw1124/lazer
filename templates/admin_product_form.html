@@ -16,6 +16,7 @@
 
         <form method="POST" enctype="multipart/form-data"
             style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                 <!-- ID -->
