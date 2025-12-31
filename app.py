@@ -592,43 +592,7 @@ def admin_product_toggle_recommend(product_id):
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
-@app.route('/admin/product/toggle_stock/<product_id>', methods=['POST'])
-@login_required
-def admin_product_toggle_stock(product_id):
-    try:
-        product = Product.query.get(product_id)
-        if not product:
-            return jsonify({'success': False, 'message': 'Product not found'}), 404
-            
-        # Toggle Stock Logic
-        product.is_out_of_stock = not product.is_out_of_stock
-        db.session.commit()
-        
-        return jsonify({'success': True, 'is_out_of_stock': product.is_out_of_stock})
-    except Exception as e:
-        return jsonify({'success': False, 'message': str(e)}), 500
 
-@app.route('/admin/product/toggle_visibility/<product_id>', methods=['POST'])
-@login_required
-def admin_product_toggle_visibility(product_id):
-    try:
-        product = Product.query.get(product_id)
-        if not product:
-            return jsonify({'success': False, 'message': 'Product not found'}), 404
-            
-        # Toggle Visibility
-        old_status = product.is_visible
-        print(f"DEBUG: Toggle Visibility for ID {product_id}. Old: {old_status} (Type: {type(old_status)})")
-        
-        product.is_visible = not bool(old_status) # Force boolean toggle
-        db.session.commit()
-        
-        print(f"DEBUG: New Visibility: {product.is_visible}")
-        
-        return jsonify({'success': True, 'is_visible': product.is_visible})
-    except Exception as e:
-        print(f"DEBUG: Error toggling visibility: {e}")
-        return jsonify({'success': False, 'message': str(e)}), 500
 
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
