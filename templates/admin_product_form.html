@@ -101,7 +101,8 @@
                         style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
                         <span
                             style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
-                        <input type="text" name="price" value="{{ product.price if product else '' }}" required
+                        <input type="text" name="price"
+                            value="{{ (product.price or '') | replace('NT$ ', '') | replace('NT$', '') }}" required
                             placeholder="100"
                             style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
                     </div>
@@ -112,7 +113,8 @@
                         style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
                         <span
                             style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
-                        <input type="text" name="original_price" value="{{ product.original_price if product else '' }}"
+                        <input type="text" name="original_price"
+                            value="{{ (product.original_price or '') | replace('NT$ ', '') | replace('NT$', '') }}"
                             placeholder="200"
                             style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
                     </div>
