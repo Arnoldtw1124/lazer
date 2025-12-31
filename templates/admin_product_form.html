@@ -99,18 +99,140 @@
             <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
                 <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">進階設定 (JSON 格式)</h4>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">規格 (Specs)</label>
-                    <textarea name="specs" rows="3" placeholder='["規格1", "規格2"]'
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: #a29bfe; font-family: monospace; border-radius: 5px;">{{ product.specs if product else '' }}</textarea>
+                <!-- Visual Spec Builder -->
+                <div style="margin-bottom: 2rem;">
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品規格 (Specifications)</label>
+                    <div id="specs-container"></div>
+                    <button type="button" onclick="addSpec()"
+                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 5px;">+
+                        新增規格</button>
+                    <input type="hidden" name="specs" id="specs-input">
                 </div>
 
-                <div style="margin-bottom: 1rem;">
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">款式 (Variants)</label>
-                    <textarea name="variants" rows="3"
-                        placeholder='[{"name": "款名", "image": "img.png", "spec_text": "描述"}]'
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: #a29bfe; font-family: monospace; border-radius: 5px;">{{ product.variants if product else '' }}</textarea>
+                <!-- Visual Variant Builder -->
+                <div style="margin-bottom: 2rem;">
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">款式變體 (Variants)</label>
+
+                    <div style="overflow-x: auto;">
+                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                            <thead>
+                                <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
+                                    <th style="padding: 10px; text-align: left;">款式名稱</th>
+                                    <th style="padding: 10px; text-align: left;">規格描述</th>
+                                    <th style="padding: 10px; text-align: left;">圖片</th>
+                                    <th style="padding: 10px; width: 50px;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="variants-container">
+                                <!-- Rows will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" onclick="addVariant()"
+                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
+                        新增款式</button>
+                    <input type="hidden" name="variants" id="variants-input">
                 </div>
+
+                <script>
+                    // Initial Data
+                    let specsData = {{ product.specs | safe if product and product.specs else '[]' }};
+                    let variantsData = {{ product.variants | safe if product and product.variants else '[]' }};
+
+                    const specsContainer = document.getElementById('specs-container');
+                    const variantsContainer = document.getElementById('variants-container');
+
+                    // Render Specs
+                    function renderSpecs() {
+                        specsContainer.innerHTML = '';
+                        specsData.forEach((spec, index) => {
+                            const div = document.createElement('div');
+                            div.style.marginBottom = '5px';
+                            div.style.display = 'flex';
+                            div.style.gap = '10px';
+                            div.innerHTML = `
+                                <input type="text" value="${spec}" onchange="updateSpec(${index}, this.value)" placeholder="例如：尺寸：10cm" style="flex:1; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                                <button type="button" onclick="removeSpec(${index})" style="background: #e74c3c; color: white; border: none; padding: 0 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                            `;
+                            specsContainer.appendChild(div);
+                        });
+                    }
+
+                    function addSpec() {
+                        specsData.push('');
+                        renderSpecs();
+                    }
+
+                    function removeSpec(index) {
+                        specsData.splice(index, 1);
+                        renderSpecs();
+                    }
+
+                    function updateSpec(index, value) {
+                        specsData[index] = value;
+                    }
+
+                    // Render Variants
+                    function renderVariants() {
+                        variantsContainer.innerHTML = '';
+                        variantsData.forEach((variant, index) => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td style="padding: 5px;">
+                                    <input type="text" value="${variant.name || ''}" onchange="updateVariant(${index}, 'name', this.value)" placeholder="款式名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                                </td>
+                                <td style="padding: 5px;">
+                                    <input type="text" value="${variant.spec_text || ''}" onchange="updateVariant(${index}, 'spec_text', this.value)" placeholder="對應規格" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                                </td>
+                                <td style="padding: 5px;">
+                                    ${variant.image ? `<div style="margin-bottom:5px;"><img src="/static/uploads/${variant.image}" height="40" style="vertical-align:middle; margin-right:5px;"></div>` : ''}
+                                    <input type="file" class="variant-file-input" data-index="${index}" style="color: #aaa; font-size: 0.9em;">
+                                    <input type="hidden" value="${variant.image || ''}"> <!-- Keep existing image -->
+                                </td>
+                                <td style="padding: 5px; text-align: center;">
+                                    <button type="button" onclick="removeVariant(${index})" style="background: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">🗑️</button>
+                                </td>
+                            `;
+                            variantsContainer.appendChild(tr);
+                        });
+                    }
+
+                    function addVariant() {
+                        variantsData.push({ name: '', image: '', spec_text: '' });
+                        renderVariants();
+                    }
+
+                    function removeVariant(index) {
+                        variantsData.splice(index, 1);
+                        renderVariants();
+                    }
+
+                    function updateVariant(index, key, value) {
+                        variantsData[index][key] = value;
+                    }
+
+                    // Initialize
+                    renderSpecs();
+                    renderVariants();
+
+                    // Form Submit Handler
+                    document.querySelector('form').addEventListener('submit', function (e) {
+                        // 1. Serialize Specs
+                        document.getElementById('specs-input').value = JSON.stringify(specsData.filter(s => s.trim() !== ''));
+
+                        // 2. Serialize Variants (Text Data)
+                        // Note: New images are handled by file inputs. Existing images are preserved in variantsData.
+                        // We will allow the backend to merge them.
+                        document.getElementById('variants-input').value = JSON.stringify(variantsData);
+
+                        // 3. Rename File Inputs to match index order (variant_image_0, variant_image_1...)
+                        const fileInputs = document.querySelectorAll('.variant-file-input');
+                        fileInputs.forEach(input => {
+                            const index = input.dataset.index;
+                            input.name = 'variant_image_' + index;
+                        });
+                    });
+                </script>
 
                 <div>
                     <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">加購項 (Add-ons)</label>

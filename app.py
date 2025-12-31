@@ -357,6 +357,19 @@ def admin_product_new():
             else:
                 filename = 'default_product.jpg' # Fallback
 
+            # Process Variants Image Uploads
+            raw_variants = request.form.get('variants')
+            variants_list = json.loads(raw_variants) if raw_variants else []
+            
+            for i, variant in enumerate(variants_list):
+                # Check for uploaded file with key 'variant_image_0', 'variant_image_1', etc.
+                v_file = request.files.get(f'variant_image_{i}')
+                if v_file and v_file.filename:
+                    v_filename = secure_filename(v_file.filename)
+                    v_file.save(os.path.join(app.config['UPLOAD_FOLDER'], v_filename))
+                    variant['image'] = v_filename
+                # Use existing image if no new file is uploaded (already in JSON from frontend)
+
             new_product = Product(
                 id=request.form.get('id'),
                 name=request.form.get('name'),
@@ -365,9 +378,9 @@ def admin_product_new():
                 discount_label=request.form.get('discount_label'),
                 desc=request.form.get('desc'),
                 image=filename,
-                specs=request.form.get('specs'), # Expecting JSON string from form
-                variants=request.form.get('variants'), # Expecting JSON string from form
-                addons=request.form.get('addons'), # Expecting JSON string from form
+                specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
+                variants=json.dumps(variants_list), # Processed list back to JSON string
+                addons=request.form.get('addons'),
                 sort_order=int(request.form.get('sort_order', 0))
             )
             db.session.add(new_product)
@@ -395,13 +408,24 @@ def admin_product_edit(product_id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 product.image = filename # Update image only if new file uploaded
 
+            # Process Variants Image Uploads
+            raw_variants = request.form.get('variants')
+            variants_list = json.loads(raw_variants) if raw_variants else []
+            
+            for i, variant in enumerate(variants_list):
+                v_file = request.files.get(f'variant_image_{i}')
+                if v_file and v_file.filename:
+                    v_filename = secure_filename(v_file.filename)
+                    v_file.save(os.path.join(app.config['UPLOAD_FOLDER'], v_filename))
+                    variant['image'] = v_filename
+
             product.name = request.form.get('name')
             product.price = request.form.get('price')
             product.original_price = request.form.get('original_price')
             product.discount_label = request.form.get('discount_label')
             product.desc = request.form.get('desc')
             product.specs = request.form.get('specs')
-            product.variants = request.form.get('variants')
+            product.variants = json.dumps(variants_list) # Save processed list
             product.addons = request.form.get('addons')
             product.sort_order = int(request.form.get('sort_order', 0))
             
@@ -410,7 +434,7 @@ def admin_product_edit(product_id):
             return redirect(url_for('admin_products'))
         except Exception as e:
             flash(f'更新失敗：{str(e)}', 'admin_error')
-
+ 
     return render_template('admin_product_form.html', product=product)
 
 # Route: Admin Delete Product
