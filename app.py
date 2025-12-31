@@ -121,7 +121,12 @@ def admin_dashboard():
     
     # Get all orders ordered by date (newest first)
     orders = Order.query.order_by(Order.date.desc()).all()
-    return render_template('admin_dashboard.html', orders=orders)
+    
+    # Stats for V2 Dashboard
+    product_count = Product.query.count()
+    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
+    return render_template('admin_dashboard.html', orders=orders, product_count=product_count, now_time=now_time)
 
 # Route: Update Order Status
 @app.route('/admin/update_status/<int:order_id>', methods=['POST'])
