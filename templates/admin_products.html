@@ -141,17 +141,23 @@
         const star = document.getElementById('star-' + productId);
 
         // Optimistic UI update (Instant feedback)
-        const isCurrentlyOn = star.style.color === 'rgb(241, 196, 15)'; // #f1c40f
-
-        // Prepare CSRF
-        const formData = new FormData();
-        formData.append('csrf_token', "{{ csrf_token() }}");
+        // const isCurrentlyOn = star.style.color === 'rgb(241, 196, 15)'; 
 
         fetch(`/admin/product/toggle_recommend/${productId}`, {
             method: 'POST',
-            body: formData
+            headers: {
+                'X-CSRFToken': "{{ csrf_token() }}",
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
         })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    // If response is not 200 OK (e.g., 400 Bad Request / CSRF Error)
+                    throw new Error('Network response was not ok (' + response.status + ')');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     // Update UI based on server response (Source of Truth)
@@ -163,12 +169,12 @@
                         star.style.transform = 'scale(1)';
                     }
                 } else {
-                    alert('操作失敗: ' + data.message);
+                    alert('操作失敗: ' + (data.message || '未知錯誤'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('發生錯誤，請稍後再試');
+                alert('發生錯誤: ' + error.message + '\n請重新整理頁面再試。');
             });
     }
 
