@@ -18,241 +18,296 @@
             style="background: rgba(255,255,255,0.05); padding: 2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1);">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+            <!-- Styles -->
+            <style>
+                .admin-section {
+                    background: rgba(255, 255, 255, 0.05);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 8px;
+                    padding: 25px;
+                    margin-bottom: 25px;
+                }
+
+                .admin-section h3 {
+                    color: var(--secondary-color);
+                    margin-bottom: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                    font-size: 1.2rem;
+                }
+
+                .form-grid {
+                    display: grid;
+                    grid-template-columns: 140px 1fr;
+                    gap: 20px;
+                    margin-bottom: 20px;
+                    align-items: start;
+                }
+
+                .form-label {
+                    text-align: right;
+                    color: #aaa;
+                    padding-top: 10px;
+                    font-weight: bold;
+                }
+
+                .form-label span.required {
+                    color: #e74c3c;
+                    margin-left: 4px;
+                }
+
+                /* Switch CSS */
+                .switch {
+                    position: relative;
+                    display: inline-block;
+                    width: 50px;
+                    height: 24px;
+                }
+
+                .switch input {
+                    display: none;
+                }
+
+                .slider {
+                    position: absolute;
+                    cursor: pointer;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background-color: #333;
+                    transition: .4s;
+                    border-radius: 34px;
+                }
+
+                .slider:before {
+                    position: absolute;
+                    content: "";
+                    height: 16px;
+                    width: 16px;
+                    left: 4px;
+                    bottom: 4px;
+                    background-color: white;
+                    transition: .4s;
+                    border-radius: 50%;
+                }
+
+                input:checked+.slider {
+                    background-color: var(--secondary-color);
+                }
+
+                input:checked+.slider.red-slider {
+                    background-color: #e74c3c;
+                }
+
+                input:checked+.slider:before {
+                    transform: translateX(26px);
+                }
+            </style>
+
+            <!-- Section: Basic Settings -->
+            <div class="admin-section">
+                <h3>基本設定 (Basic Info)</h3>
+
+                <!-- Image -->
+                <div class="form-grid">
+                    <div class="form-label">商品圖片 <span class="required">*</span></div>
+                    <div>
+                        {% if product and product.image %}
+                        <div style="margin-bottom: 10px;">
+                            <img id="preview-image" src="{{ url_for('static', filename='images/' + product.image) }}"
+                                data-fallback="{{ url_for('static', filename='uploads/' + (product.image if product else 'default_product.jpg')) }}"
+                                style="max-width: 150px; border-radius: 5px; border: 1px solid #444;">
+                            <script>
+                                document.getElementById('preview-image').addEventListener('error', function () {
+                                    if (this.dataset.failed) return;
+                                    this.dataset.failed = true;
+                                    this.src = this.getAttribute('data-fallback');
+                                });
+                            </script>
+                        </div>
+                        {% endif %}
+                        <input type="file" name="image" accept="image/*" class="file-input"
+                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                        {% if not product %}
+                        <small style="color: #e74c3c; display:block; margin-top:5px;">* 必須上傳圖片</small>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Name -->
+                <div class="form-grid">
+                    <div class="form-label">商品名稱 <span class="required">*</span></div>
+                    <div>
+                        <input type="text" name="name" value="{{ product.name if product else '' }}" required
+                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                    </div>
+                </div>
+
                 <!-- ID -->
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品代號 (ID)*</label>
-                    <input type="text" name="id" value="{{ product.id if product else '' }}" required
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;"
-                        {% if product %}readonly{% endif %}>
-                    <small style="color: #666;">唯一識別碼，不可重複 (例: keychain)</small>
-                </div>
-
-                <!-- Recommended Toggle (Mapped to sort_order) -->
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">本期推薦 (Featured)</label>
-                    <label class="switch">
-                        <input type="checkbox" name="is_recommended" {% if product and product.sort_order> 0 %}checked{%
-                        endif %}>
-                        <span class="slider round"></span>
-                    </label>
-                    <small style="color: #666; display: block; margin-top: 5px;">開啟後將顯示於首頁「本期推薦」區塊 (最多 3 項)</small>
-                </div>
-
-                <!-- Out of Stock Toggle -->
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">暫時缺貨 (Out of Stock)</label>
-                    <label class="switch">
-                        <input type="checkbox" name="is_out_of_stock" {% if product and product.is_out_of_stock
-                            %}checked{% endif %}>
-                        <span class="slider round red-slider"></span>
-                    </label>
-                    <small style="color: #666; display: block; margin-top: 5px;">開啟後前台將顯示「補貨中」並無法預約</small>
-                </div>
-
-                <!-- Visibility Toggle -->
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">是否上架 (Product Visibility)</label>
-                    <label class="switch">
-                        <input type="checkbox" name="is_visible" {% if not product or product.is_visible %}checked{%
-                            endif %}>
-                        <span class="slider round green-slider"></span>
-                    </label>
-                    <small style="color: #666; display: block; margin-top: 5px;">關閉後前台將完全隱藏此商品 (不會刪除)</small>
-                </div>
-
-                <style>
-                    /* Toggle Switch CSS */
-                    .switch {
-                        position: relative;
-                        display: inline-block;
-                        width: 50px;
-                        height: 24px;
-                    }
-
-                    .switch input {
-                        display: none;
-                    }
-
-                    .slider {
-                        position: absolute;
-                        cursor: pointer;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background-color: #333;
-                        transition: .4s;
-                        border-radius: 34px;
-                    }
-
-                    .slider:before {
-                        position: absolute;
-                        content: "";
-                        height: 16px;
-                        width: 16px;
-                        left: 4px;
-                        bottom: 4px;
-                        background-color: white;
-                        transition: .4s;
-                        border-radius: 50%;
-                    }
-
-                    input:checked+.slider {
-                        background-color: var(--secondary-color);
-                    }
-
-                    input:checked+.slider.red-slider {
-                        background-color: #e74c3c;
-                        /* Red */
-                    }
-
-                    input:checked+.slider.green-slider {
-                        background-color: #2ecc71;
-                    }
-
-                    input:checked+.slider:before {
-                        transform: translateX(26px);
-                    }
-                </style>
-            </div>
-
-            <!-- Name -->
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品名稱*</label>
-                <input type="text" name="name" value="{{ product.name if product else '' }}" required
-                    style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-            </div>
-
-            <!-- Pricing -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">售價*</label>
-                    <div
-                        style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
-                        <span
-                            style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
-                        <input type="text" name="price"
-                            value="{{ (product.price or '') | replace('NT$ ', '') | replace('NT$', '') }}" required
-                            placeholder="100"
-                            style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+                <div class="form-grid">
+                    <div class="form-label">商品代號 (ID) <span class="required">*</span></div>
+                    <div>
+                        <input type="text" name="id" value="{{ product.id if product else '' }}" required
+                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;"
+                            {% if product %}readonly{% endif %}>
+                        <small style="color: #666; display: block; margin-top: 5px;">唯一識別碼 (例: keychain)</small>
                     </div>
                 </div>
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">原價 (選填)</label>
-                    <div
-                        style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
-                        <span
-                            style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
-                        <input type="text" name="original_price"
-                            value="{{ (product.original_price or '') | replace('NT$ ', '') | replace('NT$', '') }}"
-                            placeholder="200"
-                            style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+
+                <!-- Desc -->
+                <div class="form-grid">
+                    <div class="form-label">商品描述 <span class="required">*</span></div>
+                    <div>
+                        <textarea name="desc" rows="5" required
+                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">{{ product.desc if product else '' }}</textarea>
                     </div>
                 </div>
-                <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">優惠標籤 (選填)</label>
-                    <input type="text" name="discount_label" value="{{ product.discount_label if product else '' }}"
-                        placeholder="早鳥優惠"
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+            </div>
+
+            <!-- Section: Sales Settings -->
+            <div class="admin-section">
+                <h3>銷售設定 (Sales Info)</h3>
+
+                <!-- Pricing Row -->
+                <div class="form-grid">
+                    <div class="form-label">價格設定 <span class="required">*</span></div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <!-- Price -->
+                        <div
+                            style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                            <span
+                                style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">售價
+                                $</span>
+                            <input type="text" name="price"
+                                value="{{ (product.price or '') | replace('NT$ ', '') | replace('NT$', '') }}" required
+                                placeholder="100"
+                                style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+                        </div>
+                        <!-- Original Price -->
+                        <div
+                            style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                            <span
+                                style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">原價
+                                $</span>
+                            <input type="text" name="original_price"
+                                value="{{ (product.original_price or '') | replace('NT$ ', '') | replace('NT$', '') }}"
+                                placeholder="200"
+                                style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discount Label -->
+                <div class="form-grid">
+                    <div class="form-label">優惠標籤</div>
+                    <div>
+                        <input type="text" name="discount_label" value="{{ product.discount_label if product else '' }}"
+                            placeholder="例: 早鳥優惠"
+                            style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                    </div>
+                </div>
+
+                <!-- Status Toggles (Moved from Top) -->
+                <div class="form-grid">
+                    <div class="form-label">商品狀態</div>
+                    <div style="display: flex; gap: 30px;">
+                        <!-- Out of Stock -->
+                        <div>
+                            <label class="switch">
+                                <input type="checkbox" name="is_out_of_stock" {% if product and product.is_out_of_stock
+                                    %}checked{% endif %}>
+                                <span class="slider round red-slider"></span>
+                            </label>
+                            <span style="margin-left: 10px; color: #aaa;">顯示為「補貨中」</span>
+                        </div>
+                        <!-- Recommended -->
+                        <div>
+                            <label class="switch">
+                                <input type="checkbox" name="is_recommended" {% if product and product.sort_order> 0
+                                %}checked{% endif %}>
+                                <span class="slider round"></span>
+                            </label>
+                            <span style="margin-left: 10px; color: #aaa;">設為「本期推薦」</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Description -->
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品描述*</label>
-                <textarea name="desc" rows="4" required
-                    style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">{{ product.desc if product else '' }}</textarea>
-            </div>
-
-            <!-- Image -->
-            <div style="margin-bottom: 1.5rem;">
-                <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品圖片</label>
-                {% if product and product.image %}
-                <div style="margin-bottom: 0.5rem;">
-                    <img id="preview-image" src="{{ url_for('static', filename='images/' + product.image) }}"
-                        data-fallback="{{ url_for('static', filename='uploads/' + (product.image if product else 'default_product.jpg')) }}"
-                        style="max-width: 200px; height: auto; border-radius: 5px; border: 1px solid #333;">
-                    <script>
-                        document.getElementById('preview-image').addEventListener('error', function () {
-                            if (this.dataset.failed) return;
-                            this.dataset.failed = true;
-                            this.src = this.getAttribute('data-fallback');
-                        });
-                    </script>
-                </div>
-                {% endif %}
-                <input type="file" name="image" accept="image/*"
-                    style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
-                {% if not product %}
-                <small style="color: #e74c3c;">* 新增商品時必須上傳圖片</small>
-                {% endif %}
-            </div>
-
-            <!-- JSON Fields -->
-            <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 5px; margin-bottom: 1.5rem;">
-                <h4 style="color: var(--secondary-color); margin-bottom: 1rem;">進階設定 (Advanced Settings)</h4>
+            <!-- Section: Advanced Settings -->
+            <div class="admin-section">
+                <h4
+                    style="color: var(--secondary-color); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 1.2rem;">
+                    進階設定 (Advanced Settings)</h4>
 
                 <!-- Visual Spec Builder -->
-                <div style="margin-bottom: 2rem;">
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">商品規格 (Specifications)</label>
-                    <div id="specs-container"></div>
-                    <button type="button" onclick="addSpec()"
-                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 5px;">+
-                        新增規格</button>
-                    <input type="hidden" name="specs" id="specs-input">
+                <div class="form-grid">
+                    <div class="form-label">商品規格</div>
+                    <div>
+                        <div id="specs-container"></div>
+                        <button type="button" onclick="addSpec()"
+                            style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
+                            新增規格</button>
+                        <input type="hidden" name="specs" id="specs-input">
+                    </div>
                 </div>
 
                 <!-- Visual Variant Builder -->
-                <div style="margin-bottom: 2rem;">
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">款式變體 (Variants)</label>
-
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
-                            <thead>
-                                <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
-                                    <th style="padding: 10px; text-align: left;">款式名稱</th>
-                                    <th style="padding: 10px; text-align: left;">價格 (Price)</th>
-                                    <th style="padding: 10px; text-align: left;">缺貨?</th>
-                                    <th style="padding: 10px; text-align: left;">規格描述</th>
-                                    <th style="padding: 10px; text-align: left;">圖片</th>
-                                    <th style="padding: 10px; width: 50px;">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="variants-container">
-                                <!-- Rows will be injected here -->
-                            </tbody>
-                        </table>
+                <div class="form-grid">
+                    <div class="form-label">款式變體</div>
+                    <div>
+                        <div
+                            style="overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid #333;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                                <thead>
+                                    <tr
+                                        style="background: rgba(255,255,255,0.05); color: #aaa; border-bottom: 1px solid #333;">
+                                        <th style="padding: 10px; text-align: left;">款式名稱</th>
+                                        <th style="padding: 10px; text-align: left;">價格 (Price)</th>
+                                        <th style="padding: 10px; text-align: left;">缺貨?</th>
+                                        <th style="padding: 10px; text-align: left;">規格描述</th>
+                                        <th style="padding: 10px; text-align: left;">圖片</th>
+                                        <th style="padding: 10px; width: 50px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="variants-container">
+                                    <!-- Rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" onclick="addVariant()"
+                            style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
+                            新增款式</button>
+                        <input type="hidden" name="variants" id="variants-input">
                     </div>
-                    <button type="button" onclick="addVariant()"
-                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
-                        新增款式</button>
-                    <input type="hidden" name="variants" id="variants-input">
                 </div>
 
                 <!-- Visual Add-on Builder -->
-                <div style="margin-bottom: 2rem;">
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">加購項 (Add-ons)</label>
-
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
-                            <thead>
-                                <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
-                                    <th style="padding: 10px; text-align: left;">名稱</th>
-                                    <th style="padding: 10px; text-align: left;">價格 (如 +NT$ 100)</th>
-                                    <th style="padding: 10px; text-align: left;">說明</th>
-                                    <th style="padding: 10px; width: 50px;">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="addons-container">
-                                <!-- Rows will be injected here -->
-                            </tbody>
-                        </table>
+                <div class="form-grid">
+                    <div class="form-label">加購項</div>
+                    <div>
+                        <div
+                            style="overflow-x: auto; background: rgba(0,0,0,0.2); border-radius: 5px; border: 1px solid #333;">
+                            <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                                <thead>
+                                    <tr
+                                        style="background: rgba(255,255,255,0.05); color: #aaa; border-bottom: 1px solid #333;">
+                                        <th style="padding: 10px; text-align: left;">名稱</th>
+                                        <th style="padding: 10px; text-align: left;">價格</th>
+                                        <th style="padding: 10px; text-align: left;">說明</th>
+                                        <th style="padding: 10px; width: 50px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="addons-container">
+                                    <!-- Rows will be injected here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button type="button" onclick="addAddon()"
+                            style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
+                            新增加購項</button>
+                        <input type="hidden" name="addons" id="addons-input">
                     </div>
-                    <button type="button" onclick="addAddon()"
-                        style="background: rgba(255,255,255,0.1); border: 1px dashed #666; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px;">+
-                        新增加購項</button>
-                    <input type="hidden" name="addons" id="addons-input">
                 </div>
             </div>
 
@@ -444,20 +499,21 @@
                 });
             </script>
 
-            <button type="submit" style="
-                width: 100%;
-                background: var(--secondary-color);
-                color: black;
-                font-weight: bold;
-                padding: 1rem;
-                border: none;
-                border-radius: 5px;
-                font-size: 1.1rem;
-                cursor: pointer;
-                transition: all 0.3s;
-            ">
-                {% if product %}更新商品{% else %}確認新增{% endif %}
-            </button>
+            <!-- Sticky Bottom Action Bar -->
+            <div class="action-bar">
+                <a href="{{ url_for('admin_products') }}"
+                    style="color: #aaa; text-decoration: none; font-weight: bold;">✕ 取消</a>
+                <div style="display: flex; gap: 10px;">
+                    <button type="submit" name="action" value="hide"
+                        style="background: rgba(100,100,100, 0.3); border: 1px solid rgba(255,255,255,0.2); color: #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        儲存並下架
+                    </button>
+                    <button type="submit" name="action" value="publish"
+                        style="background: var(--secondary-color); border: none; color: black; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        儲存並上架
+                    </button>
+                </div>
+            </div>
 
         </form>
     </div>

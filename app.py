@@ -452,7 +452,8 @@ def admin_product_new():
                 addons=json.dumps(addons_list),
                 sort_order=int(request.form.get('sort_order', 0)),
                 is_out_of_stock=('is_out_of_stock' in request.form),
-                is_visible=('is_visible' in request.form) # Visibility Toggle
+                is_out_of_stock=('is_out_of_stock' in request.form),
+                is_visible=(request.form.get('action') == 'publish') # Visibility Action
             )
             db.session.add(new_product)
             db.session.commit()
@@ -518,7 +519,13 @@ def admin_product_edit(product_id):
             print(f"DEBUG: is_visible in form? {'is_visible' in request.form}")
             
             product.is_out_of_stock = ('is_out_of_stock' in request.form)
-            product.is_visible = ('is_visible' in request.form) # Visibility Toggle
+            # Visibility Action: If 'action' is present, use it.
+            action = request.form.get('action')
+            if action == 'publish':
+                product.is_visible = True
+            elif action == 'hide':
+                product.is_visible = False
+            # If no action (e.g. legacy), defaults off? Use logic above.
             
             db.session.commit()
             print(f"DEBUG: Saved product.is_visible = {product.is_visible}")
