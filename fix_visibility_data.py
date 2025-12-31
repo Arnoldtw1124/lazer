@@ -2,13 +2,22 @@ import sqlite3
 import os
 
 # Database path
-db_path = os.path.join("instance", "orders_v2.db")
+# Check root first (based on app.config 'sqlite:///orders_v2.db')
+possible_paths = ["orders_v2.db", os.path.join("instance", "orders_v2.db")]
+db_path = None
+
+for p in possible_paths:
+    if os.path.exists(p):
+        db_path = p
+        break
 
 def fix_data():
-    if not os.path.exists(db_path):
-        print(f"Database not found at {db_path}")
+    if not db_path:
+        print(f"Error: Database not found. Searched in: {possible_paths}")
+        print("Please ensure you are running this script from the project root directory.")
         return
 
+    print(f"Connecting to database at: {db_path}")
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
