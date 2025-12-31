@@ -21,8 +21,15 @@
         <div
             style="flex: 1; min-width: 300px; height: 300px; overflow: hidden; border-radius: 15px; border: 1px solid rgba(255,255,255,0.2);">
             <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
-                class="img-display"
-                style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease; {% if product.is_out_of_stock %}opacity: 0.5; filter: grayscale(100%);{% endif %}">
+                style="width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s ease;"
+                class="img-display {% if product.is_out_of_stock %}out-of-stock-filter{% endif %}">
+
+            <style>
+                .out-of-stock-filter {
+                    opacity: 0.5;
+                    filter: grayscale(100%);
+                }
+            </style>
 
             {% if product.is_out_of_stock %}
             <div style="
