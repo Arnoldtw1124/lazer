@@ -39,6 +39,17 @@
                     <small style="color: #666; display: block; margin-top: 5px;">開啟後將顯示於首頁「本期推薦」區塊 (最多 3 項)</small>
                 </div>
 
+                <!-- Out of Stock Toggle -->
+                <div>
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">暫時缺貨 (Out of Stock)</label>
+                    <label class="switch">
+                        <input type="checkbox" name="is_out_of_stock" {% if product and product.is_out_of_stock
+                            %}checked{% endif %}>
+                        <span class="slider round red-slider"></span>
+                    </label>
+                    <small style="color: #666; display: block; margin-top: 5px;">開啟後前台將顯示「補貨中」並無法預約</small>
+                </div>
+
                 <style>
                     /* Toggle Switch CSS */
                     .switch {
@@ -78,6 +89,11 @@
 
                     input:checked+.slider {
                         background-color: var(--secondary-color);
+                    }
+
+                    input:checked+.slider.red-slider {
+                        background-color: #e74c3c;
+                        /* Red */
                     }
 
                     input:checked+.slider:before {
