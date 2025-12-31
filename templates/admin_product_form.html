@@ -171,7 +171,8 @@
                 {% if product and product.image %}
                 <div style="margin-bottom: 0.5rem;">
                     <img id="preview-image" src="{{ url_for('static', filename='images/' + product.image) }}"
-                        data-fallback="{{ url_for('static', filename='uploads/' + (product.image if product else 'default_product.jpg')) }}">
+                        data-fallback="{{ url_for('static', filename='uploads/' + (product.image if product else 'default_product.jpg')) }}"
+                        style="max-width: 200px; height: auto; border-radius: 5px; border: 1px solid #333;">
                     <script>
                         document.getElementById('preview-image').addEventListener('error', function () {
                             if (this.dataset.failed) return;
