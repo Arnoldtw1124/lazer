@@ -218,18 +218,7 @@ def delete_order(order_id):
     return redirect(url_for('admin_dashboard'))
 
 # Route: Customer Tracking Page
-@app.route('/tracking', methods=['GET', 'POST'])
-def tracking():
-    order = None
-    if request.method == 'POST':
-        email = request.form.get('email')
-        if email:
-            # Find the most recent order for this email
-            order = Order.query.filter_by(contact=email).order_by(Order.date.desc()).first()
-            if not order:
-                flash('找不到相關訂單，請確認 Email 是否正確。', 'error')
-    
-    return render_template('tracking.html', order=order)
+
 
 # --------------------------
 # Admin Product Management
