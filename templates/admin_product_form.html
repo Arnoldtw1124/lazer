@@ -28,12 +28,62 @@
                     <small style="color: #666;">唯一識別碼，不可重複 (例: keychain)</small>
                 </div>
 
-                <!-- Sort Order -->
+                <!-- Recommended Toggle (Mapped to sort_order) -->
                 <div>
-                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">排序權重</label>
-                    <input type="number" name="sort_order" value="{{ product.sort_order if product else 0 }}"
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">本期推薦 (Featured)</label>
+                    <label class="switch">
+                        <input type="checkbox" name="is_recommended" {% if product and product.sort_order> 0 %}checked{%
+                        endif %}>
+                        <span class="slider round"></span>
+                    </label>
+                    <small style="color: #666; display: block; margin-top: 5px;">開啟後將顯示於首頁「本期推薦」區塊 (最多 3 項)</small>
                 </div>
+
+                <style>
+                    /* Toggle Switch CSS */
+                    .switch {
+                        position: relative;
+                        display: inline-block;
+                        width: 50px;
+                        height: 24px;
+                    }
+
+                    .switch input {
+                        display: none;
+                    }
+
+                    .slider {
+                        position: absolute;
+                        cursor: pointer;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background-color: #333;
+                        transition: .4s;
+                        border-radius: 34px;
+                    }
+
+                    .slider:before {
+                        position: absolute;
+                        content: "";
+                        height: 16px;
+                        width: 16px;
+                        left: 4px;
+                        bottom: 4px;
+                        background-color: white;
+                        transition: .4s;
+                        border-radius: 50%;
+                    }
+
+                    input:checked+.slider {
+                        background-color: var(--secondary-color);
+                    }
+
+                    input:checked+.slider:before {
+                        transform: translateX(26px);
+                    }
+                </style>
             </div>
 
             <!-- Name -->

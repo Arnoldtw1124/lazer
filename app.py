@@ -687,10 +687,10 @@ products_data = {
 # Route: Home Page
 @app.route('/')
 def index():
-    # 1. Recommended Products (Admin Controlled - sort_order)
+    # 1. Recommended Products (Admin Controlled - Checkbox)
     try:
-        # Get products with highest sort_order
-        rec_query = Product.query.order_by(Product.sort_order.desc()).limit(3).all()
+        # Get recommended products (sort_order > 0)
+        rec_query = Product.query.filter(Product.sort_order > 0).order_by(Product.sort_order.desc(), Product.id.desc()).limit(3).all()
         recommended_products = [p.to_dict() for p in rec_query]
     except Exception as e:
         print(f"Error fetching recommended: {e}")
