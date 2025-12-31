@@ -48,7 +48,10 @@
                 <div class="kpi-info">
                     <h4>總訂單數</h4>
                     <div class="value">{{ orders|length }}</div>
-                    <div style="font-size: 0.8rem; color: #666;">較上週 +12%</div>
+                    <div
+                        style="font-size: 0.8rem; color: {% if growth_rate > 0 %}#2ecc71{% elif growth_rate < 0 %}#ff4757{% else %}#888{% endif %};">
+                        較上週 {{ '%+.0f'|format(growth_rate) }}%
+                    </div>
                 </div>
             </div>
             <div class="kpi-card">

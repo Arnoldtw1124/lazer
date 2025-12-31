@@ -190,14 +190,30 @@ def admin_dashboard():
         product_count = Product.query.count()
         # Calculate pending orders safely in Python
         pending_count = len([o for o in orders if o.status == 'Pending'])
+        
+        # Calculate Weekly Growth
+        now = datetime.now()
+        cutoff_7d = now - timedelta(days=7)
+        cutoff_14d = now - timedelta(days=14)
+        
+        # Filter orders locally since we have them (assumes valid o.date)
+        this_week_count = sum(1 for o in orders if o.date and o.date >= cutoff_7d)
+        last_week_count = sum(1 for o in orders if o.date and o.date >= cutoff_14d and o.date < cutoff_7d)
+        
+        if last_week_count > 0:
+            growth_rate = ((this_week_count - last_week_count) / last_week_count) * 100
+        else:
+            growth_rate = 100.0 if this_week_count > 0 else 0.0
+
     except Exception as e:
         print(f"Error fetching stats: {e}")
         product_count = 0
         pending_count = 0
+        growth_rate = 0.0
         
     now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
-    return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, now_time=now_time)
+    return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, growth_rate=growth_rate, now_time=now_time)
 
 # Route: Admin Data Center (Page)
 @app.route('/admin/data')
