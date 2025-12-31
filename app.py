@@ -494,11 +494,15 @@ def admin_product_edit(product_id):
             product.variants = json.dumps(variants_list) # Save processed list
             product.addons = json.dumps(addons_list) # Save processed list
             product.sort_order = int(request.form.get('sort_order', 0))
-            product.sort_order = int(request.form.get('sort_order', 0))
+            # Debugging Visibility
+            print(f"DEBUG: Form Keys: {request.form.keys()}")
+            print(f"DEBUG: is_visible in form? {'is_visible' in request.form}")
+            
             product.is_out_of_stock = ('is_out_of_stock' in request.form)
             product.is_visible = ('is_visible' in request.form) # Visibility Toggle
             
             db.session.commit()
+            print(f"DEBUG: Saved product.is_visible = {product.is_visible}")
             flash('商品更新成功！', 'admin_success')
             return redirect(url_for('admin_products'))
         except Exception as e:
