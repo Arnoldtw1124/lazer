@@ -400,6 +400,10 @@ def admin_product_new():
                 # Format Variant Price
                 if 'price' in variant:
                     variant['price'] = format_price(variant['price'])
+                
+                # Check Variant Stock (Checkbox)
+                # Since checkboxes only send if checked, check for presence of key
+                variant['is_out_of_stock'] = (f'variant_oos_{i}' in request.form)
 
                 # Check for uploaded file with key 'variant_image_0', 'variant_image_1', etc.
                 v_file = request.files.get(f'variant_image_{i}')
@@ -463,6 +467,9 @@ def admin_product_edit(product_id):
                 # Format Price
                 if 'price' in variant:
                     variant['price'] = format_price(variant['price'])
+                
+                # Check Variant Stock (Checkbox)
+                variant['is_out_of_stock'] = (f'variant_oos_{i}' in request.form)
                     
                 v_file = request.files.get(f'variant_image_{i}')
                 if v_file and v_file.filename:
