@@ -557,6 +557,22 @@ def admin_product_toggle_stock(product_id):
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/admin/product/toggle_visibility/<product_id>', methods=['POST'])
+@login_required
+def admin_product_toggle_visibility(product_id):
+    try:
+        product = Product.query.get(product_id)
+        if not product:
+            return jsonify({'success': False, 'message': 'Product not found'}), 404
+            
+        # Toggle Visibility
+        product.is_visible = not product.is_visible
+        db.session.commit()
+        
+        return jsonify({'success': True, 'is_visible': product.is_visible})
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 # Route: Booking Page
 @app.route('/booking', methods=['GET', 'POST'])
 def booking():

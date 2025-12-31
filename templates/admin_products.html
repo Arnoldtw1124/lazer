@@ -83,8 +83,7 @@
                             <td style="padding: 1rem; cursor: pointer; text-align: center;"
                                 onclick="toggleVisibility('{{ product.id }}')" title="點擊切換上下架">
                                 <i id="eye-{{ product.id }}"
-                                    class="fas fa-eye visibility-icon {% if product.is_visible %}active{% endif %}"
-                                    style="color: {% if product.is_visible %}#2ecc71{% else %}#555{% endif %}; transition: color 0.3s;"></i>
+                                    class="fas fa-eye visibility-icon {% if product.is_visible %}visible{% else %}hidden{% endif %}"></i>
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -234,15 +233,17 @@
             .then(data => {
                 if (data.success) {
                     if (data.is_visible) {
-                        icon.style.color = '#2ecc71';
+                        icon.style.color = '';
                         icon.classList.remove('fa-eye-slash');
                         icon.classList.add('fa-eye');
-                        icon.classList.add('active'); // CSS hook if needed
+                        icon.classList.remove('hidden');
+                        icon.classList.add('visible');
                     } else {
-                        icon.style.color = '#555';
+                        icon.style.color = '';
                         icon.classList.remove('fa-eye');
                         icon.classList.add('fa-eye-slash');
-                        icon.classList.remove('active');
+                        icon.classList.remove('visible');
+                        icon.classList.add('hidden');
                     }
                 } else {
                     alert('切換失敗: ' + (data.message || 'Error'));
@@ -273,6 +274,20 @@
         color: #444;
         /* Default inactive (Dark Gray) */
         transform: scale(1);
+    }
+
+    .visibility-icon {
+        font-size: 1.2rem;
+        transition: color 0.3s;
+        display: inline-block;
+    }
+
+    .visibility-icon.visible {
+        color: #2ecc71;
+    }
+
+    .visibility-icon.hidden {
+        color: #555;
     }
 
     .star-icon.active {
