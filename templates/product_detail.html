@@ -27,8 +27,28 @@
 
         <div style="flex: 1; min-width: 300px;">
             <h2 style="font-size: 2.5rem; margin-bottom: 0.5rem; color: var(--primary-color);">{{ product.name }}</h2>
-            <div style="font-size: 2rem; font-weight: 700; color: var(--secondary-color); margin-bottom: 1.5rem;">
+            <div
+                style="font-size: 2rem; font-weight: 700; color: var(--secondary-color); margin-bottom: 1.5rem; display: flex; align-items: baseline; flex-wrap: wrap; gap: 1rem;">
+                {% if product.original_price %}
+                <span style="text-decoration: line-through; color: #666; font-size: 1.5rem;">{{ product.original_price
+                    }}</span>
+                {% endif %}
+
                 {{ product.price }}
+
+                {% if product.discount_label %}
+                <span style="
+                    font-size: 0.9rem; 
+                    background: rgba(46, 204, 113, 0.2); 
+                    color: #2ecc71; 
+                    padding: 0.3rem 0.8rem; 
+                    border-radius: 20px; 
+                    border: 1px solid #2ecc71;
+                    vertical-align: middle;
+                ">
+                    {{ product.discount_label }}
+                </span>
+                {% endif %}
             </div>
 
             <p style="margin-bottom: 2rem; line-height: 1.8; color: rgba(255,255,255,0.9);">
