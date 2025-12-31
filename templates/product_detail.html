@@ -34,7 +34,7 @@
                     }}</span>
                 {% endif %}
 
-                {{ product.price }}
+                <span id="product-price">{{ product.price }}</span>
 
                 {% if product.discount_label %}
                 <span style="
@@ -86,8 +86,9 @@
                 <h4 style="margin-bottom: 1rem; color: var(--text-color);">選擇款式 (Select Style)：</h4>
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     {% for variant in product.variants %}
-                    <button class="variant-btn" data-spec="{{ variant.spec_text }}"
-                        onclick="changeVariant(this, '{{ variant.image }}', '{{ variant.name }}')" style="
+                    <button class="variant-btn" data-spec="{{ variant.spec_text }}" data-price="{{ variant.price }}"
+                        onclick="changeVariant(this, '{{ variant.image }}', '{{ variant.name }}', '{{ variant.price }}')"
+                        style="
                             padding: 0.5rem 1.5rem; 
                             border: 1px solid var(--secondary-color); 
                             background: rgba(0,0,0,0.3); 
@@ -120,10 +121,12 @@
 
             <script>
                 const defaultImage = "{{ url_for('static', filename='images/' + product.image) }}";
+                const defaultPrice = "{{ product.price }}";
                 let currentVariant = null;
 
-                function changeVariant(btn, imageName, variantName) {
+                function changeVariant(btn, imageName, variantName, variantPrice) {
                     const imgElement = document.querySelector('.img-display');
+                    const priceElement = document.getElementById('product-price');
                     const targetSpec = btn.getAttribute('data-spec');
                     const specsList = document.getElementById('specs-list');
                     const listItems = specsList.querySelectorAll('li');
@@ -134,6 +137,7 @@
                     // If clicking the currently active variant, reset to default (Toggle off)
                     if (currentVariant === variantName) {
                         imgElement.src = defaultImage;
+                        priceElement.innerText = defaultPrice;
                         currentVariant = null;
 
                         // Reset all buttons style
@@ -162,6 +166,13 @@
                     imgElement.src = "{{ url_for('static', filename='images/') }}" + imageName;
                     imgElement.style.opacity = 0;
                     setTimeout(() => imgElement.style.opacity = 1, 50);
+
+                    // Update Price if variant has specific price
+                    if (variantPrice && variantPrice !== 'None' && variantPrice !== '') {
+                        priceElement.innerText = variantPrice;
+                    } else {
+                        priceElement.innerText = defaultPrice;
+                    }
 
                     // Update UI Buttons: Reset others, Highlight selected
                     document.querySelectorAll('.variant-btn').forEach(b => {
