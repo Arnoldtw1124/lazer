@@ -300,7 +300,7 @@
                             <td style="padding: 5px;">
                                 <div style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
                                     <span style="padding: 5px 8px; background: #222; color: #666; font-size: 0.8em; border-right: 1px solid #333;">NT$</span>
-                                    <input type="number" value="${variant.price || ''}" onchange="updateVariant(${index}, 'price', this.value)" 
+                                    <input type="text" value="${(variant.price || '').replace('NT$ ', '').replace('NT$', '')}" onchange="updateVariant(${index}, 'price', this.value)" 
                                         placeholder="100" 
                                         style="flex: 1; padding: 8px; background: transparent; border: none; color: white; outline: none; width: 60px;">
                                 </div>
@@ -345,7 +345,10 @@
                                 <input type="text" value="${addon.name || ''}" onchange="updateAddon(${index}, 'name', this.value)" placeholder="加購品名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
                             </td>
                             <td style="padding: 5px;">
-                                <input type="text" value="${addon.price || ''}" onchange="updateAddon(${index}, 'price', this.value)" placeholder="+NT$ 100" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                                <div style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                                    <span style="padding: 5px 8px; background: #222; color: #666; font-size: 0.8em; border-right: 1px solid #333;">NT$</span>
+                                    <input type="text" value="${(addon.price || '').replace('NT$ ', '').replace('NT$', '')}" onchange="updateAddon(${index}, 'price', this.value)" placeholder="100" style="flex: 1; padding: 8px; background: transparent; border: none; color: white; outline: none;">
+                                </div>
                             </td>
                             <td style="padding: 5px;">
                                 <input type="text" value="${addon.desc || ''}" onchange="updateAddon(${index}, 'desc', this.value)" placeholder="說明 (選填)" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">

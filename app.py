@@ -367,9 +367,15 @@ def format_price(value):
     if not value:
         return value
     value = str(value).strip()
-    # If pure number, add NT$ prefix
-    if value.isdigit():
+    
+    # Check if already has currency symbol
+    if 'NT$' in value:
+        return value
+        
+    # If starts with digit, assume it needs prefix (e.g. "100", "20起")
+    if value and value[0].isdigit():
         return f"NT$ {value}"
+        
     return value
 
 @app.route('/admin/products/new', methods=['GET', 'POST'])
