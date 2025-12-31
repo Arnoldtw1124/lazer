@@ -168,6 +168,7 @@
                             <thead>
                                 <tr style="background: rgba(255,255,255,0.1); color: #aaa;">
                                     <th style="padding: 10px; text-align: left;">款式名稱</th>
+                                    <th style="padding: 10px; text-align: left;">價格 (Price)</th>
                                     <th style="padding: 10px; text-align: left;">規格描述</th>
                                     <th style="padding: 10px; text-align: left;">圖片</th>
                                     <th style="padding: 10px; width: 50px;">操作</th>
@@ -287,6 +288,9 @@
                                 <input type="text" value="${variant.name || ''}" onchange="updateVariant(${index}, 'name', this.value)" placeholder="款式名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
                             </td>
                             <td style="padding: 5px;">
+                                <input type="number" value="${variant.price || ''}" onchange="updateVariant(${index}, 'price', this.value)" placeholder="NT$" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                            </td>
+                            <td style="padding: 5px;">
                                 <input type="text" value="${variant.spec_text || ''}" onchange="updateVariant(${index}, 'spec_text', this.value)" placeholder="對應規格" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
                             </td>
                             <td style="padding: 5px;">
@@ -303,7 +307,7 @@
                 }
 
                 function addVariant() {
-                    variantsData.push({ name: '', image: '', spec_text: '' });
+                    variantsData.push({ name: '', price: '', image: '', spec_text: '' });
                     renderVariants();
                 }
 
