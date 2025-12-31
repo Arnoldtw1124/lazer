@@ -22,23 +22,37 @@ def fix_data():
     cursor = conn.cursor()
 
     try:
-        # Force all existing products to be visible (1) unless explicitly set to 0?
-        # To be safe and restore "everything disappeared", let's set ALL to 1.
-        # User implies they just added the feature, so nothing should be hidden yet.
-        cursor.execute("UPDATE product SET is_visible = 1 WHERE is_visible IS NULL OR is_visible != 0")
+        # Diagnostic: Check Table Info
+        cursor.execute("PRAGMA table_info(product)")
+        columns = [row[1] for row in cursor.fetchall()]
+        print(f"Columns in 'product' table: {columns}")
         
-        # Also check if rows were actually updated
-        print(f"Updated {cursor.rowcount} rows to is_visible=1.")
+        if 'is_visible' not in columns:
+            print("CRITICAL ERROR: 'is_visible' column NOT FOUND. Migration failed.")
+            print("Attempting to force add column...")
+            cursor.execute("ALTER TABLE product ADD COLUMN is_visible BOOLEAN DEFAULT 1")
+            print("Column forced added.")
+
+        # Check existing data
+        cursor.execute("SELECT count(*) FROM product")
+        total_rows = cursor.fetchone()[0]
+        print(f"Total products in DB: {total_rows}")
         
-        # Double check count
-        cursor.execute("SELECT count(*) FROM product WHERE is_visible = 1")
-        count = cursor.fetchone()[0]
-        print(f"Total visible products: {count}")
+        cursor.execute("SELECT id, name, is_visible FROM product LIMIT 5")
+        print("Sample data (first 5):")
+        for r in cursor.fetchall():
+            print(r)
+
+        # Force Update
+        print("Executing Update...")
+        cursor.execute("UPDATE product SET is_visible = 1") # Unconditional Update
         
+        print(f"Update executed. Changed {cursor.rowcount} rows.")
+        
+        conn.commit()
     except Exception as e:
         print(f"Error updating data: {e}")
 
-    conn.commit()
     conn.close()
 
 if __name__ == "__main__":
