@@ -50,7 +50,12 @@
     <!-- Public Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">諾雕 ALE</a>
+            <a href="{{ url_for('index') }}"
+                style="text-decoration: none; color: inherit; display: flex; align-items: center;">
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="諾雕 ALE"
+                    style="height: 40px; margin-right: 10px;">
+                <span style="font-family: 'Orbitron', sans-serif;">ALE</span>
+            </a>
         </div>
 
         <div class="hamburger">
@@ -101,7 +106,10 @@
         ">
             <!-- Column 1: Brand Identity -->
             <div class="footer-column">
-                <h4 style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">諾雕 ALE</h4>
+                <div style="margin-bottom: 1rem;">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="諾雕 ALE" style="height: 60px;">
+                </div>
+                <!-- <h4 style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">諾雕 ALE</h4> -->
                 <p style="color: #888; margin-bottom: 1.5rem;">銘刻光與金屬的界線</p>
                 <div class="social-links">
                     <a href="https://x.com/arnold__laser" target="_blank" style="
