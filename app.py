@@ -240,7 +240,7 @@ products_data = {
     'priceboard': {
         'id': 'priceboard',
         'name': '【展會專用】客製化雷雕價目牌',
-        'price': 'NT$ 350 起',
+        'price': 'NT$ 100 起',
         'desc': '同人展 (FF/CWT) 與市集攤位必備！告別軟爛紙張，用白橡木紋雷雕打造專業門面。防潑水、高對比、支援 QR Code 雕刻，不僅耐用更能吸引目光。',
         'specs': [
             '用途：同人展 (FF/CWT) / 創意市集 / 商業櫃台',
