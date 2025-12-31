@@ -5,9 +5,12 @@ from datetime import datetime, timedelta
 from flask import Flask, render_template, request, flash, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv() # Load environment variables from .env file
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here' # Required for flash messages and session
+app.secret_key = os.getenv('SECRET_KEY', 'default_secret_key') # Use env var or default
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024 # 16MB limit
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///orders_v2.db' # Local SQLite DB (v2 with filename)
@@ -467,6 +470,53 @@ def booking():
             'contact': contact_info,
             'notes': notes_content 
         }
+        
+        # 3. Send Email Notification (Local)
+        try:
+            import smtplib
+            from email.mime.text import MIMEText
+            from email.utils import formataddr
+
+            # Email Config (Environment Variables)
+            SMTP_SERVER = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+            SMTP_PORT = int(os.getenv('SMTP_PORT', 587))
+            MAIL_USER = os.getenv('MAIL_USER')
+            MAIL_PASS = os.getenv('MAIL_PASS')
+            MAIL_RECEIVER = os.getenv('MAIL_RECEIVER')
+
+            if not MAIL_USER or not MAIL_PASS:
+                 print("Email credentials not set. Skipping notification.")
+                 raise ValueError("Missing MAIL_USER or MAIL_PASS env vars")
+
+            # Email Content
+            subject = f'🔥 [新訂單] #{new_order.id} {new_order.name} - {new_order.material}'
+            body = f"""
+            <h1>LaserCraft 新訂單通知</h1>
+            <p><strong>訂單編號：</strong> #{new_order.id}</p>
+            <p><strong>顧客姓名：</strong> {new_order.name}</p>
+            <p><strong>訂購商品：</strong> {new_order.material}</p>
+            <p><strong>聯絡方式：</strong> {new_order.contact}</p>
+            <p><strong>備註/需求：</strong><br>{new_order.notes}</p>
+            <hr>
+            <p>請至 <a href="http://localhost:5000/admin">後台管理系統</a> 查看詳情。</p>
+            """
+
+            msg = MIMEText(body, 'html', 'utf-8')
+            msg['From'] = formataddr(('LaserCraft Bot', MAIL_USER))
+            msg['To'] = MAIL_RECEIVER
+            msg['Subject'] = subject
+
+            # Send via Gmail
+            server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+            server.starttls()
+            server.login(MAIL_USER, MAIL_PASS)
+            server.send_message(msg)
+            server.quit()
+            print(f"Email notification sent to {MAIL_RECEIVER}")
+
+        except Exception as e:
+            print(f"Email Error: {e}") # Non-blocking error
+
         
         try:
             # Send data to Google Sheets
