@@ -399,6 +399,31 @@ def booking():
         
     return render_template('booking.html', products=products_map)
 
+# Route: Order Tracking
+@app.route('/tracking', methods=['GET', 'POST'])
+def tracking():
+    result = None
+    searched = False
+    
+    if request.method == 'POST':
+        searched = True
+        query = request.form.get('order_id', '').strip()
+        
+        if query:
+            # Try to find by ID (if it's a number) or Name
+            if query.isdigit():
+                result = Order.query.filter_by(id=int(query)).first()
+            
+            if not result:
+                # Basic search by name (case insensitive usually depends on DB collation, 
+                # for SQLite it's case sensitive by default, we can use ilike equivalent or just exact match for now)
+                result = Order.query.filter(Order.name.contains(query)).first()
+                if not result:
+                    result = Order.query.filter(Order.contact.contains(query)).first()
+
+    return render_template('tracking.html', result=result, searched=searched)
+
+
 # Product Data
 products_data = {
     'keychain': {
