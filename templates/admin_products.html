@@ -153,18 +153,15 @@
             .then(data => {
                 if (data.success) {
                     // Update UI based on server response (Source of Truth)
-                    if (data.success) {
-                        // Update UI based on server response (Source of Truth)
-                        if (data.is_recommended) {
-                            star.classList.add('active');
-                        } else {
-                            star.classList.remove('active');
-                        }
+                    if (data.is_recommended) {
+                        star.classList.add('active');
                     } else {
-                    } else {
-                        alert('操作失敗: ' + (data.message || '未知錯誤'));
+                        star.classList.remove('active');
                     }
-                })
+                } else {
+                    alert('操作失敗: ' + (data.message || '未知錯誤'));
+                }
+            })
             .catch(error => {
                 console.error('Error:', error);
                 alert('發生錯誤: ' + error.message + '\n請重新整理頁面再試。');
@@ -178,8 +175,6 @@
                 this.dataset.failed = true;
                 this.src = this.getAttribute('data-fallback');
             });
-        });
-    });
         });
     });
 </script>
