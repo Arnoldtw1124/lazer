@@ -72,12 +72,18 @@
                             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
                             onmouseout="this.style.background='transparent'">
 
-                            <td style="padding: 1rem;">
-                                {% if product.sort_order > 0 %}
-                                <span style="color: #f1c40f; font-size: 1.2rem;" title="本期推薦">⭐</span>
-                                {% else %}
-                                <span style="color: #333;">-</span>
-                                {% endif %}
+                            <td style="padding: 1rem; cursor: pointer;" onclick="toggleRecommend('{{ product.id }}')"
+                                title="點擊切換推薦狀態">
+                                <span id="star-{{ product.id }}" style="
+                                    font-size: 1.2rem; 
+                                    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+                                    display: inline-block;
+                                    {% if product.sort_order > 0 %}
+                                    color: #f1c40f; transform: scale(1.1);
+                                    {% else %}
+                                    color: #333; transform: scale(1);
+                                    {% endif %}
+                                ">⭐</span>
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -131,6 +137,41 @@
 </div>
 
 <script>
+    function toggleRecommend(productId) {
+        const star = document.getElementById('star-' + productId);
+
+        // Optimistic UI update (Instant feedback)
+        const isCurrentlyOn = star.style.color === 'rgb(241, 196, 15)'; // #f1c40f
+
+        // Prepare CSRF
+        const formData = new FormData();
+        formData.append('csrf_token', "{{ csrf_token() }}");
+
+        fetch(`/admin/product/toggle_recommend/${productId}`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update UI based on server response (Source of Truth)
+                    if (data.is_recommended) {
+                        star.style.color = '#f1c40f';
+                        star.style.transform = 'scale(1.1)';
+                    } else {
+                        star.style.color = '#333';
+                        star.style.transform = 'scale(1)';
+                    }
+                } else {
+                    alert('操作失敗: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發生錯誤，請稍後再試');
+            });
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.product-thumb').forEach(img => {
             img.addEventListener('error', function () {
