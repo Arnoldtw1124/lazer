@@ -57,16 +57,61 @@ class Product(db.Model):
             'addons': json.loads(self.addons) if self.addons else []
         }
 
+# SiteConfig Model for Dynamic Settings
+class SiteConfig(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(50), unique=True, nullable=False)
+    value = db.Column(db.Text, nullable=True)
+
 # Create DB on startup
 with app.app_context():
     db.create_all()
+    # Ensure default marquee text exists
+    if not SiteConfig.query.filter_by(key='marquee_text').first():
+        default_marquee = SiteConfig(key='marquee_text', value='Cyberpunk 2077 Style Laser Engraving Service // 客製化雷雕服務 // 歡迎預約')
+        db.session.add(default_marquee)
+        db.session.commit()
+
+# Context Processor to inject marquee text into all templates
+@app.context_processor
+def inject_site_config():
+    marquee_config = SiteConfig.query.filter_by(key='marquee_text').first()
+    marquee_text = marquee_config.value if marquee_config else 'Welcome to LaserCraft'
     
-    # Check if products exist, if not seed from dictionary
-    # Note: We need to access products_data here, but it's defined later in the file in the original code.
-    # We should move products_data definition UP or handle this seeding after products_data is defined.
-    # Strategy: We will move the seeding logic to the bottom of the file, before app.run, or move products_data up.
-    # Let's check where products_data is. It's at line 188.
-    # To avoid massive reordering, let's keep the db.create_all() here but add a separate seeding block at the end of the file.
+    # Existing navbar product logic
+    navbar_products = Product.query.order_by(Product.sort_order).limit(4).all()
+    
+    return dict(marquee_text=marquee_text, navbar_products=navbar_products)
+
+# ... (Previous code)
+
+# Route: Admin Marketing (Marquee Settings)
+@app.route('/admin/marketing', methods=['GET', 'POST'])
+def admin_marketing():
+    if not session.get('logged_in'):
+        return redirect(url_for('admin_login'))
+    
+    if request.method == 'POST':
+        marquee_text = request.form.get('marquee_text')
+        config = SiteConfig.query.filter_by(key='marquee_text').first()
+        if config:
+            config.value = marquee_text
+        else:
+            new_config = SiteConfig(key='marquee_text', value=marquee_text)
+            db.session.add(new_config)
+        
+        try:
+            db.session.commit()
+            flash('跑馬燈內容已更新！', 'admin_success')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'更新失敗: {e}', 'admin_error')
+            
+    # Get current value
+    config = SiteConfig.query.filter_by(key='marquee_text').first()
+    current_marquee = config.value if config else ''
+    
+    return render_template('admin_marketing.html', current_marquee=current_marquee)
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -85,14 +130,7 @@ GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJ
 # ... (Route: Home Page -> /products -> /product/<id> -> /process -> /terms -> /privacy -> /guidelines -> /materials -> /faq)
 
 # Context Processor to inject data into all templates
-@app.context_processor
-def inject_navbar_products():
-    try:
-        # Fetch top 4 products for the navbar dropdown
-        navbar_products = Product.query.order_by(Product.sort_order).limit(4).all()
-        return dict(navbar_products=navbar_products)
-    except Exception:
-        return dict(navbar_products=[])
+
 
 # Route: Admin Login
 @app.route('/login', methods=['GET', 'POST'])

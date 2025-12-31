@@ -44,6 +44,15 @@
 </head>
 
 <body>
+    <!-- Dynamic Marquee -->
+    <div
+        style="background: var(--secondary-color); color: black; padding: 5px 0; overflow: hidden; white-space: nowrap; font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: bold;">
+        <div style="display: inline-block; animation: marquee 20s linear infinite;">
+            {{ marquee_text }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text
+            }} &nbsp;&nbsp;//&nbsp;&nbsp; {{ marquee_text }}
+        </div>
+    </div>
+
     <nav class="navbar">
         <div class="logo">
             <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">諾雕 ALE</a>

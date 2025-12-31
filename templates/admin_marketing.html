@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}行銷活動 - 諾雕 ALE{% endblock %}
+
+{% block content %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    {% with active_page='marketing' %}
+    {% include 'admin_sidebar.html' %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <div class="admin-main">
+        <div class="admin-header">
+            <h2 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">MARKETING MGMT <span
+                    style="font-size: 0.8rem; color: var(--secondary-color);">// ADMIN V2</span></h2>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom: 2rem;">
+            {% for category, message in messages %}
+            <div style="
+                padding: 1rem; 
+                background: rgba(46, 204, 113, 0.1); 
+                border: 1px solid #2ecc71; 
+                color: #2ecc71; 
+                border-radius: 5px;
+                margin-bottom: 1rem;
+            ">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Marquee Form -->
+        <div
+            style="background: #0f0f12; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 2rem; max-width: 600px;">
+            <h3 style="margin-top: 0; color: white;">動態跑馬燈設定 (Dynamic Marquee)</h3>
+            <p style="color: #888; font-size: 0.9rem; margin-bottom: 2rem;">
+                設定首頁上方顯示的滾動文字。可用於公告優惠訊息、休假通知或品牌宣傳。
+            </p>
+
+            <form method="POST">
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">跑馬燈內容 (支援純文字)</label>
+                    <textarea name="marquee_text" rows="4" style="
+                        width: 100%;
+                        background: #1a1a1f;
+                        border: 1px solid #333;
+                        color: white;
+                        padding: 1rem;
+                        border-radius: 5px;
+                        font-family: monospace;
+                        font-size: 1rem;
+                        outline: none;
+                    ">{{ current_marquee }}</textarea>
+                </div>
+
+                <button type="submit" style="
+                    background: var(--secondary-color);
+                    color: black;
+                    border: none;
+                    padding: 0.8rem 2rem;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                " onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    更新設定 (Update)
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

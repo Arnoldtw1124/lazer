@@ -16,7 +16,8 @@
             class="sidebar-item {% if active_page == 'products' %}active{% endif %}">
             <i class="fas fa-box-open"></i> 商品管理 (Products)
         </a>
-        <a href="#" class="sidebar-item disabled"> <!-- Placeholder for later -->
+        <a href="{{ url_for('admin_marketing') }}"
+            class="sidebar-item {% if active_page == 'marketing' %}active{% endif %}">
             <i class="fas fa-bullhorn"></i> 行銷活動 (Marketing)
         </a>
         <a href="#" class="sidebar-item disabled"> <!-- Placeholder for later -->
