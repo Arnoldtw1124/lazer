@@ -432,7 +432,8 @@ def admin_product_new():
                 variants=json.dumps(variants_list), # Processed list back to JSON string
                 addons=json.dumps(addons_list),
                 sort_order=int(request.form.get('sort_order', 0)),
-                is_out_of_stock=('is_out_of_stock' in request.form) # Boolean Toggle
+                is_out_of_stock=('is_out_of_stock' in request.form),
+                is_visible=('is_visible' in request.form) # Visibility Toggle
             )
             db.session.add(new_product)
             db.session.commit()
@@ -493,7 +494,9 @@ def admin_product_edit(product_id):
             product.variants = json.dumps(variants_list) # Save processed list
             product.addons = json.dumps(addons_list) # Save processed list
             product.sort_order = int(request.form.get('sort_order', 0))
-            product.is_out_of_stock = ('is_out_of_stock' in request.form) # Boolean Toggle
+            product.sort_order = int(request.form.get('sort_order', 0))
+            product.is_out_of_stock = ('is_out_of_stock' in request.form)
+            product.is_visible = ('is_visible' in request.form) # Visibility Toggle
             
             db.session.commit()
             flash('商品更新成功！', 'admin_success')
@@ -779,8 +782,8 @@ products_data = {
 def index():
     # 1. Recommended Products (Admin Controlled - Checkbox)
     try:
-        # Get recommended products (sort_order > 0)
-        rec_query = Product.query.filter(Product.sort_order > 0).order_by(Product.sort_order.desc(), Product.id.desc()).limit(3).all()
+        # Get recommended products (sort_order > 0 AND visible)
+        rec_query = Product.query.filter(Product.sort_order > 0, Product.is_visible == True).order_by(Product.sort_order.desc(), Product.id.desc()).limit(3).all()
         recommended_products = [p.to_dict() for p in rec_query]
     except Exception as e:
         print(f"Error fetching recommended: {e}")
@@ -810,7 +813,7 @@ def index():
                 
         # Fallback if no orders yet: use newest 3
         if not popular_products:
-             newest = Product.query.order_by(Product.id.desc()).limit(3).all()
+             newest = Product.query.filter_by(is_visible=True).order_by(Product.id.desc()).limit(3).all()
              popular_products = [p.to_dict() for p in newest]
 
     except Exception as e:
@@ -822,7 +825,8 @@ def index():
 # Route: Products List
 @app.route('/products')
 def products():
-    products_list = Product.query.all()
+    # Only show visible products
+    products_list = Product.query.filter_by(is_visible=True).all()
     # Convert to dict for template compatibility if it uses .items(), or check template.
     # Assuming template iterates over dict values or we pass a list.
     # To be safe and compatible with potential {% for key, val in products.items() %} in template:

@@ -50,6 +50,17 @@
                     <small style="color: #666; display: block; margin-top: 5px;">開啟後前台將顯示「補貨中」並無法預約</small>
                 </div>
 
+                <!-- Visibility Toggle -->
+                <div>
+                    <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">是否上架 (Product Visibility)</label>
+                    <label class="switch">
+                        <input type="checkbox" name="is_visible" {% if not product or product.is_visible %}checked{%
+                            endif %}>
+                        <span class="slider round green-slider"></span>
+                    </label>
+                    <small style="color: #666; display: block; margin-top: 5px;">關閉後前台將完全隱藏此商品 (不會刪除)</small>
+                </div>
+
                 <style>
                     /* Toggle Switch CSS */
                     .switch {
@@ -94,6 +105,10 @@
                     input:checked+.slider.red-slider {
                         background-color: #e74c3c;
                         /* Red */
+                    }
+
+                    input:checked+.slider.green-slider {
+                        background-color: #2ecc71;
                     }
 
                     input:checked+.slider:before {

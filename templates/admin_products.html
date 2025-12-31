@@ -58,11 +58,13 @@
                     <thead>
                         <tr
                             style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
-                            <th style="padding: 1rem; color: #888; font-weight: normal;">狀態 (Status)</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">推薦狀態</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">是否上架</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">圖片</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">ID</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">名稱</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">價格</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">補貨中</th>
                             <th style="padding: 1rem; color: #888; font-weight: normal;">操作</th>
                         </tr>
                     </thead>
@@ -76,6 +78,13 @@
                                 onclick="toggleRecommend('{{ product.id }}')" title="點擊切換推薦狀態">
                                 <i id="star-{{ product.id }}"
                                     class="fas fa-star star-icon {% if product.sort_order > 0 %}active{% endif %}"></i>
+                            </td>
+                            <!-- Visibility Toggle -->
+                            <td style="padding: 1rem; cursor: pointer; text-align: center;"
+                                onclick="toggleVisibility('{{ product.id }}')" title="點擊切換上下架">
+                                <i id="eye-{{ product.id }}"
+                                    class="fas fa-eye visibility-icon {% if product.is_visible %}active{% endif %}"
+                                    style="color: {% if product.is_visible %}#2ecc71{% else %}#555{% endif %}; transition: color 0.3s;"></i>
                             </td>
                             <td style="padding: 1rem;">
                                 <img src="{{ url_for('static', filename='images/' + product.image) }}"
@@ -202,6 +211,46 @@
             .catch(error => {
                 console.error('Error:', error);
                 alert('發生錯誤，請稍後再試。');
+            });
+    }
+
+    function toggleVisibility(productId) {
+        const icon = document.getElementById('eye-' + productId);
+
+        // Optimistic UI could go here, but let's wait for server
+
+        fetch(`/admin/product/toggle_visibility/${productId}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': "{{ csrf_token() }}",
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    if (data.is_visible) {
+                        icon.style.color = '#2ecc71';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                        icon.classList.add('active'); // CSS hook if needed
+                    } else {
+                        icon.style.color = '#555';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                        icon.classList.remove('active');
+                    }
+                } else {
+                    alert('切換失敗: ' + (data.message || 'Error'));
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('系統錯誤');
             });
     }
 
