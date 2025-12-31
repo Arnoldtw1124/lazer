@@ -281,9 +281,12 @@ def admin_orders():
         if search_query.isdigit():
             query = query.filter(Order.id == int(search_query))
         else:
+            # Case-insensitive search using func.lower()
+            from sqlalchemy import func
+            search_query_lower = search_query.lower()
             query = query.filter(
-                (Order.name.contains(search_query)) | 
-                (Order.contact.contains(search_query))
+                (func.lower(Order.name).contains(search_query_lower)) | 
+                (func.lower(Order.contact).contains(search_query_lower))
             )
             
     # Order by date desc
