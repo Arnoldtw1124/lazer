@@ -158,7 +158,11 @@ def admin_dashboard():
         return redirect(url_for('admin_login'))
     
     # Get all orders ordered by date (newest first)
-    orders = Order.query.order_by(Order.date.desc()).all()
+    try:
+        orders = Order.query.order_by(Order.date.desc()).all()
+    except Exception as e:
+        print(f"Error fetching orders: {e}")
+        orders = []
     
     # Stats for V2 Dashboard
     try:
@@ -173,6 +177,18 @@ def admin_dashboard():
     now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     
     return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, now_time=now_time)
+
+@app.errorhandler(500)
+def internal_error(error):
+    return f"""
+    <html><body>
+        <h1>500 Internal Server Error</h1>
+        <p>The server encountered an error:</p>
+        <pre>{error}</pre>
+        <p>Please report this to the developer.</p>
+        <p><a href="/admin">Return to Admin</a> | <a href="/">Return to Home</a></p>
+    </body></html>
+    """, 500
 
 # Route: Update Order Status
 @app.route('/admin/update_status/<int:order_id>', methods=['POST'])
