@@ -97,15 +97,25 @@
             <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
                 <div>
                     <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">售價*</label>
-                    <input type="text" name="price" value="{{ product.price if product else '' }}" required
-                        placeholder="NT$ 100"
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                    <div
+                        style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                        <span
+                            style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
+                        <input type="text" name="price" value="{{ product.price if product else '' }}" required
+                            placeholder="100"
+                            style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+                    </div>
                 </div>
                 <div>
                     <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">原價 (選填)</label>
-                    <input type="text" name="original_price" value="{{ product.original_price if product else '' }}"
-                        placeholder="NT$ 200"
-                        style="width: 100%; padding: 0.8rem; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                    <div
+                        style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                        <span
+                            style="padding: 0.8rem; background: #222; color: #888; border-right: 1px solid #333;">NT$</span>
+                        <input type="text" name="original_price" value="{{ product.original_price if product else '' }}"
+                            placeholder="200"
+                            style="flex: 1; padding: 0.8rem; background: transparent; border: none; color: white; outline: none;">
+                    </div>
                 </div>
                 <div>
                     <label style="display: block; color: #aaa; margin-bottom: 0.5rem;">優惠標籤 (選填)</label>
@@ -288,7 +298,12 @@
                                 <input type="text" value="${variant.name || ''}" onchange="updateVariant(${index}, 'name', this.value)" placeholder="款式名稱" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
                             </td>
                             <td style="padding: 5px;">
-                                <input type="number" value="${variant.price || ''}" onchange="updateVariant(${index}, 'price', this.value)" placeholder="NT$" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">
+                                <div style="display: flex; align-items: center; background: #1a1a1f; border: 1px solid #333; border-radius: 5px;">
+                                    <span style="padding: 5px 8px; background: #222; color: #666; font-size: 0.8em; border-right: 1px solid #333;">NT$</span>
+                                    <input type="number" value="${variant.price || ''}" onchange="updateVariant(${index}, 'price', this.value)" 
+                                        placeholder="100" 
+                                        style="flex: 1; padding: 8px; background: transparent; border: none; color: white; outline: none; width: 60px;">
+                                </div>
                             </td>
                             <td style="padding: 5px;">
                                 <input type="text" value="${variant.spec_text || ''}" onchange="updateVariant(${index}, 'spec_text', this.value)" placeholder="對應規格" style="width: 100%; padding: 8px; background: #1a1a1f; border: 1px solid #333; color: white; border-radius: 5px;">

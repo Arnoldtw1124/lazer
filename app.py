@@ -362,6 +362,16 @@ def admin_products():
     return render_template('admin_products.html', products=products)
 
 # Route: Admin Add Product
+# Helper: Auto-format price to NTD
+def format_price(value):
+    if not value:
+        return value
+    value = str(value).strip()
+    # If pure number, add NT$ prefix
+    if value.isdigit():
+        return f"NT$ {value}"
+    return value
+
 @app.route('/admin/products/new', methods=['GET', 'POST'])
 @login_required
 def admin_product_new():
@@ -381,6 +391,10 @@ def admin_product_new():
             variants_list = json.loads(raw_variants) if raw_variants else []
             
             for i, variant in enumerate(variants_list):
+                # Format Variant Price
+                if 'price' in variant:
+                    variant['price'] = format_price(variant['price'])
+
                 # Check for uploaded file with key 'variant_image_0', 'variant_image_1', etc.
                 v_file = request.files.get(f'variant_image_{i}')
                 if v_file and v_file.filename:
@@ -389,17 +403,24 @@ def admin_product_new():
                     variant['image'] = v_filename
                 # Use existing image if no new file is uploaded (already in JSON from frontend)
 
+            # Process Addons Price
+            raw_addons = request.form.get('addons')
+            addons_list = json.loads(raw_addons) if raw_addons else []
+            for addon in addons_list:
+                if 'price' in addon:
+                    addon['price'] = format_price(addon['price'])
+            
             new_product = Product(
                 id=request.form.get('id'),
                 name=request.form.get('name'),
-                price=request.form.get('price'),
-                original_price=request.form.get('original_price'),
+                price=format_price(request.form.get('price')),
+                original_price=format_price(request.form.get('original_price')),
                 discount_label=request.form.get('discount_label'),
                 desc=request.form.get('desc'),
                 image=filename,
                 specs=request.form.get('specs'), # Now comes from serialized JSON string in hidden input
                 variants=json.dumps(variants_list), # Processed list back to JSON string
-                addons=request.form.get('addons'),
+                addons=json.dumps(addons_list),
                 sort_order=int(request.form.get('sort_order', 0))
             )
             db.session.add(new_product)
@@ -427,25 +448,36 @@ def admin_product_edit(product_id):
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 product.image = filename # Update image only if new file uploaded
 
-            # Process Variants Image Uploads
+            # Process Variants Image Uploads & Prices
             raw_variants = request.form.get('variants')
             variants_list = json.loads(raw_variants) if raw_variants else []
             
             for i, variant in enumerate(variants_list):
+                # Format Price
+                if 'price' in variant:
+                    variant['price'] = format_price(variant['price'])
+                    
                 v_file = request.files.get(f'variant_image_{i}')
                 if v_file and v_file.filename:
                     v_filename = secure_filename(v_file.filename)
                     v_file.save(os.path.join(app.config['UPLOAD_FOLDER'], v_filename))
                     variant['image'] = v_filename
 
+            # Process Addons Prices
+            raw_addons = request.form.get('addons')
+            addons_list = json.loads(raw_addons) if raw_addons else []
+            for addon in addons_list:
+                if 'price' in addon:
+                    addon['price'] = format_price(addon['price'])
+
             product.name = request.form.get('name')
-            product.price = request.form.get('price')
-            product.original_price = request.form.get('original_price')
+            product.price = format_price(request.form.get('price'))
+            product.original_price = format_price(request.form.get('original_price'))
             product.discount_label = request.form.get('discount_label')
             product.desc = request.form.get('desc')
             product.specs = request.form.get('specs')
             product.variants = json.dumps(variants_list) # Save processed list
-            product.addons = request.form.get('addons')
+            product.addons = json.dumps(addons_list) # Save processed list
             product.sort_order = int(request.form.get('sort_order', 0))
             
             db.session.commit()
