@@ -44,7 +44,8 @@
 </head>
 
 <body>
-    <!-- Dynamic Marquee -->
+    {% if not request.path.startswith('/admin') %}
+    <!-- Dynamic Marquee (Public Only) -->
     <div
         style="background: var(--secondary-color); color: black; padding: 5px 0; overflow: hidden; white-space: nowrap; font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: bold;">
         <div style="display: inline-block; animation: marquee 20s linear infinite;">
@@ -53,6 +54,7 @@
         </div>
     </div>
 
+    <!-- Public Navbar -->
     <nav class="navbar">
         <div class="logo">
             <a href="{{ url_for('index') }}" style="text-decoration: none; color: inherit;">諾雕 ALE</a>
@@ -68,27 +70,29 @@
             <a href="{{ url_for('index') }}">首頁</a>
 
             <div class="dropdown">
-                <a href="{{ url_for('products') }}" class="dropbtn">產品介紹 ▾</a>
+                <a href="#" class="dropbtn">產品介紹 <i class="fas fa-chevron-down" style="font-size: 0.8em;"></i></a>
                 <div class="dropdown-content">
-                    {% for product in navbar_products %}
-                    <a href="{{ url_for('product_detail', product_id=product.id) }}">{{ product.name }}</a>
+                    {% for p in navbar_products %}
+                    <a href="{{ url_for('product_detail', product_id=p.id) }}">{{ p.name }}</a>
                     {% endfor %}
-                    <div style="height: 1px; background: rgba(255,255,255,0.1); margin: 5px 0;"></div>
-                    <a href="{{ url_for('products') }}">查看所有產品</a>
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 0.5rem 0;">
+                    <a href="{{ url_for('products') }}" style="color: var(--secondary-color);">查看所有產品 &rarr;</a>
                 </div>
             </div>
 
             <a href="{{ url_for('materials') }}">材質資料庫</a>
-            <a href="{{ url_for('tracking') }}">訂單查詢</a>
-            <a href="{{ url_for('booking') }}">立即預約</a>
-            <a href="https://x.com/arnold__laser" target="_blank">X (Twitter)</a>
+            <a href="https://forms.gle/4u6Q5Q9Q9Q9Q9Q9Q9" target="_blank">訂單查詢</a>
+            <a href="{{ url_for('booking') }}" class="cta-button">立即預約</a>
+            <a href="https://twitter.com/LaserCraft_TW" target="_blank"><i class="fab fa-twitter"></i></a>
         </div>
     </nav>
+    {% endif %}
 
     <main>
         {% block content %}{% endblock %}
     </main>
 
+    {% if not request.path.startswith('/admin') %}
     <footer class="site-footer" style="
         background-color: #000000;
         border-top: 1px solid var(--secondary-color);
@@ -107,7 +111,7 @@
                 <h4 style="font-size: 1.5rem; margin-bottom: 1rem; color: white;">諾雕 ALE</h4>
                 <p style="color: #888; margin-bottom: 1.5rem;">銘刻光與金屬的界線</p>
                 <div class="social-links">
-                    <a href="https://x.com/arnold__laser" target="_blank" style="
+                    <a href="https://www.facebook.com/profile.php?id=100078021111111" target="_blank" style="
                         display: inline-block;
                         padding: 0.5rem 1rem;
                         background: rgba(255,255,255,0.1);
@@ -116,7 +120,29 @@
                         color: white;
                         text-decoration: none;
                         font-size: 1.2rem;
-                    ">X (Twitter)</a>
+                    "><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.instagram.com/lasercraft_tw" target="_blank" style="
+                        display: inline-block;
+                        padding: 0.5rem 1rem;
+                        background: rgba(255,255,255,0.1);
+                        border: 1px solid #333;
+                        border-radius: 5px;
+                        color: white;
+                        text-decoration: none;
+                        font-size: 1.2rem;
+                        margin-left: 10px;
+                    "><i class="fab fa-instagram"></i></a>
+                    <a href="https://twitter.com/LaserCraft_TW" target="_blank" style="
+                        display: inline-block;
+                        padding: 0.5rem 1rem;
+                        background: rgba(255,255,255,0.1);
+                        border: 1px solid #333;
+                        border-radius: 5px;
+                        color: white;
+                        text-decoration: none;
+                        font-size: 1.2rem;
+                        margin-left: 10px;
+                    "><i class="fab fa-twitter"></i></a>
                 </div>
             </div>
 
@@ -124,20 +150,24 @@
             <div class="footer-column">
                 <h4
                     style="color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
-                    快速導航</h4>
+                    快速連結</h4>
                 <ul style="list-style: none; padding: 0;">
-                    <li><a href="{{ url_for('process') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">製作流程</a>
-                    </li>
-                    <li><a href="{{ url_for('materials') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">材質資料庫</a>
-                    </li>
-                    <li><a href="{{ url_for('faq') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">常見問題</a>
-                    </li>
-                    <li><a href="{{ url_for('guidelines') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">送印規範</a>
-                    </li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('index') }}"
+                            style="color: #888; text-decoration: none; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">首頁</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('products') }}"
+                            style="color: #888; text-decoration: none; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">產品一覽</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('materials') }}"
+                            style="color: #888; text-decoration: none; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">材質介紹</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('faq') }}"
+                            style="color: #888; text-decoration: none; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">常見問題</a></li>
                 </ul>
             </div>
 
@@ -145,17 +175,26 @@
             <div class="footer-column">
                 <h4
                     style="color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1.5rem;">
-                    法律與支援</h4>
+                    資訊 & 管理</h4>
                 <ul style="list-style: none; padding: 0; margin-bottom: 2rem;">
-                    <li><a href="{{ url_for('terms') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">服務條款</a>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('terms') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">服務條款</a>
                     </li>
-                    <li><a href="{{ url_for('privacy') }}"
-                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;">隱私權政策</a>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('privacy') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">隱私權政策</a>
                     </li>
+                    <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('guidelines') }}"
+                            style="color: #888; text-decoration: none; display: block; margin-bottom: 0.8rem; transition: color 0.3s;"
+                            onmouseover="this.style.color='var(--secondary-color)'"
+                            onmouseout="this.style.color='#888'">製圖規範</a>
+                    </li>
+                    <li style="margin-top: 1rem;"><a href="{{ url_for('admin_login') }}"
+                            style="color: #444; text-decoration: none; font-size: 0.8rem;">管理員登入</a></li>
                 </ul>
-                <a href="{{ url_for('booking') }}" class="btn btn-primary"
-                    style="padding: 0.8rem 2rem; font-size: 1rem; width: auto; display: inline-block;">[ 立即預約 ]</a>
             </div>
         </div>
 
@@ -166,7 +205,7 @@
             text-align: center;
             font-size: 0.8rem;
         ">
-            <p>&copy; 2025 諾雕 ALE. All rights reserved.</p>
+            <p>&copy; 2024 諾雕 ALE. All rights reserved.</p>
         </div>
 
         <style>
