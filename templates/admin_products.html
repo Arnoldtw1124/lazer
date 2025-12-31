@@ -3,128 +3,120 @@
 {% block title %}商品管理 - 諾雕 ALE{% endblock %}
 
 {% block content %}
-<section style="min-height: 100vh; background: #0f0f13; padding: 100px 5%;">
-
-    <div style="
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 3rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding-bottom: 1rem;
-    ">
-        <h1 style="color: white; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">
-            PRODUCT MANAGEMENT <span style="font-size: 1rem; color: var(--secondary-color);">// ADMIN V2</span>
-        </h1>
-        <div>
-            <a href="{{ url_for('admin_product_new') }}" style="
-                background: var(--secondary-color);
-                color: black;
-                text-decoration: none;
-                font-weight: bold;
-                padding: 0.5rem 1rem; 
-                border-radius: 5px;
-                margin-right: 1rem;
-                transition: all 0.3s;
-            ">
-                + 新增商品
-            </a>
-            <a href="{{ url_for('admin_dashboard') }}" style="
-                color: #aaa; 
-                text-decoration: none; 
-                border: 1px solid #aaa; 
-                padding: 0.5rem 1rem; 
-                border-radius: 5px;
-                transition: all 0.3s;
-            " onmouseover="this.style.borderColor='white'; this.style.color='white'"
-                onmouseout="this.style.borderColor='#aaa'; this.style.color='#aaa'">
-                返回訂單
-            </a>
-        </div>
-    </div>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div style="max-width: 100%; margin-bottom: 2rem;">
-        {% for category, message in messages %}
-        <div style="
-            padding: 1rem; 
-            border-radius: 8px; 
-            margin-bottom: 1rem;
-            text-align: center;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.2);
-        ">
-            {{ message }}
-        </div>
-        {% endfor %}
-    </div>
-    {% endif %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    {% with active_page='products' %}
+    {% include 'admin_sidebar.html' %}
     {% endwith %}
 
-    <!-- Products Table -->
-    <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">
-            <thead>
-                <tr style="border-bottom: 2px solid var(--secondary-color); text-align: left;">
-                    <th style="padding: 1rem; color: var(--secondary-color);">排序</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">圖片</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">ID</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">名稱</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">價格</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.02)'"
-                    onmouseout="this.style.background='transparent'">
+    <!-- Main Content -->
+    <div class="admin-main">
+        <div class="admin-header">
+            <h2 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">PRODUCT MGMT <span
+                    style="font-size: 0.8rem; color: var(--secondary-color);">// ADMIN V2</span></h2>
+            <div>
+                <a href="{{ url_for('admin_product_new') }}" style="
+                    background: var(--secondary-color);
+                    color: black;
+                    text-decoration: none;
+                    font-weight: bold;
+                    padding: 0.5rem 1rem; 
+                    border-radius: 5px;
+                    display: flex; align-items: center; gap: 0.5rem;
+                    transition: all 0.3s;
+                ">
+                    <i class="fas fa-plus"></i> 新增商品
+                </a>
+            </div>
+        </div>
 
-                    <td style="padding: 1rem;">{{ product.sort_order }}</td>
-                    <td style="padding: 1rem;">
-                        <img src="{{ url_for('static', filename='images/' + product.image) }}" alt="{{ product.name }}"
-                            class="product-thumb"
-                            data-fallback="{{ url_for('static', filename='uploads/' + product.image) }}"
-                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; border: 1px solid #333;">
-                        <!-- Try images dir first, then uploads (if uploaded via admin) -->
-                    </td>
-                    <td style="padding: 1rem; font-family: monospace; color: #aaa;">{{ product.id }}</td>
-                    <td style="padding: 1rem; font-weight: bold;">
-                        {{ product.name }}
-                        {% if product.discount_label %}
-                        <br><span style="font-size: 0.8rem; color: #2ecc71;">{{ product.discount_label }}</span>
-                        {% endif %}
-                    </td>
-                    <td style="padding: 1rem;">{{ product.price }}</td>
-                    <td style="padding: 1rem;">
-                        <a href="{{ url_for('admin_product_edit', product_id=product.id) }}" style="
-                            color: var(--secondary-color);
-                            text-decoration: none;
-                            margin-right: 1rem;
-                            font-weight: bold;
-                        ">編輯</a>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom: 2rem;">
+            {% for category, message in messages %}
+            <div style="
+                padding: 1rem; 
+                background: rgba(46, 204, 113, 0.1); 
+                border: 1px solid #2ecc71; 
+                color: #2ecc71; 
+                border-radius: 5px;
+                margin-bottom: 1rem;
+            ">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
 
-                        <form action="{{ url_for('admin_product_delete', product_id=product.id) }}" method="POST"
-                            style="display: inline;" onsubmit="return confirm('確定要刪除商品 {{ product.name }} 嗎？');">
-                            <button type="submit" style="
-                                background: transparent; 
-                                border: none;
-                                color: #ff4757; 
-                                cursor: pointer;
-                                font-weight: bold;
-                            ">刪除</button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <!-- Products Table -->
+        <div
+            style="background: #0f0f12; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;">
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">
+                    <thead>
+                        <tr
+                            style="border-bottom: 2px solid rgba(255,255,255,0.05); text-align: left; background: rgba(255,255,255,0.02);">
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">排序</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">圖片</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">ID</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">名稱</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">價格</th>
+                            <th style="padding: 1rem; color: #888; font-weight: normal;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+
+                            <td style="padding: 1rem;">{{ product.sort_order }}</td>
+                            <td style="padding: 1rem;">
+                                <img src="{{ url_for('static', filename='images/' + product.image) }}"
+                                    alt="{{ product.name }}" class="product-thumb"
+                                    data-fallback="{{ url_for('static', filename='uploads/' + product.image) }}"
+                                    style="width: 50px; height: 50px; object-fit: cover; border-radius: 5px; border: 1px solid #333;">
+                            </td>
+                            <td style="padding: 1rem; font-family: monospace; color: #aaa;">{{ product.id }}</td>
+                            <td style="padding: 1rem; font-weight: bold;">
+                                {{ product.name }}
+                                {% if product.discount_label %}
+                                <br><span style="font-size: 0.8rem; color: #2ecc71;">{{ product.discount_label }}</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding: 1rem;">{{ product.price }}</td>
+                            <td style="padding: 1rem;">
+                                <a href="{{ url_for('admin_product_edit', product_id=product.id) }}" style="
+                                    color: var(--secondary-color);
+                                    text-decoration: none;
+                                    margin-right: 1rem;
+                                    font-weight: bold;
+                                    font-size: 0.9rem;
+                                "><i class="fas fa-edit"></i> 編輯</a>
+
+                                <form action="{{ url_for('admin_product_delete', product_id=product.id) }}"
+                                    method="POST" style="display: inline;"
+                                    onsubmit="return confirm('確定要刪除商品 {{ product.name }} 嗎？');">
+                                    <button type="submit" style="
+                                        background: transparent; 
+                                        border: none;
+                                        color: #ff4757; 
+                                        cursor: pointer;
+                                        font-weight: bold;
+                                        font-size: 0.9rem;
+                                    "><i class="fas fa-trash-alt"></i> 刪除</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
-</section>
+</div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

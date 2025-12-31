@@ -1,205 +1,161 @@
 {% extends 'base.html' %}
 
-{% block title %}管理控制台 - 諾雕 ALE{% endblock %}
+{% block title %}戰情中心 - 諾雕 ALE{% endblock %}
 
 {% block content %}
-<style>
-    .status-select {
-        background: #1a1a1f;
-        border: 1px solid #333;
-        padding: 0.3rem;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        outline: none;
-        color: #fff;
-        /* Default fallback */
-    }
-
-    .status-pending {
-        color: #ff9f43 !important;
-    }
-
-    .status-processing {
-        color: #00d2d3 !important;
-    }
-
-    .status-completed {
-        color: #2ecc71 !important;
-    }
-
-    .status-cancelled {
-        color: #ff6b6b !important;
-    }
-
-    .flash-admin-success {
-        background: rgba(46, 204, 113, 0.2);
-        color: #2ecc71;
-        border: 1px solid #2ecc71;
-    }
-
-    .flash-admin-error {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-        border: 1px solid #e74c3c;
-    }
-</style>
-<section style="min-height: 100vh; background: #0f0f13; padding: 100px 5%;">
-
-    <div style="
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        margin-bottom: 3rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        padding-bottom: 1rem;
-    ">
-        <h1 style="color: white; font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">
-            COMMAND CENTRE <span style="font-size: 1rem; color: var(--secondary-color);">// ADMIN V2</span>
-        </h1>
-        <a href="{{ url_for('admin_logout') }}" style="
-            color: #ff4d4d; 
-            text-decoration: none; 
-            border: 1px solid #ff4d4d; 
-            padding: 0.5rem 1rem; 
-            border-radius: 5px;
-            transition: all 0.3s;
-        " onmouseover="this.style.background='#ff4d4d'; this.style.color='white'"
-            onmouseout="this.style.background='transparent'; this.style.color='#ff4d4d'">
-            LOGOUT
-        </a>
-    </div>
-
-    <!-- Quick Actions -->
-    <div style="margin-bottom: 2rem; display: flex; gap: 1rem;">
-        <a href="{{ url_for('admin_products') }}" style="
-            background: rgba(0, 210, 211, 0.1); 
-            color: var(--secondary-color); 
-            border: 1px solid var(--secondary-color);
-            padding: 1rem 2rem;
-            text-decoration: none;
-            border-radius: 5px;
-            font-weight: bold;
-            transition: all 0.3s;
-            display: flex; align-items: center; gap: 0.5rem;
-        " onmouseover="this.style.background='var(--secondary-color)'; this.style.color='black'"
-            onmouseout="this.style.background='rgba(0, 210, 211, 0.1)'; this.style.color='var(--secondary-color)'">
-            📦 商品管理 (Products)
-        </a>
-    </div>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div style="max-width: 100%; margin-bottom: 2rem;">
-        {% for category, message in messages %}
-        {% if 'admin_' in category %}
-        <div class="flash-message {{ 'flash-admin-success' if 'success' in category else 'flash-admin-error' }}" style="
-            padding: 1rem; 
-            border-radius: 8px; 
-            margin-bottom: 1rem;
-            text-align: center;
-        ">
-            {{ message }}
-        </div>
-        {% endif %}
-        {% endfor %}
-    </div>
-    {% endif %}
+<div class="admin-layout">
+    <!-- Sidebar -->
+    {% with active_page='dashboard' %}
+    {% include 'admin_sidebar.html' %}
     {% endwith %}
 
-    <!-- Orders Table -->
-    <div style="overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.9);">
-            <thead>
-                <tr style="border-bottom: 2px solid var(--secondary-color); text-align: left;">
-                    <th style="padding: 1rem; color: var(--secondary-color);">ID</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">日期</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">姓名</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">產品/材質</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">圖片</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">狀態</th>
-                    <th style="padding: 1rem; color: var(--secondary-color);">操作</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for order in orders %}
-                <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.3s;"
-                    onmouseover="this.style.background='rgba(255,255,255,0.02)'"
-                    onmouseout="this.style.background='transparent'">
+    <!-- Main Content -->
+    <div class="admin-main">
+        <div class="admin-header">
+            <h2 style="font-family: 'Orbitron', sans-serif; letter-spacing: 2px;">DASHBOARD_V2 <span
+                    style="font-size: 0.8rem; color: var(--secondary-color);">// ONLINE</span></h2>
+            <div style="color: #666; font-family: monospace;">SYSTEM_TIME: {{ now_time }}</div>
+        </div>
 
-                    <td style="padding: 1rem; font-family: monospace;">#{{ order.id }}</td>
-                    <td style="padding: 1rem; font-size: 0.9rem; color: #888;">{{ order.date.strftime('%Y-%m-%d %H:%M')
-                        }}</td>
-                    <td style="padding: 1rem; font-weight: bold;">{{ order.name }}<br><span
-                            style="font-size:0.8rem; color:#666;">{{ order.contact }}</span></td>
-                    <td style="padding: 1rem;">
-                        <span style="
-                            background: rgba(0, 255, 255, 0.1); 
-                            color: var(--secondary-color); 
-                            padding: 0.2rem 0.5rem; 
-                            border-radius: 3px; 
-                            font-size: 0.8rem;
-                        ">{{ order.material }}</span>
-                    </td>
-                    <td style="padding: 1rem;">
-                        {% if order.filename %}
-                        <a href="{{ url_for('static', filename='uploads/' + order.filename) }}" target="_blank">
-                            <img src="{{ url_for('static', filename='uploads/' + order.filename) }}" alt="Upload"
-                                style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #555; border-radius: 4px; transition: transform 0.2s;"
-                                onmouseover="this.style.transform='scale(2)'"
-                                onmouseout="this.style.transform='scale(1)'">
-                        </a>
-                        {% else %}
-                        <span style="color: #444; font-size: 0.8rem;">無圖片</span>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div style="margin-bottom: 2rem;">
+            {% for category, message in messages %}
+            {% if 'admin_' in category %}
+            <div style="
+                padding: 1rem; 
+                background: rgba(46, 204, 113, 0.1); 
+                border: 1px solid #2ecc71; 
+                color: #2ecc71; 
+                border-radius: 5px;
+                margin-bottom: 1rem;
+            ">
+                {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- KPI Cards -->
+        <div class="dashboard-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="kpi-info">
+                    <h4>總訂單數</h4>
+                    <div class="value">{{ orders|length }}</div>
+                    <div style="font-size: 0.8rem; color: #666;">較上週 +12%</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: rgba(255, 159, 67, 0.1); color: #ff9f43;">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div class="kpi-info">
+                    <h4>待處理</h4>
+                    <div class="value">{{ orders|selectattr('status', 'equalto', 'Pending')|list|length }}</div>
+                    <div style="font-size: 0.8rem; color: #666;">需盡快處理</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71;">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div class="kpi-info">
+                    <h4>上架商品</h4>
+                    <div class="value">{{ product_count }}</div>
+                    <div style="font-size: 0.8rem; color: #666;">全通路販售中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Orders Section -->
+        <div
+            style="background: #0f0f12; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden;">
+            <div
+                style="padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 1.1rem;">近期訂單 (Recent Orders)</h3>
+                <a href="#" style="color: var(--secondary-color); font-size: 0.9rem; text-decoration: none;">查看全部</a>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; color: rgba(255,255,255,0.8);">
+                    <thead>
+                        <tr style="text-align: left; background: rgba(255,255,255,0.02);">
+                            <th style="padding: 1rem; color: #666; font-weight: normal;">ID</th>
+                            <th style="padding: 1rem; color: #666; font-weight: normal;">日期</th>
+                            <th style="padding: 1rem; color: #666; font-weight: normal;">客戶</th>
+                            <th style="padding: 1rem; color: #666; font-weight: normal;">項目</th>
+                            <th style="padding: 1rem; color: #666; font-weight: normal;">狀態</th>
+                            <th style="padding: 1rem; color: #666; font-weight: normal; text-align: right;">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders[:5] %} <!-- Show only top 5 -->
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.02); transition: background 0.2s;"
+                            onmouseover="this.style.background='rgba(255,255,255,0.02)'"
+                            onmouseout="this.style.background='transparent'">
+                            <td style="padding: 1rem; font-family: monospace;">#{{ order.id }}</td>
+                            <td style="padding: 1rem; font-size: 0.9rem; color: #888;">{{ order.date.strftime('%m/%d
+                                %H:%M') }}</td>
+                            <td style="padding: 1rem; font-weight: bold;">{{ order.name }}</td>
+                            <td style="padding: 1rem;">
+                                <span
+                                    style="background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px; font-size: 0.85rem;">
+                                    {{ order.material }}
+                                </span>
+                            </td>
+                            <td style="padding: 1rem;">
+                                <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
+                                    <select name="status" onchange="this.form.submit()" style="
+                                        background: transparent; 
+                                        border: 1px solid rgba(255,255,255,0.2); 
+                                        color: {% if order.status == 'Pending' %}#ff9f43{% elif order.status == 'Completed' %}#2ecc71{% elif order.status == 'Processing' %}#00d2d3{% else %}#ff6b6b{% endif %};
+                                        padding: 4px 8px;
+                                        border-radius: 4px;
+                                        outline: none;
+                                        cursor: pointer;
+                                    ">
+                                        <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠
+                                            待確認</option>
+                                        <option value="Processing" {% if order.status=='Processing' %}selected{% endif
+                                            %}>🔵 製作中</option>
+                                        <option value="Completed" {% if order.status=='Completed' %}selected{% endif %}>
+                                            🟢 已完成</option>
+                                        <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>
+                                            🔴 已取消</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td style="padding: 1rem; text-align: right;">
+                                <form action="{{ url_for('delete_order', order_id=order.id) }}" method="POST"
+                                    style="display: inline;" onsubmit="return confirm('確定要刪除訂單 #{{ order.id }} 嗎？');">
+                                    <button type="submit"
+                                        style="background: transparent; border: none; color: #444; cursor: pointer; transition: color 0.3s;"
+                                        onmouseover="this.style.color='#ff4757'" onmouseout="this.style.color='#444'">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <!-- Expandable Row for Notes -->
+                        {% if order.notes %}
+                        <tr style="background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td colspan="6"
+                                style="padding: 0.5rem 1rem; padding-left: 2rem; font-size: 0.85rem; color: #aaa;">
+                                <strong>📝 備註：</strong> {{ order.notes }}
+                            </td>
+                        </tr>
                         {% endif %}
-                    </td>
-                    <td style="padding: 1rem;">
-                        <!-- Status Update Form -->
-                        <form action="{{ url_for('update_status', order_id=order.id) }}" method="POST">
-                            <select name="status" onchange="this.form.submit()"
-                                class="status-select status-{{ order.status|lower }}">
-                                <option value="Pending" {% if order.status=='Pending' %}selected{% endif %}>🟠 待確認
-                                </option>
-                                <option value="Processing" {% if order.status=='Processing' %}selected{% endif %}>🔵 製作中
-                                </option>
-                                <option value="Completed" {% if order.status=='Completed' %}selected{% endif %}>🟢 已完成
-                                </option>
-                                <option value="Cancelled" {% if order.status=='Cancelled' %}selected{% endif %}>🔴 已取消
-                                </option>
-                            </select>
-                        </form>
-                    </td>
-                    <td style="padding: 1rem;">
-                        <!-- Delete Form -->
-                        <form action="{{ url_for('delete_order', order_id=order.id) }}" method="POST"
-                            style="display: inline;" onsubmit="return confirm('確定要刪除訂單 #{{ order.id }} 嗎？此動作無法復原！');">
-                            <button type="submit" style="
-                                background: transparent; 
-                                border: 1px solid #ff4757; 
-                                color: #ff4757; 
-                                width: 30px; 
-                                height: 30px; 
-                                border-radius: 5px; 
-                                cursor: pointer;
-                                display: flex; align-items: center; justify-content: center;
-                            " title="刪除訂單">
-                                🗑️
-                            </button>
-                        </form>
-                    </td>
-                </tr>
-                <!-- Expandable Row for Notes -->
-                {% if order.notes %}
-                <tr style="background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <td colspan="7" style="padding: 0.5rem 1rem; padding-left: 2rem; font-size: 0.85rem; color: #aaa;">
-                        <strong>📝 備註：</strong> {{ order.notes }}
-                    </td>
-                </tr>
-                {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-</section>
-{% endblock %}
+            </section>
+            {% endblock %}
