@@ -687,14 +687,13 @@ products_data = {
 # Route: Home Page
 @app.route('/')
 def index():
-    # Select Top 3 Popular Products
-    popular_ids = ['coaster', 'keychain', 'stand'] 
-    popular_products = []
-    
-    for pid in popular_ids:
-        product = Product.query.get(pid)
-        if product:
-             popular_products.append(product.to_dict())
+    # Select Top 3 Popular Products by Sort Order (High to Low)
+    try:
+        top_products = Product.query.order_by(Product.sort_order.desc()).limit(3).all()
+        popular_products = [p.to_dict() for p in top_products]
+    except Exception as e:
+        print(f"Error fetching popular products: {e}")
+        popular_products = []
     
     return render_template('index.html', popular_products=popular_products)
 
