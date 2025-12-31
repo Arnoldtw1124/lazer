@@ -130,6 +130,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll('.product-thumb').forEach(img => {
             img.addEventListener('error', function () {
+                if (this.dataset.failed) return; // Prevent infinite loop
+                this.dataset.failed = true;
                 this.src = this.getAttribute('data-fallback');
             });
         });
