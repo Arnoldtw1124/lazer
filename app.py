@@ -119,23 +119,32 @@ def admin_dashboard():
     if not session.get('logged_in'):
         return redirect(url_for('admin_login'))
     
-    # Get all orders ordered by date (newest first)
-    orders = Order.query.order_by(Order.date.desc()).all()
-    
-    
-    # Stats for V2 Dashboard
     try:
-        product_count = Product.query.count()
-        # Calculate pending orders safely in Python
-        pending_count = len([o for o in orders if o.status == 'Pending'])
-    except Exception as e:
-        print(f"Error fetching stats: {e}")
-        product_count = 0
-        pending_count = 0
+        # Get all orders ordered by date (newest first)
+        orders = Order.query.order_by(Order.date.desc()).all()
         
-    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    
-    return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, now_time=now_time)
+        # Stats for V2 Dashboard
+        try:
+            product_count = Product.query.count()
+            # Calculate pending orders safely in Python
+            pending_count = len([o for o in orders if o.status == 'Pending'])
+        except Exception as e:
+            print(f"Error fetching stats: {e}")
+            product_count = 0
+            pending_count = 0
+            
+        now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        
+        return render_template('admin_dashboard.html', orders=orders, product_count=product_count, pending_count=pending_count, now_time=now_time)
+        
+    except Exception as e:
+        # Emergency Debug Output
+        return f"""
+        <h1>DEBUG ERROR REPORT</h1>
+        <p>Admin Dashboard crashed with error:</p>
+        <pre>{str(e)}</pre>
+        <p>Please screenshot this and send to developer.</p>
+        """
 
 # Route: Update Order Status
 @app.route('/admin/update_status/<int:order_id>', methods=['POST'])
