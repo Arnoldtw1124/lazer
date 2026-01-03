@@ -152,7 +152,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 ADMIN_PASSWORD = "admin" # Default password, change this!
 
 # Google Sheets Web App URL
-GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxv-mle-uSkDbYFH5zJXwUNqd8y7yMZ5z1Vt7cug_q3_8iIZuq-aP_fuAx2zhV4f84K/exec'
+GOOGLE_SCRIPT_URL = os.getenv('GOOGLE_SCRIPT_URL')
 
 # Product Data (unchanged)
 # ... (rest of product data initialization if needed, but here we replace the top section)
